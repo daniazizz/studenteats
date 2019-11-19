@@ -29,14 +29,26 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{% url 'blog-home' %}">Home</a>
-              <a class="nav-item nav-link" href="{% url 'blog-map' %}">Map</a>
+              
+            </div>
+            <div class="navbar-nav mr-auto">
+            <!-- Search -->  
+              <form class="form-inline">
+                  <div class="input-group">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1" height="25">
+                    <div class="input-group-prepend">
+                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{% url 'blog-map' %}" id="basic-addon1">
+                        <img src="{% static 'blog/map_icon.png' %}" alt="Map" height="20">
+                      </a>
+                    </div>
+                  </div>
+              </form>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
                 <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
-                <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                <a class="nav-item nav-link" href="{% url 'profile' %}"><img src="{{ user.profile.image.url }}" alt="Profile" height="25"></a>
                 <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
               {% else %}
                 <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>

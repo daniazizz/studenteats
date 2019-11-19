@@ -42,6 +42,8 @@ class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
 
 
     def form_valid(self, form):
+        print(form.cleaned_data)# debugging
+        print(form)
         form.instance.author = self.request.user ## Setting the author to the current logged in user
         return super().form_valid(form)
 

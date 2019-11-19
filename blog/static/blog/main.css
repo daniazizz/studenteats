@@ -20,6 +20,9 @@ body {
     color: #000000;
   }
   
+  .form-control:focus{border-color: #707070;  box-shadow: none; -webkit-box-shadow: none;} 
+
+  
   .site-header .navbar-nav .nav-link:hover {
     color: #535353;
   }
