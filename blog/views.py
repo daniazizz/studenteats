@@ -3,6 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin #
 from django.contrib.auth.models import User
 from .models import Post
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from .forms import PostImageForm
+from django.db.models import Q
 
 
 def home(request):
@@ -31,15 +33,30 @@ class UserPostListView(ListView):# A class based view
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Post.objects.filter(author=user).order_by('-date_posted')
 
+class SearchResultListView(ListView):# A class based view
+    model = Post 
+    template_name = 'blog/search_result.html' # <app>/<model>_<viewtype>.html
+    context_object_name = 'posts' # This makes it so that the list of objects is called posts.
+                                    # as default, the name is ObjectList
+    ordering = ['-date_posted'] # Minus symbol to reverse ordering
+    paginate_by = 5
+
+    def get_queryset(self): ## filters posts list to the ones from user
+        query = self.request.GET.get('q')
+        return Post.objects.filter(Q(title__icontains=query)).order_by('-date_posted')
 
 class PostDetailView(DetailView):# A class based view
     model = Post 
 
 class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
     model = Post 
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content']
     success_url = '/'
 
+    def get_context_data(self, **kwargs):
+        context = super(PostCreateView, self).get_context_data(**kwargs)
+        context['post_images_form']  = PostImageForm
+        return context
 
     def form_valid(self, form):
         print(form.cleaned_data)# debugging
@@ -49,7 +66,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):# A class based view
     model = Post 
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content']
 
     def test_func(self):
         post = self.get_object()

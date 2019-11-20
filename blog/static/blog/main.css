@@ -1,5 +1,6 @@
 body {
-    background: #5a5a5a;
+    background: rgb(118,118,118);
+    background: linear-gradient(180deg, rgba(118,118,118,1) 0%, rgba(60,60,60,1) 98%);
     color: #333333;
     margin-top: 5rem;
   }
@@ -21,6 +22,13 @@ body {
   }
   
   .form-control:focus{border-color: #707070;  box-shadow: none; -webkit-box-shadow: none;} 
+
+  /*  Making sure the image inside a carousel takes 100% of the width  */
+  .carousel-item img{ margin: auto; }
+
+  .carousel {
+    background-color: #535353;
+  }
 
   
   .site-header .navbar-nav .nav-link:hover {

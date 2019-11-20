@@ -10,7 +10,6 @@ class Post(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(default = timezone.now)
     author = models.ForeignKey(User, on_delete = models.CASCADE)
-    image = models.ImageField(default="default.jpg", upload_to='post_images')
 
     def __str__(self):
         return self.title
@@ -18,6 +17,11 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk}) ## Returns the url to the details page of the current post AS A STRING
                                                             ## Difference between redirect and reverse: rederict, redirects the user to an url, while reverse returns the url as a string
+
+class PostImage(models.Model):
+    Post = models.ForeignKey(Post, related_name='images', on_delete = models.CASCADE)
+    image = models.ImageField(upload_to='post_images')
+
     def save(self):
         super().save()## Calling parent class' save method
 
