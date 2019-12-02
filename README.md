@@ -2,5 +2,7 @@ STUDENTEATS: a web application for students to share their favorite places to ea
 
 
 You will have to install some packages before running the server:
-1) crispy forms: pip install django-crispy-forms
-2) pillow: pip install pillow
+(0) You will need Python (obviously)
+1) django: pip install Django
+2) crispy forms: pip install django-crispy-forms
+3) pillow: pip install pillow
