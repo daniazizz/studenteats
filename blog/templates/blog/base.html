@@ -48,7 +48,7 @@
             <div class="navbar-nav">
               {% if user.is_authenticated %}
                 <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
-                <a class="nav-item nav-link" href="{% url 'profile' %}">
+                <a class="nav-item nav-link" href="{% url 'profile' user.username %}">
                   <img src="{{ user.profile.image.url }}" alt="Profile" height="30" width="30" class="rounded-circle">
                 </a>
                 <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>

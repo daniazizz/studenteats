@@ -27,7 +27,7 @@ class PostImage(models.Model):
 
         img = Image.open(self.image.path)
 
-        if img.height > 300 or img.width > 300:## Resizes the profile image if its too large
+        if img.height > 300 or img.width > 300:## Resizes the post image if its too large
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)

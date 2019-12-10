@@ -21,17 +21,22 @@ class PostListView(ListView):# A class based view
     ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
 
-class UserPostListView(ListView):# A class based view
+class ProfileListView(ListView):# A class based view
     model = Post 
-    template_name = 'blog/user_post.html' # <app>/<model>_<viewtype>.html
+    template_name = 'blog/profile.html' 
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
                                     # as default, the name is ObjectList
     ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
 
+    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['selected_user'] = self.user
+        return context
+
     def get_queryset(self): ## filters posts list to the ones from user
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=user).order_by('-date_posted')
+        self.user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=self.user).order_by('-date_posted')
 
 class SearchResultListView(ListView):# A class based view
     model = Post 
