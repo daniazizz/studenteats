@@ -9,8 +9,8 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
     
-    def save(self):
-        super().save()## Calling parent class' save method
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)## Calling parent class' save method
 
         img = Image.open(self.image.path)
 
