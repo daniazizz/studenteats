@@ -5,15 +5,16 @@ from .models import Post
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import PostImageForm
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def home(request):
     context = {
         'posts': Post.objects.all()
     }
     return render(request, 'blog/home.html', context)
 
-class PostListView(ListView):# A class based view
+class PostListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
@@ -21,7 +22,7 @@ class PostListView(ListView):# A class based view
     ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
 
-class ProfileListView(ListView):# A class based view
+class ProfileListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/profile.html' 
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
@@ -38,7 +39,7 @@ class ProfileListView(ListView):# A class based view
         self.user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Post.objects.filter(author=self.user).order_by('-date_posted')
 
-class SearchResultListView(ListView):# A class based view
+class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/search_result.html' # <app>/<model>_<viewtype>.html
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
@@ -50,7 +51,7 @@ class SearchResultListView(ListView):# A class based view
         query = self.request.GET.get('q')
         return Post.objects.filter(Q(title__icontains=query)).order_by('-date_posted')
 
-class PostDetailView(DetailView):# A class based view
+class PostDetailView(LoginRequiredMixin, DetailView):# A class based view
     model = Post 
 
 class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
@@ -92,6 +93,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):# A cl
         if self.request.user == post.author:
             return True
         return False
-    
+        
+@login_required    
 def map(request):
     return render(request, 'blog/map.html', {'title': 'Map'})

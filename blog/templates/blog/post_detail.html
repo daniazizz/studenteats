@@ -2,7 +2,9 @@
 {% extends "blog/base.html" %}
 {% block content %}
     <article class="media content-section">
-        <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}" alt="author's image">
+        <a class="mr-2" href="{% url 'profile' post.author.username %}">
+            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
+        </a>
         <div class="media-body">
             <div class="article-metadata">
             <a class="mr-2" href="{% url 'profile' object.author.username %}">{{ object.author }}</a>
