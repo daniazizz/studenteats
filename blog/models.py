@@ -19,7 +19,7 @@ class Post(models.Model):
                                                             ## Difference between redirect and reverse: rederict, redirects the user to an url, while reverse returns the url as a string
 
 class PostImage(models.Model):
-    Post = models.ForeignKey(Post, related_name='images', on_delete = models.CASCADE)
+    post = models.ForeignKey(Post, related_name='images', on_delete = models.CASCADE)
     image = models.ImageField(upload_to='post_images')
 
     def save(self):

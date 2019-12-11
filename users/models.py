@@ -7,6 +7,7 @@ from PIL import Image
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    bio = models.TextField(max_length=150, default='') 
     following = models.ManyToManyField('self', symmetrical = False, blank=True, related_name='followers') ## symmetrical = False makes it so that the follow relationship is unidirectional
     ##Reference https://www.caktusgroup.com/blog/2009/08/14/creating-recursive-symmetrical-many-to-many-relationships-in-django/
     def __str__(self):
