@@ -2,10 +2,12 @@
 {% extends "blog/base.html" %}
 {% block content %}
     <article class="media content-section">
-        <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}" alt="author's image">
+        <a class="mr-2" href="{% url 'profile' post.author.username %}">
+            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
+        </a>
         <div class="media-body">
             <div class="article-metadata">
-            <a class="mr-2" href="{% url 'user-post' object.author.username %}">{{ object.author }}</a>
+            <a class="mr-2" href="{% url 'profile' object.author.username %}">{{ object.author }}</a>
             <small class="text-muted">{{ object.date_posted |date:"F d, Y"}}</small>
             {% if object.author == user %}
                <div>

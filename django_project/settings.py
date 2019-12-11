@@ -125,7 +125,7 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Path to the media root
 MEDIA_URL = '/media/'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap3' # Change used CSS framework to bootstrap 4
+CRISPY_TEMPLATE_PACK = 'bootstrap3' # Change used CSS framework to bootstrap 3
 
 LOGIN_REDIRECT_URL = 'blog-home' # Modify the default redirection after logging in
 

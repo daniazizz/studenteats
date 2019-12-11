@@ -1,19 +1,24 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin ## Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
 from .models import Post
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import PostImageForm
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
-
+@login_required
 def home(request):
+    following = request.user.profile.following.all()
+    print(following)
+    print(Post.objects.all())
     context = {
         'posts': Post.objects.all()
     }
     return render(request, 'blog/home.html', context)
 
-class PostListView(ListView):# A class based view
+class PostListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
@@ -21,31 +26,55 @@ class PostListView(ListView):# A class based view
     ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
 
-class UserPostListView(ListView):# A class based view
+    def get_queryset(self): ## filters posts list to the ones from user
+        user = self.request.user
+        following = user.profile.following.all()
+        return Post.objects.filter(author__profile__in=following).order_by('-date_posted')## Filtering out the posts to the posts of following
+
+class ProfileListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
-    template_name = 'blog/user_post.html' # <app>/<model>_<viewtype>.html
+    template_name = 'blog/profile.html' 
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
                                     # as default, the name is ObjectList
     ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
+    
+
+    def post(self, request, *args, **kwargs):
+        s_user_username = request.POST.get("selected_user")
+        s_user = get_object_or_404(User, username= s_user_username)
+        c_user = request.user
+        c_user.profile.following.add(s_user.profile)
+        print(c_user, s_user)
+        messages.success(request, f'You followed {s_user}') 
+        return redirect('profile', s_user_username)
+
+    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['selected_user'] = self.user
+        context['following_count'] = self.user.profile.following.all().count()
+        context['followers_count'] = self.user.profile.followers.all().count()
+        return context
 
     def get_queryset(self): ## filters posts list to the ones from user
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=user).order_by('-date_posted')
+        self.user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=self.user).order_by('-date_posted')
 
-class SearchResultListView(ListView):# A class based view
+class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/search_result.html' # <app>/<model>_<viewtype>.html
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
                                     # as default, the name is ObjectList
-    ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
 
     def get_queryset(self): ## filters posts list to the ones from user
         query = self.request.GET.get('q')
-        return Post.objects.filter(Q(title__icontains=query)).order_by('-date_posted')
+        if query==None: ## If the query is empty, return all posts
+            return Post.objects.all().order_by('-date_posted')
+        else: 
+            return Post.objects.filter(Q(title__icontains=query)).order_by('-date_posted')
 
-class PostDetailView(DetailView):# A class based view
+class PostDetailView(LoginRequiredMixin, DetailView):# A class based view
     model = Post 
 
 class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
@@ -87,6 +116,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):# A cl
         if self.request.user == post.author:
             return True
         return False
-    
+        
+@login_required    
 def map(request):
     return render(request, 'blog/map.html', {'title': 'Map'})

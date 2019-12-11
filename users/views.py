@@ -16,7 +16,7 @@ def register(request):
     return render(request, 'users/register.html', {'form': form})
 
 @login_required # Decorator to add functionality
-def profile(request):
+def profile_update(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user) ## Instance argument make it so that the fields are filled with the current data
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)## Files argument is for the image
@@ -24,7 +24,7 @@ def profile(request):
             u_form.save()
             p_form.save()
             messages.success(request, f'Your account has been updated!')
-            return redirect('profile')
+            return redirect('profile_update')
     else:
         u_form = UserUpdateForm(instance=request.user) ## Arguments make it so that the fields are filled with the current data
         p_form = ProfileUpdateForm(instance=request.user.profile)
@@ -32,6 +32,4 @@ def profile(request):
         'u_form': u_form,
         'p_form': p_form
     }
-    return render(request, 'users/profile.html', context)
-
-
+    return render(request, 'users/profile_update.html', context)
