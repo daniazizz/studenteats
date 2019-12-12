@@ -6,7 +6,7 @@
           {% csrf_token %}
           <fieldset class="form-group">
               <legend class="border-bottom mb-4">Blog post</legend>
-              {{ p_form|crispy }}
+              {{ form |crispy }}
           </fieldset>
           <div class="form-group">
               <button class="btn btn-outline-secondary" type="submit">Update</button>

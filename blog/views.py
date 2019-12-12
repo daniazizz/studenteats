@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.forms import modelformset_factory
 
+
 class PostListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html
@@ -117,31 +118,11 @@ def postCreate(request):
     return render(request, 'blog/post_create.html',
                   {'p_form': p_form, 'pi_formset': pi_formset})
 
-@login_required
-def postUpdate(request, pk):
-    post = Post.objects.get(pk=pk)
 
-    if request.method == 'POST':
-        p_form = PostForm(request.POST, instance=post)
-
-        if p_form.is_valid():
-            post_form = p_form.save(commit=False)# Commit=false, doesnt save yet, returns an object that can be modified
-            if p_form.has_changed():
-                post_form.author = request.user
-                post_form.save()
-
-            messages.success(request, f'Updated "{post_form}"') 
-            return redirect("/")
-        else:
-            print(p_form.errors)
-    else:
-        p_form = PostForm(instance=post)
-    return render(request, 'blog/post_update.html',
-                  {'p_form': p_form})
-
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):# A class based view
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView): 
     model = Post 
     fields = ['title', 'content']
+    template_name = 'blog/post_update.html'
 
     def test_func(self):
         post = self.get_object()
