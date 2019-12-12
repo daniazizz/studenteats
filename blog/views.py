@@ -1,22 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin ## Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
-from .models import Post
+from .models import Post, PostImage
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import PostImageForm
+from .forms import PostImageForm, PostForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
-@login_required
-def home(request):
-    following = request.user.profile.following.all()
-    print(following)
-    print(Post.objects.all())
-    context = {
-        'posts': Post.objects.all()
-    }
-    return render(request, 'blog/home.html', context)
+from django.forms import modelformset_factory
 
 class PostListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
@@ -29,7 +20,7 @@ class PostListView(LoginRequiredMixin, ListView):# A class based view
     def get_queryset(self): ## filters posts list to the ones from user
         user = self.request.user
         following = user.profile.following.all()
-        return Post.objects.filter(author__profile__in=following).order_by('-date_posted')## Filtering out the posts to the posts of following
+        return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by('-date_posted')## Filtering out the posts to the posts of following or own posts
 
 class ProfileListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
@@ -52,8 +43,8 @@ class ProfileListView(LoginRequiredMixin, ListView):# A class based view
     def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['selected_user'] = self.user
-        context['following_count'] = self.user.profile.following.all().count()
-        context['followers_count'] = self.user.profile.followers.all().count()
+        context['following'] = self.user.profile.following.all()
+        context['followers'] = self.user.profile.followers.all()
         return context
 
     def get_queryset(self): ## filters posts list to the ones from user
@@ -77,21 +68,76 @@ class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
 class PostDetailView(LoginRequiredMixin, DetailView):# A class based view
     model = Post 
 
-class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
-    model = Post 
-    fields = ['title', 'content']
-    success_url = '/'
+# class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
+#     model = Post 
+#     fields = ['title', 'content']
+#     success_url = '/'
 
-    def get_context_data(self, **kwargs):
-        context = super(PostCreateView, self).get_context_data(**kwargs)
-        context['post_images_form']  = PostImageForm
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super(PostCreateView, self).get_context_data(**kwargs)
+#         context['post_images_form']  = PostImageForm
+#         return context
 
-    def form_valid(self, form):
-        print(form.cleaned_data)# debugging
-        print(form)
-        form.instance.author = self.request.user ## Setting the author to the current logged in user
-        return super().form_valid(form)
+#     def form_valid(self, form):
+#         print(form.cleaned_data)# debugging
+#         print(form)
+#         form.instance.author = self.request.user ## Setting the author to the current logged in user
+#         return super().form_valid(form)
+
+
+#Reference: https://stackoverflow.com/questions/34006994/how-to-upload-multiple-images-to-a-blog-post-in-django
+@login_required
+def postCreate(request):
+    PostImageFormSet = modelformset_factory(PostImage,
+                                        form=PostImageForm, extra=3)
+
+    if request.method == 'POST':
+
+        p_form = PostForm(request.POST)
+        pi_formset = PostImageFormSet(request.POST, request.FILES, queryset=PostImage.objects.none())
+
+        if p_form.is_valid() and pi_formset.is_valid():
+            post_form = p_form.save(commit=False)
+            post_form.author = request.user
+            post_form.save()
+            for form in pi_formset.cleaned_data:
+                if form:
+                    image = form['image']
+                    photo = PostImage(post=post_form, image=image)
+                    photo.save()
+
+            messages.success(request, f'Posted "{post_form}"') 
+            return redirect("/")
+        else:
+            print(p_form.errors, pi_formset.errors)
+    else:
+        p_form = PostForm()
+        pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
+
+    return render(request, 'blog/post_create.html',
+                  {'p_form': p_form, 'pi_formset': pi_formset})
+
+@login_required
+def postUpdate(request, pk):
+    post = Post.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        p_form = PostForm(request.POST, instance=post)
+
+        if p_form.is_valid():
+            post_form = p_form.save(commit=False)# Commit=false, doesnt save yet, returns an object that can be modified
+            if p_form.has_changed():
+                post_form.author = request.user
+                post_form.save()
+
+            messages.success(request, f'Updated "{post_form}"') 
+            return redirect("/")
+        else:
+            print(p_form.errors)
+    else:
+        p_form = PostForm(instance=post)
+    return render(request, 'blog/post_update.html',
+                  {'p_form': p_form})
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):# A class based view
     model = Post 
