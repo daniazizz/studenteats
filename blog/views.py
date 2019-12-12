@@ -130,6 +130,11 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['post'] = self.get_object()
+        return context
+
     def form_valid(self, form):
         form.instance.author = self.request.user ## Setting the author to the current logged in user
         return super().form_valid(form)
