@@ -1,19 +1,16 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin ## Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
-from .models import Post
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import PostImageForm
+from .models import Post, PostImage
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
+from .forms import PostImageForm, PostForm
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.forms import modelformset_factory
 
 
-def home(request):
-    context = {
-        'posts': Post.objects.all()
-    }
-    return render(request, 'blog/home.html', context)
-
-class PostListView(ListView):# A class based view
+class PostListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
@@ -21,72 +18,188 @@ class PostListView(ListView):# A class based view
     ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
 
-class UserPostListView(ListView):# A class based view
+    def get_queryset(self): ## filters posts list to the ones from user
+        user = self.request.user
+        following = user.profile.following.all()
+        return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by('-date_posted')## Filtering out the posts to the posts of following or own posts
+
+class ProfileListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
-    template_name = 'blog/user_post.html' # <app>/<model>_<viewtype>.html
+    template_name = 'blog/profile.html' 
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
                                     # as default, the name is ObjectList
     ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
 
-    def get_queryset(self): ## filters posts list to the ones from user
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=user).order_by('-date_posted')
+    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['selected_user'] = self.user
+        context['following'] = self.user.profile.following.all()
+        context['followers'] = self.user.profile.followers.all()
+        return context
 
-class SearchResultListView(ListView):# A class based view
+    def get_queryset(self): ## filters posts list to the ones from user
+        self.user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=self.user).order_by('-date_posted')
+
+class ProfileFollowToggle(RedirectView):
+    def get_redirect_url(self, *arg, **kwargs):
+        s_user_id = self.kwargs['su_pk']
+        s_user = get_object_or_404(User, id=s_user_id)
+        c_user = self.request.user
+        if c_user.is_authenticated:
+            if s_user.profile in c_user.profile.following.all():
+                c_user.profile.following.remove(s_user.profile)
+                messages.warning(self.request, f'You unfollowed {s_user}')
+            else:
+                c_user.profile.following.add(s_user.profile)
+                messages.success(self.request, f'You followed {s_user}')
+        return reverse('profile', args=[s_user.username])
+
+class PostLikeToggle(RedirectView):
+    def get_redirect_url(self, *arg, **kwargs):
+        s_post_id = self.kwargs['sp_pk']
+        s_post = get_object_or_404(Post, id=s_post_id)
+        c_user = self.request.user
+        if c_user.is_authenticated:
+            if c_user in s_post.likes.all():
+                s_post.likes.remove(c_user)
+                messages.warning(self.request, f'You unliked {s_post}')
+            else:
+                s_post.likes.add(c_user)
+                messages.success(self.request, f'You liked {s_post}')
+        return reverse('post-detail', args=[s_post_id])
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+
+class PostLikeAPIToggle(APIView):
+
+    authentication_classes = [authentication.SessionAuthentication]# differnce with ToeknAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        s_post_id = self.kwargs['sp_pk']
+        s_post = get_object_or_404(Post, id=s_post_id)
+        c_user = self.request.user
+        updated = False
+        liked = False
+        
+        if c_user.is_authenticated:
+            if c_user in s_post.likes.all():
+                s_post.likes.remove(c_user)
+                liked = False
+                messages.warning(self.request, f'You unliked {s_post}')
+            else:
+                s_post.likes.add(c_user)
+                liked = True
+                messages.success(self.request, f'You liked {s_post}')
+            updated = True
+        data = {
+            "updated": updated,
+            "liked": liked
+        }
+
+        return Response(data)
+
+
+class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/search_result.html' # <app>/<model>_<viewtype>.html
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
                                     # as default, the name is ObjectList
-    ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
 
     def get_queryset(self): ## filters posts list to the ones from user
         query = self.request.GET.get('q')
-        return Post.objects.filter(Q(title__icontains=query)).order_by('-date_posted')
+        if query==None: ## If the query is empty, return all posts
+            return Post.objects.all().order_by('-date_posted')
+        else: 
+            return Post.objects.filter(Q(title__icontains=query)).order_by('-date_posted')
 
-class PostDetailView(DetailView):# A class based view
+class PostDetailView(LoginRequiredMixin, DetailView):# A class based view
     model = Post 
 
-class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
+# class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
+#     model = Post 
+#     fields = ['title', 'content']
+#     success_url = '/'
+
+#     def get_context_data(self, **kwargs):
+#         context = super(PostCreateView, self).get_context_data(**kwargs)
+#         context['post_images_form']  = PostImageForm
+#         return context
+
+#     def form_valid(self, form):
+#         print(form.cleaned_data)# debugging
+#         print(form)
+#         form.instance.author = self.request.user ## Setting the author to the current logged in user
+#         return super().form_valid(form)
+
+
+#Reference: https://stackoverflow.com/questions/34006994/how-to-upload-multiple-images-to-a-blog-post-in-django
+@login_required
+def postCreate(request):
+    PostImageFormSet = modelformset_factory(PostImage,
+                                        form=PostImageForm, extra=3)
+
+    if request.method == 'POST':
+
+        p_form = PostForm(request.POST)
+        pi_formset = PostImageFormSet(request.POST, request.FILES, queryset=PostImage.objects.none())
+
+        if p_form.is_valid() and pi_formset.is_valid():
+            post_form = p_form.save(commit=False)
+            post_form.author = request.user
+            post_form.save()
+            for form in pi_formset.cleaned_data:
+                if form:
+                    image = form['image']
+                    photo = PostImage(post=post_form, image=image)
+                    photo.save()
+
+            messages.success(request, f'Posted "{post_form}"') 
+            return redirect("/")
+        else:
+            print(p_form.errors, pi_formset.errors)
+    else:
+        p_form = PostForm()
+        pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
+
+    return render(request, 'blog/post_create.html',
+                  {'p_form': p_form, 'pi_formset': pi_formset})
+
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView): 
     model = Post 
     fields = ['title', 'content']
-    success_url = '/'
+    template_name = 'blog/post_update.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(PostCreateView, self).get_context_data(**kwargs)
-        context['post_images_form']  = PostImageForm
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['post'] = self.get_object()
         return context
 
     def form_valid(self, form):
-        print(form.cleaned_data)# debugging
-        print(form)
         form.instance.author = self.request.user ## Setting the author to the current logged in user
         return super().form_valid(form)
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):# A class based view
-    model = Post 
-    fields = ['title', 'content']
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user ## Setting the author to the current logged in user
-        return super().form_valid(form)
-
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):# A class based view
+# Uses UserPassesTestMixin to check if the user requesting a post deletion is the author of that post
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post 
     success_url = '/'
 
     def test_func(self):
         post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
-    
+        return self.request.user == post.author
+        
+@login_required    
 def map(request):
     return render(request, 'blog/map.html', {'title': 'Map'})
