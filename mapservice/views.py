@@ -3,6 +3,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
+from mapservice.models import EatingPlace
+
+
 @login_required
 def map(request):
-    return render(request, 'blog/map.html', {'title': 'Map'})
+    restaurants = EatingPlace.objects.all()
+    return render(request, 'mapservice/map.html', {'title': 'Map', 'restaurants' : restaurants})

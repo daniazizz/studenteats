@@ -5,7 +5,6 @@
 
 {% block extra_css %}
 {% leaflet_css %}
-<link rel="stylesheet" type="text/css" href="{% static 'blog/map.css' %}"/>
 {% endblock extra_css %}
 
 
@@ -18,7 +17,13 @@
 </center>
 
 <script>
+
     function setupMap(map, option) {
+      function putOnMap(name, addr, lat, long) {
+        let marker = L.marker([lat, long]).addTo(map);
+        marker.bindPopup(name + "\n" + addr);
+      }
+
       function showUserLocation(userLocation){
 	    let latitude = userLocation.coords.latitude;
 	    let longitude = userLocation.coords.longitude;
@@ -27,10 +32,14 @@
 	    marker.bindPopup("Your (approximate) position").openPopup();
 	    map.setView([latitude, longitude], 15);
       }
-     map.setView([50.8466, 4.3528], 11);
-	 if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(showUserLocation, () => {});
-	 }
+
+	  if (navigator.geolocation) {
+	    navigator.geolocation.getCurrentPosition(showUserLocation, () => {});
+	  }
+
+	 {% for resto in restaurants %}
+	 putOnMap("{{resto.name}}", "{{resto.address}}", {{resto.latitude}}, {{resto.longitude}});
+	 {% endfor %}
     }
 </script>
 
