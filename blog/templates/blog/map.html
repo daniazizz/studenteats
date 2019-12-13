@@ -1,11 +1,48 @@
 {% extends "blog/base.html" %}
 {% load static %}
+
+{% load leaflet_tags %}
+
+{% block extra_css %}
+{% leaflet_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'blog/map.css' %}"/>
+{% endblock extra_css %}
+
+
 {% block content %}
-<div class="text-center">
-    <img src="{% static 'blog/map.jpg' %}" class="img-fluid rounded" alt="map">
-  </div>
+
+<center>
+<div id="map">
+    {% leaflet_map "map_studenteats" callback="window.setupMap" %}
+</div>
+</center>
 
 <script>
-    alert("In progress")
+    function setupMap(map, option) {
+      function showUserLocation(userLocation){
+	    let latitude = userLocation.coords.latitude;
+	    let longitude = userLocation.coords.longitude;
+
+	    let marker = L.marker([latitude, longitude]).addTo(map);
+	    marker.bindPopup("Your (approximate) position").openPopup();
+	    map.setView([latitude, longitude], 15);
+      }
+     map.setView([50.8466, 4.3528], 11);
+     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        accessToken: 'pk.eyJ1IjoiZGFuaTQ1MCIsImEiOiJjazQzZ2N6NHIwNzEwM2VvYjV0czNod2k1In0.EoSQjo_EcbtuCpeRKBEHqw'
+	    }).addTo(map);
+
+	 if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(showUserLocation, () => {});
+	 }
+    }
 </script>
+
+{% block extra_jss %}
+    {% leaflet_js %}
+{% endblock extra_jss %}
+
 {% endblock content %}
