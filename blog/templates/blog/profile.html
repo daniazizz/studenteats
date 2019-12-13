@@ -16,12 +16,7 @@
                 <a class="btn btn-secondary btn-sm mb-1" href="{% url 'profile_update'%}">Update</a>
                </div>
             {% else %}<!-- need to switch to unfollow after -->
-            <form method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="selected_user" value={{ selected_user }}>
-              <button class="btn btn-secondary btn-sm mb-1" type="submit">Follow</button>
-            </form>
-            <a href="{% url 'follow' selected_user.id %}">Follow</a>
+              <a class="btn btn-primary btn-sm mb-1" href="{% url 'follow' selected_user.id %}">Follow</a>
             {% endif %}
         </div>
       </div>
