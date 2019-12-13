@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="165f7d41-bd3b-4868-b5db-b8d441aaa181" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/blog/templates/blog/paginated.html" afterDir="false" />
+    <list default="true" id="165f7d41-bd3b-4868-b5db-b8d441aaa181" name="Default Changelist" comment="Merge branch 'master' of https://github.com/killerz224/studenteats&#10;&#10;# Conflicts:&#10;#&#9;db.sqlite3">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blog/templates/blog/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/blog/templates/blog/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/blog/templates/blog/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/blog/templates/blog/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blog/templates/blog/search_result.html" beforeDir="false" afterPath="$PROJECT_DIR$/blog/templates/blog/search_result.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blog/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/blog/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -56,6 +52,7 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="run.code.analysis.last.selected.profile" value="aDefault" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -137,7 +134,7 @@
       <workItem from="1575835969355" duration="1835000" />
       <workItem from="1576074871270" duration="2390000" />
       <workItem from="1576142895368" duration="6588000" />
-      <workItem from="1576235222011" duration="5845000" />
+      <workItem from="1576235222011" duration="6402000" />
     </task>
     <task id="LOCAL-00001" summary="nothing">
       <created>1576246879873</created>
