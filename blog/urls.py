@@ -1,5 +1,15 @@
 from django.urls import path
-from .views import PostListView, PostDetailView, PostDeleteView, ProfileListView, SearchResultListView, PostUpdateView #, PostCreateView, 
+from .views import (
+    PostListView,
+    PostDetailView, 
+    PostDeleteView, 
+    ProfileListView, 
+    SearchResultListView, 
+    PostUpdateView, 
+    ProfileFollowToggle, 
+    PostLikeToggle,
+    PostLikeAPIToggle 
+    ) 
 from . import views
 
 
@@ -12,5 +22,8 @@ urlpatterns = [
     path('post/new/', views.postCreate, name='post-create'), ## post creation
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+    path('follow/<int:su_pk>/', ProfileFollowToggle.as_view(), name='follow'),
+    path('like/<int:sp_pk>/', PostLikeToggle.as_view(), name='post-like'),
+    path('api/like/<int:sp_pk>/', PostLikeAPIToggle.as_view(), name='api-post-like'),
     path('map', views.map, name='blog-map'),
 ]

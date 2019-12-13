@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',# Always add the apps to this list
     'blog.apps.BlogConfig',
     'crispy_forms', # Third party application for forms
+    'rest_framework', # Django rest Framework
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

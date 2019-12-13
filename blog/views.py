@@ -1,8 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin ## Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
 from .models import Post, PostImage
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
 from .forms import PostImageForm, PostForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -30,16 +30,6 @@ class ProfileListView(LoginRequiredMixin, ListView):# A class based view
                                     # as default, the name is ObjectList
     ordering = ['-date_posted'] # Minus symbol to reverse ordering
     paginate_by = 5
-    
-
-    def post(self, request, *args, **kwargs):
-        s_user_username = request.POST.get("selected_user")
-        s_user = get_object_or_404(User, username= s_user_username)
-        c_user = request.user
-        c_user.profile.following.add(s_user.profile)
-        print(c_user, s_user)
-        messages.success(request, f'You followed {s_user}') 
-        return redirect('profile', s_user_username)
 
     def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
@@ -51,6 +41,68 @@ class ProfileListView(LoginRequiredMixin, ListView):# A class based view
     def get_queryset(self): ## filters posts list to the ones from user
         self.user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Post.objects.filter(author=self.user).order_by('-date_posted')
+
+class ProfileFollowToggle(RedirectView):
+    def get_redirect_url(self, *arg, **kwargs):
+        s_user_id = self.kwargs['su_pk']
+        s_user = get_object_or_404(User, id=s_user_id)
+        c_user = self.request.user
+        if c_user.is_authenticated:
+            if s_user.profile in c_user.profile.following.all():
+                c_user.profile.following.remove(s_user.profile)
+                messages.warning(self.request, f'You unfollowed {s_user}')
+            else:
+                c_user.profile.following.add(s_user.profile)
+                messages.success(self.request, f'You followed {s_user}')
+        return reverse('profile', args=[s_user.username])
+
+class PostLikeToggle(RedirectView):
+    def get_redirect_url(self, *arg, **kwargs):
+        s_post_id = self.kwargs['sp_pk']
+        s_post = get_object_or_404(Post, id=s_post_id)
+        c_user = self.request.user
+        if c_user.is_authenticated:
+            if c_user in s_post.likes.all():
+                s_post.likes.remove(c_user)
+                messages.warning(self.request, f'You unliked {s_post}')
+            else:
+                s_post.likes.add(c_user)
+                messages.success(self.request, f'You liked {s_post}')
+        return reverse('post-detail', args=[s_post_id])
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+
+class PostLikeAPIToggle(APIView):
+
+    authentication_classes = [authentication.SessionAuthentication]# differnce with ToeknAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        s_post_id = self.kwargs['sp_pk']
+        s_post = get_object_or_404(Post, id=s_post_id)
+        c_user = self.request.user
+        updated = False
+        liked = False
+        
+        if c_user.is_authenticated:
+            if c_user in s_post.likes.all():
+                s_post.likes.remove(c_user)
+                liked = False
+                messages.warning(self.request, f'You unliked {s_post}')
+            else:
+                s_post.likes.add(c_user)
+                liked = True
+                messages.success(self.request, f'You liked {s_post}')
+            updated = True
+        data = {
+            "updated": updated,
+            "liked": liked
+        }
+
+        return Response(data)
+
 
 class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
@@ -139,15 +191,14 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         form.instance.author = self.request.user ## Setting the author to the current logged in user
         return super().form_valid(form)
 
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):# A class based view
+# Uses UserPassesTestMixin to check if the user requesting a post deletion is the author of that post
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post 
     success_url = '/'
 
     def test_func(self):
         post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
+        return self.request.user == post.author
         
 @login_required    
 def map(request):

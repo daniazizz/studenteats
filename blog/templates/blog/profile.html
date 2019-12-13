@@ -21,6 +21,7 @@
               <input type="hidden" name="selected_user" value={{ selected_user }}>
               <button class="btn btn-secondary btn-sm mb-1" type="submit">Follow</button>
             </form>
+            <a href="{% url 'follow' selected_user.id %}">Follow</a>
             {% endif %}
         </div>
       </div>
