@@ -22,7 +22,9 @@
     {% block extra_css %}
     {% endblock extra_css %}
   </head>
+
   <body>
+
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-light bg-steel fixed-top">
         <div class="container">
@@ -50,10 +52,11 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
-                <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
-                <a class="nav-item nav-link" href="{% url 'profile' user.username %}">
+                  <a class="nav-item nav-link" href="{% url 'profile' user.username %}">
                   <img src="{{ user.profile.image.url }}" alt="Profile" height="30" width="30" class="rounded-circle">
                 </a>
+                <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
+
                 <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
               {% else %}
                 <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
@@ -64,7 +67,9 @@
         </div>
       </nav>
     </header>
+
         <main role="main" class="container">
+
               <div class="row">
                 <div class="col-md-12">
                   {% if messages %}
@@ -74,7 +79,16 @@
                     </div>
                     {% endfor %}
                   {% endif %}
-                  {% block content %}{% endblock %}
+                <div class="bg-image img1"></div>
+                <div class="bg-image img2"></div>
+                <div class="bg-image img3"></div>
+                <div class="bg-image img4"></div>
+                <div class="bg-image img5"></div>
+                <div class="bg-image img6"></div>
+                <div class="bg-image img7"></div>
+              {% block content %}{% endblock %}
+
+
                 </div>
                 <!-- A SIDEBAR
                 <div class="col-md-4">
@@ -92,6 +106,7 @@
                 </div>-->
               </div>
             </main>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -109,7 +124,7 @@
       {% block jquery %}{% endblock %}
 
 // Reference: https://www.youtube.com/watch?v=pkPRtQf6oQ8&t=1549s
-// Handeling the like button logic with ajax
+// Handling the like button logic with ajax
       $(".like-btn").click(function(e){
         e.preventDefault()
         var this_ = $(this)
