@@ -1,0 +1,67 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% load leaflet_tags %}
+
+{% block extra_css %}
+{% leaflet_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'mapservice/mapcss.css' %}"/>
+{% endblock extra_css %}
+
+
+{% block content %}
+
+<center>
+<div id="map">
+    {% leaflet_map "map_studenteats" callback="window.setupMap" %}
+</div>
+</center>
+
+{% block extra_jss %}
+    {% leaflet_js %}
+    <!-- Marker Icons from https://github.com/pointhi/leaflet-color-markers-->
+<script>
+    function setupMap(map, option) {
+      function putOnMap(name, addr, lat, long) {
+        let redIconMarker = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+        });
+        let marker = L.marker([lat, long], {icon: redIconMarker}).addTo(map);
+        marker.bindPopup(name + " - " + addr);
+      }
+
+      function showUserLocation(userLocation){
+	    let latitude = userLocation.coords.latitude;
+	    let longitude = userLocation.coords.longitude;
+
+        let greenIconMarker = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+        });
+
+	    let marker = L.marker([latitude, longitude], {icon: greenIconMarker}).addTo(map);
+	    marker.bindPopup("Your (approximate) position").openPopup();
+	    map.setView([latitude, longitude], 14);
+      }
+
+	  if (navigator.geolocation) {
+	    navigator.geolocation.getCurrentPosition(showUserLocation, () => {});
+	  }
+
+	 {% for resto in restaurants %}
+	 putOnMap("{{resto.name}}", "{{resto.address}}", {{resto.latitude}}, {{resto.longitude}});
+	 {% endfor %}
+    }
+</script>
+{% endblock extra_jss %}
+
+{% endblock content %}

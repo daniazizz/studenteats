@@ -27,5 +27,4 @@ urlpatterns = [
     path('api/follow/<int:su_pk>/', ProfileFollowAPIToggle.as_view(), name='api-follow'),
     path('like/<int:sp_pk>/', PostLikeToggle.as_view(), name='post-like'),
     path('api/like/<int:sp_pk>/', PostLikeAPIToggle.as_view(), name='api-post-like'),
-    path('map', views.map, name='blog-map'),
 ]

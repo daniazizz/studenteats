@@ -44,7 +44,8 @@ $(".follow-btn").click(function(e){
                <div>
                 <a class="btn btn-secondary btn-sm mb-1" href="{% url 'profile_update'%}">Update</a>
                </div>
-            {% else %}<!-- need to switch to unfollow after -->
+            {% else %}
+            
             <a class="follow-btn btn btn-primary btn-sm mb-1" data-href="{% url 'api-follow' selected_user.id %}" href="{% url 'follow' selected_user.id %}">
               {% if selected_user.profile in user.profile.following.all %}
               {{ selected_user.profile.followers.count }} Unfollow
@@ -52,6 +53,7 @@ $(".follow-btn").click(function(e){
               {{ selected_user.profile.followers.count }} Follow
               {% endif %}
             </a>
+
             {% endif %}
         </div>
       </div>
@@ -106,24 +108,5 @@ $(".follow-btn").click(function(e){
         </div>
       </article>
     {% endfor %}
-    {% if is_paginated %}
-      {% if page_obj.has_previous %}
-        <a class="btn btn-outline-light mb-4"  href="?page=1">First</a>
-        <a class="btn btn-outline-light mb-4"  href="?page={{ page_obj.previous_page_number }}">Previous</a>
-      {% endif %}
-
-      {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-          <a class="btn btn-light mb-4"  href="?page={{ num }}">{{ num }}</a>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3'%}
-          <a class="btn btn-outline-light mb-4"  href="?page={{ num }}">{{ num }}</a>
-        {% endif %}
-      {% endfor %}
-
-      {% if page_obj.has_next %}
-        <a class="btn btn-outline-light mb-4"  href="?page={{ page_obj.next_page_number }}">Next</a>
-        <a class="btn btn-outline-light mb-4"  href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-      {% endif %}
-
-    {% endif  %}
+    {% include './paginated.html'  %}
 {% endblock content %}
