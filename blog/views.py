@@ -19,11 +19,11 @@ class PostListView(LoginRequiredMixin, ListView):  # A class based view
     ordering = ['-date_posted']  # Minus symbol to reverse ordering
     paginate_by = 5
 
-    def get_queryset(self):  ## filters posts list to the ones from user
+    def get_queryset(self):  # filters posts list to the ones from user
         user = self.request.user
         following = user.profile.following.all()
         return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by(
-            '-date_posted')  ## Filtering out the posts to the posts of following or own posts
+            '-date_posted')  # Filtering out the posts to the posts of following or own posts
 
 
 class ProfileListView(LoginRequiredMixin, ListView):  # A class based view
