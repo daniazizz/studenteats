@@ -13,7 +13,7 @@ from django.forms import modelformset_factory
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
-
+from geopy.geocoders import Bing
 
 class PostListView(LoginRequiredMixin, ListView):  # A class based view
     model = Post
@@ -197,10 +197,12 @@ def postCreate(request):
 
         if p_form.is_valid() and pi_formset.is_valid() and ep_form.is_valid():
             # EatingPlace
+            locator = Bing(api_key="AozreVUVlwxpZVbVcf6FErTup90eXr3DFSdlltU6m5JHLRuVh0Cp3A5PGh1OzVZC")
             name = ep_form.cleaned_data['name']
-            latitude = 50.87203 # Needs to be calculated DANIEL
-            longitude = 4.29232 # Needs to be calculated DANIEL
             address = ep_form.cleaned_data['address']
+            location = locator.geocode(address)
+            latitude = location.latitude
+            longitude = location.longitude
 
             # Can use default to ignore some fields in get
             eating_place, created = EatingPlace.objects.get_or_create(name=name, address=address, latitude=latitude, longitude=longitude)

@@ -146,7 +146,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (50.8466, 4.3528),
     'DEFAULT_ZOOM': 11,
-    'MAX_ZOOM': 17,
+    'MAX_ZOOM': 16,
     'MIN_ZOOM': 11,
     'SCALE': None,
     'RESET_VIEW': False
