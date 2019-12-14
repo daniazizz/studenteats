@@ -1,0 +1,5 @@
+Django
+
+[docs]
+sphinx
+sphinx-autobuild

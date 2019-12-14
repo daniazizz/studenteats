@@ -139,7 +139,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-# Two factor authantication left to add
+# Two factor authentication left to add
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER') # Environment variables
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 
