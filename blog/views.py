@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse
-from django.contrib.auth.mixins import LoginRequiredMixin, \
-    UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
 from .models import Post, PostImage
+from mapservice.models import EatingPlace
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
 from .forms import PostImageForm, PostForm
+from mapservice.forms import EatingPlaceFrom
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -192,11 +193,25 @@ def postCreate(request):
 
         p_form = PostForm(request.POST)
         pi_formset = PostImageFormSet(request.POST, request.FILES, queryset=PostImage.objects.none())
+        ep_form = EatingPlaceFrom(request.POST)
 
-        if p_form.is_valid() and pi_formset.is_valid():
+        if p_form.is_valid() and pi_formset.is_valid() and ep_form.is_valid():
+            # EatingPlace
+            name = ep_form.cleaned_data['name']
+            latitude = 50.87203 # Needs to be calculated DANIEL
+            longitude = 4.29232 # Needs to be calculated DANIEL
+            address = ep_form.cleaned_data['address']
+
+            # Can use default to ignore some fields in get
+            eating_place, created = EatingPlace.objects.get_or_create(name=name, address=address, latitude=latitude, longitude=longitude)
+
+            # Post
             post_form = p_form.save(commit=False)
             post_form.author = request.user
+            post_form.place = eating_place
             post_form.save()
+
+            # Post Images
             for form in pi_formset.cleaned_data:
                 if form:
                     image = form['image']
@@ -210,10 +225,12 @@ def postCreate(request):
     else:
         p_form = PostForm()
         pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
+        ep_form = EatingPlaceFrom()
 
     context = {
         'p_form': p_form, 
         'pi_formset': pi_formset,
+        'ep_form': ep_form,
         'title': 'New post'
         }
 
