@@ -6,7 +6,8 @@ from .views import (
     ProfileListView, 
     SearchResultListView, 
     PostUpdateView, 
-    ProfileFollowToggle, 
+    ProfileFollowToggle,
+    ProfileFollowAPIToggle,
     PostLikeToggle,
     PostLikeAPIToggle 
     ) 
@@ -23,6 +24,7 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     path('follow/<int:su_pk>/', ProfileFollowToggle.as_view(), name='follow'),
+    path('api/follow/<int:su_pk>/', ProfileFollowAPIToggle.as_view(), name='api-follow'),
     path('like/<int:sp_pk>/', PostLikeToggle.as_view(), name='post-like'),
     path('api/like/<int:sp_pk>/', PostLikeAPIToggle.as_view(), name='api-post-like'),
 ]

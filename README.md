@@ -8,3 +8,6 @@ You will have to install some packages before running the server: [Python has to
 4) django rest framework:   pip install djangorestframework
 5) leaflet:                 pip install django-leaflet
 6) six:                     pip install six
+
+
+OR : you can listen to the REAL boss and run ./packtoinstall.sh on your bash terminal 😉😉
