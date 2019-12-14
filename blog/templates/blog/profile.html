@@ -1,5 +1,7 @@
 {% extends "blog/base.html" %}
 
+
+<!-- Code still needs to be restructered -->
 <script>
 {% block jquery %}
 $(".follow-btn").click(function(e){
@@ -14,10 +16,11 @@ $(".follow-btn").click(function(e){
       console.log(data)
       followersCount = data.followersCount
       if (data.followed){
-        updateText(this_, followersCount, "Unfollow")
+        updateText(this_, "Unfollow")
       } else {
-        updateText(this_, followersCount, "Follow")
+        updateText(this_, "Follow")
       }
+      updateText($("#followersCount"), followersCount)
     }, 
     error: function(error){
       console.log(error)
@@ -37,7 +40,9 @@ $(".follow-btn").click(function(e){
           <!-- Abdoullah: the following/followers variables contain all the following/followers objects, you could display them as a list (like instagram)
           by looping through them -->
           <p>Following: {{ following.count }}</p> 
-          <p>Followers: {{ followers.count }}</p>
+          <p>Followers: 
+            <span id='followersCount'>{{ followers.count }}</span>
+          </p>
           <h5>Bio:</h5>
           <p>{{ selected_user.profile.bio }}</p>
           {% if selected_user == user %}
@@ -45,12 +50,12 @@ $(".follow-btn").click(function(e){
                 <a class="btn btn-secondary btn-sm mb-1" href="{% url 'profile_update'%}">Update</a>
                </div>
             {% else %}
-            
+            <!-- Profile follow button: -->
             <a class="follow-btn btn btn-primary btn-sm mb-1" data-href="{% url 'api-follow' selected_user.id %}" href="{% url 'follow' selected_user.id %}">
               {% if selected_user.profile in user.profile.following.all %}
-              {{ selected_user.profile.followers.count }} Unfollow
+              Unfollow
               {% else %}
-              {{ selected_user.profile.followers.count }} Follow
+              Follow
               {% endif %}
             </a>
 
