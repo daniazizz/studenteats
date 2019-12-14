@@ -102,8 +102,8 @@
     <script>
     $(document).ready(function(){
 
-      function updateText(btn, count, newLabel){
-      btn.text(count + " " + newLabel)
+      function updateText(obj, newLabel){
+      obj.text(newLabel)
       }
 
       {% block jquery %}{% endblock %}
@@ -122,9 +122,9 @@
             console.log(data)
             likeCount = data.likeCount
             if (data.liked){
-              updateText(this_, likeCount, "Unlike")
+              updateText(this_, likeCount + " Unlike")
             } else {
-              updateText(this_, likeCount, "Like")
+              updateText(this_, likeCount + " Like")
             }
           }, 
           error: function(error){

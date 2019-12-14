@@ -42,6 +42,7 @@ class ProfileListView(LoginRequiredMixin, ListView):  # A class based view
         context['selected_user'] = self.user
         context['following'] = self.user.profile.following.all()
         context['followers'] = self.user.profile.followers.all()
+        context['title'] = self.user
         return context
 
     def get_queryset(self):  # filters posts list to the ones from user
@@ -141,6 +142,7 @@ class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
     def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q')
+        context['title'] = 'Search results'
         return context
 
 
@@ -154,6 +156,11 @@ class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
 
 class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
     model = Post
+
+    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Post Detail'
+        return context
 
 
 # class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
@@ -204,8 +211,13 @@ def postCreate(request):
         p_form = PostForm()
         pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
 
-    return render(request, 'blog/post_create.html',
-                  {'p_form': p_form, 'pi_formset': pi_formset})
+    context = {
+        'p_form': p_form, 
+        'pi_formset': pi_formset,
+        'title': 'New post'
+        }
+
+    return render(request, 'blog/post_create.html', context)
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
