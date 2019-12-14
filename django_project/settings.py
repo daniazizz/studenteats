@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users.apps.UsersConfig',# Always add the apps to this list
     'blog.apps.BlogConfig',
+    'mapservice.apps.MapserviceConfig',
     'crispy_forms', # Third party application for forms
     'rest_framework', # Django rest Framework
     'django.contrib.admin',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'leaflet',
 ]
 
 MIDDLEWARE = [
@@ -140,3 +142,12 @@ EMAIL_USE_TLS = True
 # Two factor authantication left to add
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER') # Environment variables
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (50.8466, 4.3528),
+    'DEFAULT_ZOOM': 11,
+    'MAX_ZOOM': 17,
+    'MIN_ZOOM': 11,
+    'SCALE': None,
+    'RESET_VIEW': False
+}

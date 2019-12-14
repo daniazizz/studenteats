@@ -1,0 +1,46 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% load leaflet_tags %}
+
+{% block extra_css %}
+{% leaflet_css %}
+{% endblock extra_css %}
+
+
+{% block content %}
+
+<center>
+<div id="map">
+    {% leaflet_map "map_studenteats" callback="window.setupMap" %}
+</div>
+</center>
+
+<script>
+
+    function setupMap(map, option) {
+      function putOnMap(name, addr, lat, long) {
+        let marker = L.marker([lat, long]).addTo(map);
+        marker.bindPopup(name + "\n" + addr);
+      }
+
+      function showUserLocation(userLocation){
+	    let latitude = userLocation.coords.latitude;
+	    let longitude = userLocation.coords.longitude;
+
+	    let marker = L.marker([latitude, longitude]).addTo(map);
+	    marker.bindPopup("Your (approximate) position").openPopup();
+	    map.setView([latitude, longitude], 14);
+      }
+
+	  if (navigator.geolocation) {
+	    navigator.geolocation.getCurrentPosition(showUserLocation, () => {});
+	  }
+    }
+</script>
+
+{% block extra_jss %}
+    {% leaflet_js %}
+{% endblock extra_jss %}
+
+{% endblock content %}
