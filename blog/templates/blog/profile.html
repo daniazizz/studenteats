@@ -1,4 +1,33 @@
 {% extends "blog/base.html" %}
+
+<script>
+{% block jquery %}
+$(".follow-btn").click(function(e){
+  e.preventDefault()
+  var this_ = $(this)
+  var followUrl = this_.attr("data-href")
+  $.ajax({
+    url: followUrl,
+    method: "GET",
+    data: {},
+    success: function(data){
+      console.log(data)
+      followersCount = data.followersCount
+      if (data.followed){
+        updateText(this_, followersCount, "Unfollow")
+      } else {
+        updateText(this_, followersCount, "Follow")
+      }
+    }, 
+    error: function(error){
+      console.log(error)
+      console.log("error")
+    }
+  })
+})
+{% endblock %}
+</script>
+
 {% block content %}
     <div class="content-section">
       <div class="media">
@@ -16,12 +45,13 @@
                 <a class="btn btn-secondary btn-sm mb-1" href="{% url 'profile_update'%}">Update</a>
                </div>
             {% else %}<!-- need to switch to unfollow after -->
-            <form method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="selected_user" value={{ selected_user }}>
-              <button class="btn btn-secondary btn-sm mb-1" type="submit">Follow</button>
-            </form>
-            <a href="{% url 'follow' selected_user.id %}">Follow</a>
+            <a class="follow-btn btn btn-primary btn-sm mb-1" data-href="{% url 'api-follow' selected_user.id %}" href="{% url 'follow' selected_user.id %}">
+              {% if selected_user.profile in user.profile.following.all %}
+              {{ selected_user.profile.followers.count }} Unfollow
+              {% else %}
+              {{ selected_user.profile.followers.count }} Follow
+              {% endif %}
+            </a>
             {% endif %}
         </div>
       </div>
@@ -35,7 +65,18 @@
             <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
           </div>
           <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+          
+          <!-- Post like button: -->
+          <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
+              {% if user in post.likes.all %}
+              {{ post.likes.count }} Unlike
+              {% else %}
+              {{ post.likes.count }} Like
+              {% endif %}
+            </a>
+
           <!-- CAROUSEL -->
+          {% if post.images.count != 0 %} <!-- A carousel is only created when there is atleast one image in the post-->
         <div id="post-carousel-{{forloop.counter }}" class="carousel slide w-50" data-interval="false" data-ride="carousel"> <!-- data-interval = autoslide -->
           <div class="carousel-inner">
             {% for image in post.images.all %}
@@ -59,6 +100,7 @@
               <span class="sr-only">Next</span>
             </a>
         </div>
+        {% endif %}
         <!-- END CAROUSEL -->
           <p class="article-content">{{ post.content }}</p>
         </div>

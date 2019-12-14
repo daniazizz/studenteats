@@ -8,6 +8,9 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.forms import modelformset_factory
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
 
 
 class PostListView(LoginRequiredMixin, ListView):# A class based view
@@ -70,9 +73,30 @@ class PostLikeToggle(RedirectView):
                 messages.success(self.request, f'You liked {s_post}')
         return reverse('post-detail', args=[s_post_id])
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import authentication, permissions
+class ProfileFollowAPIToggle(APIView):
+
+    authentication_classes = [authentication.SessionAuthentication]# differnce with ToeknAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        s_user_id = self.kwargs['su_pk']
+        s_user = get_object_or_404(User, id=s_user_id)
+        c_user = self.request.user
+        followed = False
+        if c_user.is_authenticated and c_user != s_user: # A user cannot follow himself
+            if s_user.profile in c_user.profile.following.all():
+                c_user.profile.following.remove(s_user.profile)
+                followed = False
+            else:
+                c_user.profile.following.add(s_user.profile)
+                followed = True
+        followersCount = s_user.profile.followers.count()
+        data = {
+            "followed": followed,
+            "followersCount": followersCount
+        }
+
+        return Response(data)
 
 class PostLikeAPIToggle(APIView):
 
@@ -83,22 +107,19 @@ class PostLikeAPIToggle(APIView):
         s_post_id = self.kwargs['sp_pk']
         s_post = get_object_or_404(Post, id=s_post_id)
         c_user = self.request.user
-        updated = False
         liked = False
         
         if c_user.is_authenticated:
             if c_user in s_post.likes.all():
                 s_post.likes.remove(c_user)
                 liked = False
-                messages.warning(self.request, f'You unliked {s_post}')
             else:
                 s_post.likes.add(c_user)
                 liked = True
-                messages.success(self.request, f'You liked {s_post}')
             updated = True
         data = {
-            "updated": updated,
-            "liked": liked
+            "liked": liked,
+            "likeCount": s_post.likes.count()
         }
 
         return Response(data)
@@ -109,7 +130,12 @@ class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
     template_name = 'blog/search_result.html' # <app>/<model>_<viewtype>.html
     context_object_name = 'posts' # This makes it so that the list of objects is called posts.
                                     # as default, the name is ObjectList
-    paginate_by = 5
+    # paginate_by = 5
+
+    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        return context
 
     def get_queryset(self): ## filters posts list to the ones from user
         query = self.request.GET.get('q')
