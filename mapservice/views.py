@@ -11,7 +11,8 @@ from mapservice.models import EatingPlace
 # Create your views here.
 
 @login_required
-def map(request, name='jkqzdkkjqsdkdkbqds', address='jkqzdkkjqsdkdkbqds'):
+def map(request, name='##undefined##', address='##undefined##'):
+
     restaurants = EatingPlace.objects.all()
     selected_place = EatingPlace.objects.filter(name__icontains=name, address__icontains=address)
     posts = Post.objects.all()
@@ -19,16 +20,9 @@ def map(request, name='jkqzdkkjqsdkdkbqds', address='jkqzdkkjqsdkdkbqds'):
     if  selected_place:
         selected_place = selected_place.first()
         posts = selected_place.posts.all()
-    return render(request, 'mapservice/map.html', {'title': 'Map', 'restaurants' : restaurants, 'posts': posts})
+        return render(request, 'mapservice/map.html', {'title' : 'Map', 'restaurants' : restaurants, 'posts' : posts,'show_posts' : True})
+    else:
+        return render(request, 'mapservice/map.html', {'title' : 'Map', 'restaurants' : restaurants, 'show_posts' : False})
 
-#https://stackoverflow.com/questions/24152420/pass-dynamic-javascript-variable-to-django-python
-def showPost(request):
-    if request.method == 'GET':
-        name = request.GET['name']
-        address = request.GET['address']
-        latitude = request.GET['latitude']
-        longitude = request.GET['longitude']
 
-        correspondingEatingPlaceID = EatingPlace.objects.get(name__icontains=name,  address__icontains=address, latitude__exact=latitude, longitude__exact=longitude)#.values('id'))[0]['id']
-        correspondingPosts = correspondingEatingPlaceID.posts.all()#Post.objects.filter(place_id__exact=correspondingEatingPlaceID).order_by('-date_posted')
-        return render(request, 'mapservice/map.html', {'posts' : correspondingPosts})# HttpResponse(correspondingPosts)
+   # return render(request, 'mapservice/map.html', {'title': 'Map', 'restaurants' : restaurants})##'restaurants' : restaurants, 'posts': posts})

@@ -15,6 +15,7 @@
         </div>
     </center>
 
+    {%  if show_posts %}
     {% for post in posts %}
     <article class="media content-section">
       <a class="mr-2" href="{% url 'profile' post.author.username %}">
@@ -67,6 +68,7 @@
         </div>
       </article>
     {% endfor %}
+    {% endif %}
 
     {% block extra_jss %}
         {% leaflet_js %}
@@ -78,6 +80,9 @@
                 let greenMarkerUrl = 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png';
 
                 function putOnMap(descr, latAndLong, markerUrl, name, address) {
+                    if(name != undefined)
+                        descr = '<a href="' + '{% url 'blog-map' %}' + '/' + name + '/' + address +'">' + descr + '</a>';
+
                     let iconMarker = new L.Icon({
                         iconUrl: markerUrl,
                         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -87,28 +92,13 @@
                         shadowSize: [41, 41]
                         });
                     let marker = L.marker(latAndLong, {icon: iconMarker}).addTo(map);
-                    marker.bindPopup('<a href="' + '{% url 'blog-map' %}' + '/' + name + '/' + address +'">' + descr + '</a>');
-                   // marker.on('click', markerEvent)
+                    marker.bindPopup(descr);
+                    marker.on('mouseover', (e) => {marker.openPopup()});
                 }
 
                 map.locate({setView: true});
                 map.on('locationfound', (e) => {putOnMap("Your current position (approximation)", e.latlng, greenMarkerUrl)});
                 map.on('locationerror', (e) => {alert("Enable geolocalisation to see the eating places near your location ;-)")});
-
-                function getPosts(e) {
-                    let latAndLng = e.latlng;
-                    let popUpDescription = e.target.getPopup().getContent();
-                    let separatorIndx = popUpDescription.indexOf("-");
-
-                    let name = popUpDescription.slice(0, separatorIndx - 1);
-                    let address = popUpDescription.slice(separatorIndx + 2);
-                    let latitude = latAndLng.lat;
-                    let longitude = latAndLng.lng;
-
-                    let data = {'name': name, 'address' : address, 'latitude': latitude, 'longitude' : longitude};
-                    window.location.href = '{% url 'blog-map' %}' + '/' + name + '/' + address
-                    //$.get('', data /*(res) => {alert(res)}*/);
-                }
 
 	            {% for resto in restaurants %}
                     putOnMap("{{resto.name}}" + " - " + "{{resto.address}}", [{{resto.latitude}}, {{resto.longitude}}], redMarkerUrl, "{{resto.name}}", "{{resto.address}}");
