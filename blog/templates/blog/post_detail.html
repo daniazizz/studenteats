@@ -9,6 +9,7 @@
             <div class="article-metadata">
             <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
             <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
+            <div class="sharethis-inline-share-buttons"></div>
             {% if post.author == user %}
                <div>
                 <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
