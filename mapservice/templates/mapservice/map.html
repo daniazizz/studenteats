@@ -17,6 +17,7 @@
     
 
     {%  if show_posts %}
+        <h3> Posts related to '{{ selected_place.name }}' ({{ posts.count }}): </h3>
         {% include 'blog/blocks/list-posts.html'  %}
     {% endif %}
 
