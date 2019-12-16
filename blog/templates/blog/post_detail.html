@@ -25,6 +25,10 @@
             </a>
             </div>
             <h2 class="article-title">{{ post.title }}</h2>
+            <!-- Eating place link -->
+            <p>
+              Eating place: <a href="{% url 'place-profile' post.place %}">{{ post.place.name }}</a>
+            </p>
             <!-- CAROUSEL -->
           {% if post.images.count != 0 %} <!-- A carousel is only created when there is atleast one image in the post-->
         <div id="post-carousel-{{forloop.counter }}" class="carousel slide w-50" data-interval="false" data-ride="carousel"> <!-- data-interval = autoslide -->

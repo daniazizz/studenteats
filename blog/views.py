@@ -29,6 +29,25 @@ class PostListView(LoginRequiredMixin, ListView):  # A class based view
         return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by(
             '-date_posted')  # Filtering out the posts to the posts of following or own posts
 
+# View handeling the eating place page:
+class EatingPlaceListView(LoginRequiredMixin, ListView):  # A class based view
+    model = Post
+    template_name = 'blog/place_profile.html'
+    context_object_name = 'posts'
+    ordering = ['-date_posted']  # Minus symbol to reverse ordering
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['selected_place'] = self.place
+        context['title'] = self.place
+        return context
+
+    def get_queryset(self):  # filters posts list to the ones from user
+        self.place = get_object_or_404(EatingPlace, name=self.kwargs.get('name'))
+        return Post.objects.filter(place=self.place).order_by('-date_posted')
+
+
 
 class ProfileListView(LoginRequiredMixin, ListView):  # A class based view
     model = Post

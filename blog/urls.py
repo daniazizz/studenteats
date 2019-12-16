@@ -9,7 +9,8 @@ from .views import (
     ProfileFollowToggle,
     ProfileFollowAPIToggle,
     PostLikeToggle,
-    PostLikeAPIToggle 
+    PostLikeAPIToggle,
+    EatingPlaceListView 
     ) 
 from . import views
 
@@ -17,6 +18,8 @@ from . import views
 urlpatterns = [
     path('', PostListView.as_view(), name='blog-home'),
     path('profile/<str:username>', ProfileListView.as_view(), name='profile'),
+    # Eating place profile:
+    path('place/<str:name>', EatingPlaceListView.as_view(), name='place-profile'),
     path('search/', SearchResultListView.as_view(), name='search-result'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'), ## variable inside url (primary key)
     #path('post/new/', PostCreateView.as_view(), name='post-create'), ## post creation
