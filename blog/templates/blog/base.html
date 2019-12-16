@@ -18,8 +18,13 @@
     {% else %}
        <title>StudentEats</title>
     {% endif %}
+
+    {% block extra_css %}
+    {% endblock extra_css %}
   </head>
+
   <body>
+
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-light bg-steel fixed-top">
         <div class="container">
@@ -29,7 +34,7 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              
+
             </div>
             <div class="navbar-nav mr-auto">
             <!-- Search -->  <!-- It would be better to use django form for search (security reasons), also can be upgraded -->
@@ -37,7 +42,7 @@
                   <div class="input-group">
                     <input class="form-control form-control-sm" name="q" type="search" placeholder="Search" >
                     <div class="input-group-prepend">
-                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{% url 'blog-map' %}" id="basic-addon1">
+                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{% url 'blog-map'%}" id="basic-addon1">
                         <img src="{% static 'blog/map_icon.png' %}" alt="Map" height="20">
                       </a>
                     </div>
@@ -47,10 +52,11 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
-                <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
-                <a class="nav-item nav-link" href="{% url 'profile' %}">
+                  <a class="nav-item nav-link" href="{% url 'profile' user.username %}">
                   <img src="{{ user.profile.image.url }}" alt="Profile" height="30" width="30" class="rounded-circle">
                 </a>
+                <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
+
                 <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
               {% else %}
                 <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
@@ -61,7 +67,9 @@
         </div>
       </nav>
     </header>
+
         <main role="main" class="container">
+
               <div class="row">
                 <div class="col-md-12">
                   {% if messages %}
@@ -71,7 +79,16 @@
                     </div>
                     {% endfor %}
                   {% endif %}
-                  {% block content %}{% endblock %}
+              <!--  <div class="bg-image img1"></div>
+                <div class="bg-image img2"></div>
+                <div class="bg-image img3"></div>
+                <div class="bg-image img4"></div>
+                <div class="bg-image img5"></div>
+                <div class="bg-image img6"></div>
+                <div class="bg-image img7"></div>-->
+              {% block content %}{% endblock %}
+
+
                 </div>
                 <!-- A SIDEBAR
                 <div class="col-md-4">
@@ -89,10 +106,53 @@
                 </div>-->
               </div>
             </main>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+    <script>
+    $(document).ready(function(){
+
+      function updateText(obj, newLabel){
+      obj.text(newLabel)
+      }
+
+      {% block jquery %}{% endblock %}
+
+// Reference: https://www.youtube.com/watch?v=pkPRtQf6oQ8&t=1549s
+// Handling the like button logic with ajax
+      $(".like-btn").click(function(e){
+        e.preventDefault()
+        var this_ = $(this)
+        var likeUrl = this_.attr("data-href")
+        $.ajax({
+          url: likeUrl,
+          method: "GET",
+          data: {},
+          success: function(data){
+            console.log(data)
+            likeCount = data.likeCount
+            if (data.liked){
+              updateText(this_, likeCount + " Unlike")
+            } else {
+              updateText(this_, likeCount + " Like")
+            }
+          }, 
+          error: function(error){
+            console.log(error)
+            console.log("error")
+          }
+        })
+      })
+    }) 
+    </script>
+
+    {% block extra_jss %}
+    {% endblock extra_jss %}
   </body>
 </html>
+
