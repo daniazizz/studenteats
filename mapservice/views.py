@@ -20,7 +20,7 @@ def map(request, name='##undefined##', address='##undefined##'):
     if  selected_place:
         selected_place = selected_place.first()
         posts = selected_place.posts.all()
-        return render(request, 'mapservice/map.html', {'title' : 'Map', 'restaurants' : restaurants, 'posts' : posts,'show_posts' : True})
+        return render(request, 'mapservice/map.html', {'title' : 'Map', 'restaurants' : restaurants, 'posts' : posts,'show_posts' : True, 'selected_place': selected_place})
     else:
         return render(request, 'mapservice/map.html', {'title' : 'Map', 'restaurants' : restaurants, 'show_posts' : False})
 
