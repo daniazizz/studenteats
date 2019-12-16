@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+   # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -146,7 +146,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (50.8466, 4.3528),
     'DEFAULT_ZOOM': 11,
-    'MAX_ZOOM': 16,
+    'MAX_ZOOM': 15,
     'MIN_ZOOM': 11,
     'SCALE': None,
     'RESET_VIEW': False

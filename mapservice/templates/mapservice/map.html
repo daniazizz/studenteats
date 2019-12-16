@@ -1,67 +1,109 @@
 {% extends "blog/base.html" %}
 {% load static %}
-
 {% load leaflet_tags %}
 
 {% block extra_css %}
-{% leaflet_css %}
-<link rel="stylesheet" type="text/css" href="{% static 'mapservice/mapcss.css' %}"/>
+    {% leaflet_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'mapservice/mapcss.css' %}"/>
 {% endblock extra_css %}
-
 
 {% block content %}
 
-<center>
-<div id="map">
-    {% leaflet_map "map_studenteats" callback="window.setupMap" %}
-</div>
-</center>
+    <center>
+        <div id="map">
+            {% leaflet_map "map_studenteats" callback="window.setupMap" %}
+        </div>
+    </center>
 
-{% block extra_jss %}
-    {% leaflet_js %}
-    <!-- Marker Icons from https://github.com/pointhi/leaflet-color-markers-->
-<script>
-    function setupMap(map) {
-      function putOnMap(name, addr, lat, long) {
-        let redIconMarker = new L.Icon({
-        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-        });
-        let marker = L.marker([lat, long], {icon: redIconMarker}).addTo(map);
-        marker.bindPopup(name + " - " + addr);
-      }
+    {%  if show_posts %}
+    {% for post in posts %}
+    <article class="media content-section">
+      <a class="mr-2" href="{% url 'profile' post.author.username %}">
+        <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
+      </a>
+      <div class="media-body">
+        <div class="article-metadata">
+          <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
+          <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
+        </div>
+        <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+        
+        <!-- Post like button: -->
+        <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
+              {% if user in post.likes.all %}
+              {{ post.likes.count }} Unlike
+              {% else %}
+              {{ post.likes.count }} Like
+              {% endif %}
+            </a>
 
-      function showUserLocation(userLocation){
-	    let latitude = userLocation.coords.latitude;
-	    let longitude = userLocation.coords.longitude;
+          <!-- CAROUSEL -->
+          {% if post.images.count != 0 %} <!-- A carousel is only created when there is atleast one image in the post-->
+        <div id="post-carousel-{{forloop.counter }}" class="carousel slide w-50" data-interval="false" data-ride="carousel"> <!-- data-interval = autoslide -->
+          <div class="carousel-inner">
+            {% for image in post.images.all %}
+              {% if forloop.first %}
+              <div class="carousel-item active">
+                  <img class="d-block" src="{{ image.image.url }}" alt="First slide">
+              </div>
+              {% else %}
+              <div class="carousel-item">
+                  <img class="d-block" src="{{ image.image.url }}" alt="Next slide">
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+            <a class="carousel-control-prev" href="#post-carousel-{{forloop.counter }}" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#post-carousel-{{forloop.counter }}" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+        </div>
+        {% endif %}
+        <!-- END CAROUSEL -->
+          <p class="article-content">{{ post.content }}</p>
+        </div>
+      </article>
+    {% endfor %}
+    {% endif %}
 
-        let greenIconMarker = new L.Icon({
-        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-        });
+    {% block extra_jss %}
+        {% leaflet_js %}
 
-	    let marker = L.marker([latitude, longitude], {icon: greenIconMarker}).addTo(map);
-	    marker.bindPopup("Your (approximate) position").openPopup();
-	    map.setView([latitude, longitude], 14);
-      }
+        <!-- Marker Icons from https://github.com/pointhi/leaflet-color-markers-->
+        <script>
+            function setupMap(map) {
+                let redMarkerUrl = 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png';
+                let greenMarkerUrl = 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png';
 
-	  if (navigator.geolocation) {
-	    navigator.geolocation.getCurrentPosition(showUserLocation, () => {});
-	  }
+                function putOnMap(descr, latAndLong, markerUrl, name, address) {
+                    if(name != undefined)
+                        descr = '<a href="' + '{% url 'blog-map' %}' + '/' + name + '/' + address +'">' + descr + '</a>';
 
-	 {% for resto in restaurants %}
-	 putOnMap("{{resto.name}}", "{{resto.address}}", {{resto.latitude}}, {{resto.longitude}});
-	 {% endfor %}
-    }
-</script>
-{% endblock extra_jss %}
+                    let iconMarker = new L.Icon({
+                        iconUrl: markerUrl,
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                        });
+                    let marker = L.marker(latAndLong, {icon: iconMarker}).addTo(map);
+                    marker.bindPopup(descr);
+                    marker.on('mouseover', (e) => {marker.openPopup()});
+                }
 
+                map.locate({setView: true});
+                map.on('locationfound', (e) => {putOnMap("Your current position (approximation)", e.latlng, greenMarkerUrl)});
+                map.on('locationerror', (e) => {alert("Enable geolocalisation to see the eating places near your location ;-)")});
+
+	            {% for resto in restaurants %}
+                    putOnMap("{{resto.name}}" + " - " + "{{resto.address}}", [{{resto.latitude}}, {{resto.longitude}}], redMarkerUrl, "{{resto.name}}", "{{resto.address}}");
+	            {% endfor %}
+            }
+        </script>
+    {% endblock extra_jss %}
 {% endblock content %}

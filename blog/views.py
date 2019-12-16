@@ -124,7 +124,7 @@ class PostLikeAPIToggle(APIView):
             else:
                 s_post.likes.add(c_user)
                 liked = True
-            updated = True
+                
         data = {
             "liked": liked,
             "likeCount": s_post.likes.count()
@@ -205,7 +205,7 @@ def postCreate(request):
             longitude = location.longitude
 
             # Can use default to ignore some fields in get
-            eating_place, created = EatingPlace.objects.get_or_create(name=name, address=address, latitude=latitude, longitude=longitude)
+            eating_place, _ = EatingPlace.objects.get_or_create(name=name, address=address, latitude=latitude, longitude=longitude)
 
             # Post
             post_form = p_form.save(commit=False)
