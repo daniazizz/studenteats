@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse, HttpResponse
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
+from django.contrib.auth.mixins import LoginRequiredMixin, \
+    UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
 from .models import Post, PostImage
 from mapservice.models import EatingPlace
@@ -20,6 +21,7 @@ from geopy.geocoders import Bing
 import json
 from django.http import JsonResponse
 
+
 class PostListView(LoginRequiredMixin, ListView):  # A class based view
     model = Post
     template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
@@ -33,6 +35,7 @@ class PostListView(LoginRequiredMixin, ListView):  # A class based view
         following = user.profile.following.all()
         return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by(
             '-date_posted')  # Filtering out the posts to the posts of following or own posts
+
 
 # View handeling the eating place page:
 class EatingPlaceListView(LoginRequiredMixin, ListView):  # A class based view
@@ -53,7 +56,6 @@ class EatingPlaceListView(LoginRequiredMixin, ListView):  # A class based view
     def get_queryset(self):  # filters posts list to the ones from user
         self.place = get_object_or_404(EatingPlace, name=self.kwargs.get('name'))
         return Post.objects.filter(place=self.place).order_by('-date_posted')
-
 
 
 class ProfileListView(LoginRequiredMixin, ListView):  # A class based view
@@ -106,9 +108,9 @@ class PostLikeToggle(RedirectView):
                 messages.success(self.request, f'You liked {s_post}')
         return reverse('post-detail', args=[s_post_id])
 
-class ProfileFollowAPIToggle(APIView):
 
-    authentication_classes = [authentication.SessionAuthentication]# differnce with ToeknAuthentication??
+class ProfileFollowAPIToggle(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # differnce with ToeknAuthentication??
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None, **kwargs):
@@ -116,7 +118,7 @@ class ProfileFollowAPIToggle(APIView):
         s_user = get_object_or_404(User, id=s_user_id)
         c_user = self.request.user
         followed = False
-        if c_user.is_authenticated and c_user != s_user: # A user cannot follow himself
+        if c_user.is_authenticated and c_user != s_user:  # A user cannot follow himself
             if s_user.profile in c_user.profile.following.all():
                 c_user.profile.following.remove(s_user.profile)
                 followed = False
@@ -130,7 +132,6 @@ class ProfileFollowAPIToggle(APIView):
         }
 
         return Response(data)
-
 
 
 class PostLikeAPIToggle(APIView):
@@ -150,7 +151,7 @@ class PostLikeAPIToggle(APIView):
             else:
                 s_post.likes.add(c_user)
                 liked = True
-                
+
         data = {
             "liked": liked,
             "likeCount": s_post.likes.count()
@@ -168,6 +169,7 @@ class SearchAutocompleteAPI(APIView):
         posts = Post.objects.filter(title__startswith=q)
         users = User.objects.filter(username__startswith=q)
         places = EatingPlace.objects.filter(name__startswith=q)
+        locations = EatingPlace.objects.filter(address__icontains=q)
 
         results = []
 
@@ -177,6 +179,8 @@ class SearchAutocompleteAPI(APIView):
             results.append(r.username)
         for r in places:
             results.append(r.name)
+        for r in locations:
+            results.append(r.address)
 
         data = {
             "results": results,
@@ -201,6 +205,7 @@ class EatingPlacesAPI(APIView):
         }
         return JsonResponse(data)
 
+
 class GetEatingPlaceAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
     permission_classes = [permissions.IsAuthenticated]
@@ -213,6 +218,7 @@ class GetEatingPlaceAPI(APIView):
 
         return Response(serializer.data)
 
+
 class PostsAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
     permission_classes = [permissions.IsAuthenticated]
@@ -223,32 +229,34 @@ class PostsAPI(APIView):
 
         return Response(serializer.data)
 
-class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
-    model = Post 
-    template_name = 'blog/search_result.html' # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts' # This makes it so that the list of objects is called posts.
-                                    # as default, the name is ObjectList
+
+class SearchResultListView(LoginRequiredMixin, ListView):  # A class based view
+    model = Post
+    template_name = 'blog/search_result.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'posts'  # This makes it so that the list of objects is called posts.
+
+    # as default, the name is ObjectList
     # paginate_by = 5
 
-    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q')
         context['title'] = 'Search results'
         return context
-
 
     def get_queryset(self):  ## filters posts list to the ones from user
         query = self.request.GET.get('q')
         if query == None:  ## If the query is empty, return all posts
             return Post.objects.all().order_by('-date_posted')
         else:
-            return Post.objects.filter(Q(title__icontains=query) | Q(author__username__icontains=query) | Q(place__name__icontains=query)).order_by('-date_posted')
+            return Post.objects.filter(Q(title__icontains=query) | Q(author__username__icontains=query) | Q(
+                place__name__icontains=query) | Q(place__address__icontains=query)).order_by('-date_posted')
 
 
 class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
     model = Post
 
-    def get_context_data(self, **kwargs): ## Adding extra data in the context to pass on the template
+    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['title'] = 'Post Detail'
         return context
@@ -268,7 +276,6 @@ def postCreate(request):
         cost = request.POST.get('cost')
         place_name = request.POST.get('place-name')
         place_address = request.POST.get('place-address')
-        
 
         if p_form.is_valid() and pi_formset.is_valid():
             # EatingPlace
@@ -280,7 +287,9 @@ def postCreate(request):
             longitude = location.longitude
 
             # Can use default to ignore some fields in get
-            eating_place, _ = EatingPlace.objects.get_or_create(address=address, defaults={'name': name, 'latitude': latitude, 'longitude': longitude})
+            eating_place, _ = EatingPlace.objects.get_or_create(address=address,
+                                                                defaults={'name': name, 'latitude': latitude,
+                                                                          'longitude': longitude})
 
             # Post
             post_form = p_form.save(commit=False)
@@ -306,10 +315,10 @@ def postCreate(request):
         pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
 
     context = {
-        'p_form': p_form, 
+        'p_form': p_form,
         'pi_formset': pi_formset,
         'title': 'New post'
-        }
+    }
 
     return render(request, 'blog/post_create.html', context)
 
