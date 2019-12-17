@@ -12,6 +12,8 @@ class Post(models.Model):
     date_posted = models.DateTimeField(default = timezone.now)
     author = models.ForeignKey(User, on_delete = models.CASCADE, related_name='posts')
     likes = models.ManyToManyField(User, blank=True, related_name='likers')
+    rating = models.IntegerField(null=False, default=0)
+    cost = models.IntegerField(null=False, default=0)
     # Eating Place
     place = models.ForeignKey(EatingPlace, related_name='posts', null = True, blank=True, on_delete=models.CASCADE)
 

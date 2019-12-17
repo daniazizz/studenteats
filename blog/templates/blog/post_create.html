@@ -5,10 +5,27 @@
       <form method="POST", enctype="multipart/form-data">
           {% csrf_token %}
           <fieldset class="form-group">
-              <legend class="border-bottom mb-4">Review</legend>
-              {{ p_form|crispy }}
-              {{ ep_form|crispy }}
-              {{ pi_formset }}
+            <legend class="border-bottom mb-4">Review</legend>
+            {{ p_form|crispy }}
+            {{ ep_form|crispy }}
+            <input id="rating" name="rating" type="hidden" value="0">
+
+            <!-- Reference: https://www.w3schools.com/howto/howto_css_star_rating.asp -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+
+            <input id="cost" name="cost" type="hidden" value="0">
+            <span class="fa fa-usd fa-lg"></span>
+            <span class="fa fa-usd fa-lg"></span>
+            <span class="fa fa-usd fa-lg"></span>
+            <span class="fa fa-usd fa-lg"></span>
+            <span class="fa fa-usd fa-lg"></span>
+            {{ pi_formset }}
+              
           </fieldset>
           <div class="form-group">
               <button class="btn btn-outline-secondary" type="submit">Post</button>
@@ -16,3 +33,129 @@
       </form>
   </div>
 {% endblock content %}
+
+{% block extra_css %}
+<style>
+    .checked, .clicked {
+    color: orange;
+    }
+
+    .checked2, .clicked2 {
+    color: green;
+}
+</style>
+{% endblock extra_css %}
+
+{% block extra_jss %}
+  <script>
+    var stars = document.getElementsByClassName("fa-star");
+    var rating  = 0;
+    var ratingInput = document.getElementById("rating");
+
+    function addHoverEffect() {
+        for(let i = 0; i < stars.length; ++i){
+            let star = stars[i];
+            star.onmouseover = function() {
+                if(!star.classList.contains("checked")){
+                    for(k = 0; k <= i; ++k){
+                        stars[k].classList.add("checked");
+                        stars[k].classList.remove("clicked");
+                    }
+                    for(k = stars.length-1; k > i; --k){
+                        if(stars[k].classList.contains("clicked")){
+                            stars[k].classList.remove("clicked");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function addOutFocusEffect() {
+        for(let i = 0; i < stars.length; ++i){
+            let star = stars[i];
+            star.onmouseout = function() {
+                if(star.classList.contains("checked")){
+                    for(k = 0; k <= i; ++k){
+                        stars[k].classList.remove("checked");
+                    }
+                }
+            } 
+        }
+    }
+
+    function addClickEffect() {
+        for(let i = 0; i < stars.length; ++i){
+            let star = stars[i];
+            star.onclick = function() {
+                rating = i + 1;
+                ratingInput.value = rating;
+                for(k = 0; k <= i; ++k){
+                        stars[k].classList.add("clicked");
+                }
+            }
+        }
+    }
+
+    addClickEffect();
+    addHoverEffect();
+    addOutFocusEffect();
+
+    var dollars = document.getElementsByClassName("fa-usd");
+    var costInput = document.getElementById("cost");
+    var cost  = 0;
+
+    function addHoverEffect2() {
+        for(let i = 0; i < dollars.length; ++i){
+            let dollar = dollars[i];
+            dollar.onmouseover = function() {
+                if(!dollar.classList.contains("checked2")){
+                    for(k = 0; k <= i; ++k){
+                        dollars[k].classList.add("checked2");
+                        dollars[k].classList.remove("clicked2");
+                    }
+                    for(k = dollars.length-1; k > i; --k){
+                        if(dollars[k].classList.contains("clicked2")){
+                            dollars[k].classList.remove("clicked2");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function addOutFocusEffect2() {
+        for(let i = 0; i < dollars.length; ++i){
+            let dollar = dollars[i];
+            dollar.onmouseout = function() {
+                if(dollar.classList.contains("checked2")){
+                    for(k = 0; k <= i; ++k){
+                        dollars[k].classList.remove("checked2");
+                    }
+                }
+            } 
+        }
+    }
+
+    function addClickEffect2() {
+        for(let i = 0; i < dollars.length; ++i){
+            let dollar = dollars[i];
+            dollar.onclick = function() {
+                cost = i + 1;
+                costInput.value = cost;
+                alert(rating);
+                for(k = 0; k <= i; ++k){
+                        dollars[k].classList.add("clicked2");
+                }
+            }
+        }
+    }
+
+    addClickEffect2();
+    addHoverEffect2();
+    addOutFocusEffect2();
+
+  </script>
+{% endblock extra_jss %}
+
+

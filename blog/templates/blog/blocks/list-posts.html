@@ -23,6 +23,16 @@
                 {% endif %}
             </a>
 
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <p>Rating: {{ post.rating }}</p>
+            <p>Cost: {{ post.cost }}</p>
+            <span class="fa fa-usd fa-lg"></span>
+            <span class="fa fa-usd fa-lg"></span>
+            <span class="fa fa-usd fa-lg"></span>
+            <span class="fa fa-usd fa-lg"></span>
+            <span class="fa fa-usd fa-lg"></span>
+
+
             <!-- CAROUSEL -->
             {% if post.images.count != 0 %} <!-- A carousel is only created when there is atleast one image in the post-->
                 <div id="post-carousel-{{forloop.counter }}" class="carousel slide w-50" data-interval="false" data-ride="carousel"> <!-- data-interval = autoslide -->
@@ -37,6 +47,11 @@
                                 <img class="d-block" src="{{ image.image.url }}" alt="Next slide">
                             </div>
                             {% endif %}
+
+                            
+                                
+                            
+
                         {% endfor %}
                     </div>
                     <a class="carousel-control-prev" href="#post-carousel-{{forloop.counter }}" role="button" data-slide="prev">
@@ -48,10 +63,35 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
+
             {% endif %}
             <!-- END CAROUSEL -->
 
             <p class="article-content">{{ post.content }}</p>
         </div>
     </article>
+    
+<style>
+    .checked, .clicked {
+    color: orange;
+    }
+
+    .checked2, .clicked2 {
+    color: green;
+
+    }
+</style>
+
+<script>
+    var dollars = document.getElementsByClassName("fa-usd");
+
+    function lightUp(rating, lst){
+        for(i = 0; i < rating; ++i){
+            lst[i].classList.add("checked2");
+        }
+    }
+    alert('hi');
+    lightUp({{ post.cost }} , dollars);
+</script>
 {% endfor %}
+
