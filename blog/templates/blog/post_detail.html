@@ -1,6 +1,10 @@
 {% extends "blog/base.html" %}
-
+{% load static %}
 {% block content %}
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
+
     <article class="media content-section">
         <a class="mr-2" href="{% url 'profile' post.author.username %}">
             <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
@@ -14,14 +18,10 @@
                     <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
                     <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
                     {% endif %}
-                    <!-- Post like button: -->
-                    <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
-                    {% if user in post.likes.all %}
-                    {{ post.likes.count }} Unlike
-                    {% else %}
-                    {{ post.likes.count }} Like
-                    {% endif %}
-                    </a>
+                    
+
+                    <p>Rating: {{ post.rating }} <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span><br>
+                      Cost: {{ post.cost }} <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span></p>
                 </div>
             </div>
             <h2 class="article-title">{{ post.title }}</h2>
@@ -57,6 +57,33 @@
         {% endif %}
         <!-- END CAROUSEL -->
             <p class="article-content">{{ post.content }}</p>
+            
+            <!-- Post like button: -->
+            <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
+              {% if user in post.likes.all %}
+              {{ post.likes.count }} Unlike
+              {% else %}
+              {{ post.likes.count }} Like
+              {% endif %}
+              </a>
         </div>
     </article>
 {% endblock content %}
+
+{% block extra_jss %}
+    <script>
+
+    var stars = document.getElementsByClassName("fa-star");
+    var euros = document.getElementsByClassName("fa-eur");
+
+    function lightUp(rating, lst, className){
+        for(i = 0; i < rating; ++i){
+            lst[i].classList.add(className);
+        }
+    }
+
+    lightUp({{ post.rating }}, stars, "checked");
+    lightUp({{ post.cost }}, euros, "checked2");
+
+  </script>
+{% endblock extra_jss %}

@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.shortcuts import render, get_object_or_404, redirect, reverse, HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
 from .models import Post, PostImage
@@ -14,6 +14,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from geopy.geocoders import Bing
+import json
+from django.http import JsonResponse
 
 class PostListView(LoginRequiredMixin, ListView):  # A class based view
     model = Post
@@ -154,6 +156,37 @@ class PostLikeAPIToggle(APIView):
         return Response(data)
 
 
+class EatingPlacesAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        q = request.GET.get('term', '').capitalize()
+        qs = EatingPlace.objects.filter(name__startswith=q)
+        results = []
+        print(q)
+        print('YAYAY')
+        for r in qs:
+            results.append(r.name)
+                
+        data = {
+            "results": results,
+        }
+        return Response(data)
+
+def autocompletePlaceName(request):
+
+    if request.is_ajax():
+        queryset = EatingPlace.objects.filter(name__startswith=request.GET.get('search', None))
+        list = []
+        for i in queryset:
+            list.append(i.name)
+        data = {
+            'list': list,
+        }
+        return JsonResponse(data)
+
+
 class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
     template_name = 'blog/search_result.html' # <app>/<model>_<viewtype>.html
@@ -282,7 +315,11 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return context
 
     def form_valid(self, form):
+        rating = self.request.POST.get('rating')
+        cost = self.request.POST.get('cost')
         form.instance.author = self.request.user  ## Setting the author to the current logged in user
+        form.instance.cost = cost
+        form.instance.rating = rating
         return super().form_valid(form)
 
 

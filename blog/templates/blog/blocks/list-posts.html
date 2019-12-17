@@ -17,15 +17,6 @@
                 <a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a>
             </h2>
 
-            <!-- Post like button: -->
-            <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
-                {% if user in post.likes.all %}
-                    {{ post.likes.count }} Unlike
-                {% else %}
-                    {{ post.likes.count }} Like
-                {% endif %}
-            </a>
-
             <p>Rating: {{ post.rating }} <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span><br>
                Cost: {{ post.cost }} <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span></p>
 
@@ -59,6 +50,16 @@
             <!-- END CAROUSEL -->
 
             <p class="article-content">{{ post.content }}</p>
+
+            <!-- Post like button: -->
+            <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
+                {% if user in post.likes.all %}
+                    {{ post.likes.count }} Unlike
+                {% else %}
+                    {{ post.likes.count }} Like
+                {% endif %}
+            </a>
+
         </div>
     </article>
 

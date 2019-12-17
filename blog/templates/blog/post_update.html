@@ -39,9 +39,9 @@
                 </div>
                 <!-- END CAROUSEL -->
               {{ form |crispy }}
-              <input id="rating" name="rating" type="hidden" value="0">
+              <input id="rating" name="rating" type="hidden" value="{{ post.rating }}">
               <p>Rating: <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span></p>
-              <input id="cost" name="cost" type="hidden" value="0">
+              <input id="cost" name="cost" type="hidden" value="{{ post.cost }}">
               <p>Cost: <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span></p>
           </fieldset>
           <div class="form-group">
@@ -106,6 +106,18 @@
             }
         }
     }
+
+    var stars = document.getElementsByClassName("fa-star");
+    var euros = document.getElementsByClassName("fa-eur");
+
+    function lightUp(rating, lst, className){
+        for(i = 0; i < rating; ++i){
+            lst[i].classList.add(className);
+        }
+    }
+
+    lightUp({{ post.rating }}, stars, "checked");
+    lightUp({{ post.cost }}, euros, "checked2");
 
     addHoverEffectOn(stars, "checked", "clicked");
     addOutFocusEffectOn(stars, "checked");

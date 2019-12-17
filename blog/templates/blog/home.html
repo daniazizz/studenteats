@@ -1,5 +1,8 @@
 {% extends "blog/base.html" %}
 {% block content %}
+    {% if posts.count == 0 %}
+    <h3>Follow users</h3>
+    {% endif %}
     {% include "blog/blocks/list-posts.html" %}
     {% include 'blog/blocks/paginated.html'  %}
 {% endblock content %}

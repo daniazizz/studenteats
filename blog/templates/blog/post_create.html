@@ -16,6 +16,8 @@
             {{ p_form|crispy }}
             {{ ep_form|crispy }}
             <input id="rating" name="rating" type="hidden" value="0">
+            <label for="name">Place Name: </label>
+            <input id="place-name" type="text" placeholder="name">
             <!-- Reference: https://www.w3schools.com/howto/howto_css_star_rating.asp -->
             <p>Rating: <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span></p>
             <input id="cost" name="cost" type="hidden" value="0">
@@ -29,6 +31,31 @@
       </form>
   </div>
 {% endblock content %}
+<script>
+{% block jquery %}
+jQuery(function() {
+    $("#place-name").on('keyup', function(){
+        var value = $(this).val();
+        $.ajax({
+            url: "{% url 'api-eatingplaces' %}",
+            data: {
+            'search': value
+            },
+            dataType: 'json',
+            success: function (data) {
+                list = data.list;
+                $("#place-name").autocomplete({
+                source: list,
+                minLength: 3
+                });
+            }
+        });
+    });
+});
+{% endblock %}
+</script>
+
+
 
 {% block extra_jss %}
   <script>
