@@ -1,15 +1,8 @@
 {% extends "blog/base.html" %}
+{% load static %}
 {% block extra_css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-        .checked {
-            color: orange;
-        }
-
-        .checked2 {
-            color: green;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
@@ -33,7 +26,7 @@
 {% block extra_jss %}
     <script>
         var stars = document.getElementsByClassName("fa-star")
-        var dollars = document.getElementsByClassName("fa-eur");
+        var euros = document.getElementsByClassName("fa-eur");
 
         function lightUp(rating, lst, htmlClassName){
 	        for(i = 0; i < rating; ++i){
@@ -42,6 +35,6 @@
         }
 
         lightUp({{ average_rating }}, stars, "checked");
-        lightUp({{ average_cost }}, dollars, "checked2");
+        lightUp({{ average_cost }}, euros, "checked2");
     </script>
 {% endblock extra_jss %}

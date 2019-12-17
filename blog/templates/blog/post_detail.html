@@ -7,22 +7,22 @@
         </a>
         <div class="media-body">
             <div class="article-metadata">
-            <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
-            <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
-            {% if post.author == user %}
-               <div>
-                <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
-                <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
-               </div>
-            {% endif %}
-            <!-- Post like button: -->
-            <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
-              {% if user in post.likes.all %}
-              {{ post.likes.count }} Unlike
-              {% else %}
-              {{ post.likes.count }} Like
-              {% endif %}
-            </a>
+                <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
+                <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
+                <div>
+                    {% if post.author == user %}
+                    <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
+                    <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
+                    {% endif %}
+                    <!-- Post like button: -->
+                    <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
+                    {% if user in post.likes.all %}
+                    {{ post.likes.count }} Unlike
+                    {% else %}
+                    {{ post.likes.count }} Like
+                    {% endif %}
+                    </a>
+                </div>
             </div>
             <h2 class="article-title">{{ post.title }}</h2>
             <!-- Eating place link -->

@@ -1,17 +1,10 @@
 {% extends "blog/base.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-        .checked, .clicked {
-            color: orange;
-        }
-
-        .checked2, .clicked2 {
-            color: green;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
