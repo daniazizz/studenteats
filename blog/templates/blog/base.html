@@ -37,9 +37,9 @@
 
             </div>
             <div class="navbar-nav mr-auto">
-              <form class="form-inline" action="{% url 'search-result' %}" method="GET">
+              <form class="form-inline" action="{% url 'search-result' %}" method="GET" autocomplete="off">
                   <div class="input-group">
-                    <input class="form-control form-control-sm" name="q" type="search" placeholder="Search" >
+                    <input id="search" class="form-control form-control-sm" name="q" type="search" placeholder="Search" >
 
                      <div class="input-group-prepend">
                       <a class="btn btn-light nav-item input-group-text rounded-right" href="{% url 'blog-map' %}" id="basic-addon1">
@@ -128,9 +128,9 @@
 
 
 
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" /> 
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" type="text/css" media="all" /> 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"> </script> 
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
 
     <script>
     $(document).ready(function(){
@@ -166,6 +166,26 @@
           }
         })
       })
+
+      jQuery(function() {
+        var search = $("#search")
+        search.on('keyup', function(){
+            var value = $(this).val();
+            $.ajax({
+                url: "{% url 'api-search-autocomplete' %}",
+                data: {
+                'query': value
+                },
+                dataType: 'json',
+                success: function (data) {
+                    search.autocomplete({
+                    source: data.results,
+                    minLength: 1
+                      });
+                    }
+                });
+            });
+        });
     })
     
      

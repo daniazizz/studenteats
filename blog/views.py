@@ -4,8 +4,11 @@ from django.contrib.auth.models import User
 from .models import Post, PostImage
 from mapservice.models import EatingPlace
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
+# Forms
 from .forms import PostImageForm, PostForm
-from mapservice.forms import EatingPlaceFrom
+# Serializers
+from .serializers import EatingPlaceSerializer, PostSerializer
+
 from django.db.models import Q, Avg
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -156,36 +159,69 @@ class PostLikeAPIToggle(APIView):
         return Response(data)
 
 
+class SearchAutocompleteAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        q = request.GET.get('query', '')
+        posts = Post.objects.filter(title__startswith=q)
+        users = User.objects.filter(username__startswith=q)
+        places = EatingPlace.objects.filter(name__startswith=q)
+
+        results = []
+
+        for r in posts:
+            results.append(r.title)
+        for r in users:
+            results.append(r.username)
+        for r in places:
+            results.append(r.name)
+
+        data = {
+            "results": results,
+        }
+        return JsonResponse(data)
+
+
 class EatingPlacesAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None, **kwargs):
-        q = request.GET.get('term', '').capitalize()
-        qs = EatingPlace.objects.filter(name__startswith=q)
+        q = request.GET.get('query', '')
+        queryset = EatingPlace.objects.filter(name__startswith=q)
         results = []
-        print(q)
-        print('YAYAY')
-        for r in qs:
+
+        for r in queryset:
             results.append(r.name)
-                
+
         data = {
             "results": results,
         }
-        return Response(data)
-
-def autocompletePlaceName(request):
-
-    if request.is_ajax():
-        queryset = EatingPlace.objects.filter(name__startswith=request.GET.get('search', None))
-        list = []
-        for i in queryset:
-            list.append(i.name)
-        data = {
-            'list': list,
-        }
         return JsonResponse(data)
 
+class GetEatingPlaceAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        q = request.GET.get('query', '')
+        queryset = EatingPlace.objects.filter(name=q)
+        serializer = EatingPlaceSerializer(queryset, many=True)
+        print(q)
+
+        return Response(serializer.data)
+
+class PostsAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        queryset = Post.objects.all()
+        serializer = PostSerializer(queryset, many=True)
+
+        return Response(serializer.data)
 
 class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
     model = Post 
@@ -206,7 +242,7 @@ class SearchResultListView(LoginRequiredMixin, ListView):# A class based view
         if query == None:  ## If the query is empty, return all posts
             return Post.objects.all().order_by('-date_posted')
         else:
-            return Post.objects.filter(Q(title__icontains=query)).order_by('-date_posted')
+            return Post.objects.filter(Q(title__icontains=query) | Q(author__username__icontains=query) | Q(place__name__icontains=query)).order_by('-date_posted')
 
 
 class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
@@ -216,25 +252,6 @@ class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
         context = super().get_context_data(**kwargs)
         context['title'] = 'Post Detail'
         return context
-
-
-# class PostCreateView(LoginRequiredMixin, CreateView):# A class based view
-
-
-#     model = Post
-#     fields = ['title', 'content']
-#     success_url = '/'
-
-#     def get_context_data(self, **kwargs):
-#         context = super(PostCreateView, self).get_context_data(**kwargs)
-#         context['post_images_form']  = PostImageForm
-#         return context
-
-#     def form_valid(self, form):
-#         print(form.cleaned_data)# debugging
-#         print(form)
-#         form.instance.author = self.request.user ## Setting the author to the current logged in user
-#         return super().form_valid(form)
 
 
 # Reference: https://stackoverflow.com/questions/34006994/how-to-upload-multiple-images-to-a-blog-post-in-django
@@ -247,22 +264,23 @@ def postCreate(request):
 
         p_form = PostForm(request.POST)
         pi_formset = PostImageFormSet(request.POST, request.FILES, queryset=PostImage.objects.none())
-        ep_form = EatingPlaceFrom(request.POST)
         rating = request.POST.get('rating')
         cost = request.POST.get('cost')
+        place_name = request.POST.get('place-name')
+        place_address = request.POST.get('place-address')
         
 
-        if p_form.is_valid() and pi_formset.is_valid() and ep_form.is_valid():
+        if p_form.is_valid() and pi_formset.is_valid():
             # EatingPlace
             locator = Bing(api_key="AozreVUVlwxpZVbVcf6FErTup90eXr3DFSdlltU6m5JHLRuVh0Cp3A5PGh1OzVZC")
-            name = ep_form.cleaned_data['name']
-            address = ep_form.cleaned_data['address']
+            name = place_name
+            address = place_address
             location = locator.geocode(address)
             latitude = location.latitude
             longitude = location.longitude
 
             # Can use default to ignore some fields in get
-            eating_place, _ = EatingPlace.objects.get_or_create(name=name, address=address, latitude=latitude, longitude=longitude)
+            eating_place, _ = EatingPlace.objects.get_or_create(address=address, defaults={'name': name, 'latitude': latitude, 'longitude': longitude})
 
             # Post
             post_form = p_form.save(commit=False)
@@ -286,12 +304,10 @@ def postCreate(request):
     else:
         p_form = PostForm()
         pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
-        ep_form = EatingPlaceFrom()
 
     context = {
         'p_form': p_form, 
         'pi_formset': pi_formset,
-        'ep_form': ep_form,
         'title': 'New post'
         }
 

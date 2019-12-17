@@ -115,6 +115,16 @@ html {
     font-size: 2.5rem;
   }
 
+/* Moddifying autocomplete z-index */
+  .ui-autocomplete {
+    z-index: 9999 !important;
+  }
+
+  .ui-autocomplete.ui-widget {
+    font-size: 14px !important;
+  }
+  
+
   /* ---------------------------- FOOTER STYLE TEST ----------------------*/
 
 footer {

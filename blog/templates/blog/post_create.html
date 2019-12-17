@@ -13,15 +13,34 @@
           {% csrf_token %}
           <fieldset class="form-group">
             <legend class="border-bottom mb-4">Review</legend>
+
+            <!-- Post creation form with styled with crispy-forms -->
             {{ p_form|crispy }}
-            {{ ep_form|crispy }}
-            <input id="rating" name="rating" type="hidden" value="0">
-            <label for="name">Place Name: </label>
-            <input id="place-name" type="text" placeholder="name">
+
+            <h3>Eating place:</h3>
+
+            <!-- Input for place name -->
+            <label for="place-name">Place Name: </label>
+            <input id="place-name" type="text" name="place-name">
+
+            <!-- Input for place address -->
+            <label for="place-address">Place Address: </label>
+            <input id="place-address" type="text" name="place-address">
+
             <!-- Reference: https://www.w3schools.com/howto/howto_css_star_rating.asp -->
-            <p>Rating: <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span></p>
-            <input id="cost" name="cost" type="hidden" value="0">
-            <p>Cost: <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span></p>
+            <p>Rating: </p>
+            <div>
+                <!-- Hidden input for rating -->
+                <input id="rating" name="rating" type="hidden" value="0">
+                <!-- The stars -->
+                <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span>
+            </div>
+            <div>
+                <!-- Hidden input for cost -->
+                <input id="cost" name="cost" type="hidden" value="0">
+                <!-- The euro signs -->
+                <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span>
+            </div>
             {{ pi_formset }}
               
           </fieldset>
@@ -39,14 +58,27 @@ jQuery(function() {
         $.ajax({
             url: "{% url 'api-eatingplaces' %}",
             data: {
-            'search': value
+            'query': value
             },
             dataType: 'json',
             success: function (data) {
-                list = data.list;
+                list = data.results;
                 $("#place-name").autocomplete({
                 source: list,
-                minLength: 3
+                minLength: 1,
+                select: function(event, ui) {
+                    var place_name = ui.item.value
+                    $.get(
+                        '{% url 'api-get-eatingplace' %}',
+                        {'query': place_name},
+                        function(data) {
+                            var place_address = data[0].address
+                            console.log(place_address);
+                            $("#place-address").val(place_address);
+                        },
+                        'json'
+                     )
+                }
                 });
             }
         });

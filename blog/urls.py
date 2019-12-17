@@ -12,7 +12,9 @@ from .views import (
     PostLikeAPIToggle,
     EatingPlaceListView,
     EatingPlacesAPI,
-    autocompletePlaceName
+    GetEatingPlaceAPI,
+    PostsAPI,
+    SearchAutocompleteAPI
     ) 
 from . import views
 
@@ -31,7 +33,11 @@ urlpatterns = [
     path('follow/<int:su_pk>/', ProfileFollowToggle.as_view(), name='follow'),
     path('api/follow/<int:su_pk>/', ProfileFollowAPIToggle.as_view(), name='api-follow'),
     path('like/<int:sp_pk>/', PostLikeToggle.as_view(), name='post-like'),
+    # APIs
     path('api/like/<int:sp_pk>/', PostLikeAPIToggle.as_view(), name='api-post-like'),
-    #path('api/Eatingplaces/', EatingPlacesAPI.as_view(), name='api-eatingplaces'),
-    path(r'^api/Eatingplaces/', autocompletePlaceName, name='api-eatingplaces')
+    path('api/Eatingplaces/', EatingPlacesAPI.as_view(), name='api-eatingplaces'),
+    path('api/SearchAutocomplete/', SearchAutocompleteAPI.as_view(), name='api-search-autocomplete'),
+    path('api/GetEatingplace/', GetEatingPlaceAPI.as_view(), name='api-get-eatingplace'),
+    path('api/GetEatingplace/', GetEatingPlaceAPI.as_view(), name='api-get-eatingplace'),
+    path('api/Posts/', PostsAPI.as_view(), name='api-posts')
 ]
