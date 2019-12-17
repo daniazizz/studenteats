@@ -268,37 +268,40 @@ def postCreate(request):
         cost = request.POST.get('cost')
         place_name = request.POST.get('place-name')
         place_address = request.POST.get('place-address')
+
+        locator = Bing(api_key="AozreVUVlwxpZVbVcf6FErTup90eXr3DFSdlltU6m5JHLRuVh0Cp3A5PGh1OzVZC")
+        location = locator.geocode(place_address)
         
 
         if p_form.is_valid() and pi_formset.is_valid():
-            # EatingPlace
-            locator = Bing(api_key="AozreVUVlwxpZVbVcf6FErTup90eXr3DFSdlltU6m5JHLRuVh0Cp3A5PGh1OzVZC")
-            name = place_name
-            address = place_address
-            location = locator.geocode(address)
-            latitude = location.latitude
-            longitude = location.longitude
+            if location!=None:
+                # EatingPlace
+                print(location)
+                latitude = location.latitude
+                longitude = location.longitude
 
-            # Can use default to ignore some fields in get
-            eating_place, _ = EatingPlace.objects.get_or_create(address=address, defaults={'name': name, 'latitude': latitude, 'longitude': longitude})
+                # Can use default to ignore some fields in get
+                eating_place, _ = EatingPlace.objects.get_or_create(address=place_address, defaults={'name': place_name, 'latitude': latitude, 'longitude': longitude})
 
-            # Post
-            post_form = p_form.save(commit=False)
-            post_form.author = request.user
-            post_form.place = eating_place
-            post_form.rating = rating
-            post_form.cost = cost
-            post_form.save()
+                # Post
+                post_form = p_form.save(commit=False)
+                post_form.author = request.user
+                post_form.place = eating_place
+                post_form.rating = rating
+                post_form.cost = cost
+                post_form.save()
 
-            # Post Images
-            for form in pi_formset.cleaned_data:
-                if form:
-                    image = form['image']
-                    photo = PostImage(post=post_form, image=image)
-                    photo.save()
+                # Post Images
+                for form in pi_formset.cleaned_data:
+                    if form:
+                        image = form['image']
+                        photo = PostImage(post=post_form, image=image)
+                        photo.save()
 
-            messages.success(request, f'Posted "{post_form}"')
-            return redirect("/")
+                messages.success(request, f'Posted "{post_form}"')
+                return redirect("/")
+            else:
+                messages.warning(request, f'Invalid address "{place_address}"')
         else:
             print(p_form.errors, pi_formset.errors)
     else:
