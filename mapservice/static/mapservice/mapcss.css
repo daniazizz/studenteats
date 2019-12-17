@@ -1,4 +1,18 @@
+#mapContainer {
+    padding: 15px;
+    border-radius: 5px;
+    background: white;
+}
+
 #map {
-    width: 100%;
-   margin: auto;
+    height: 75vh;
+}
+
+#notification {
+    background-color: #008CBA;
+    color: white;
+    text-align: center;
+    display: none;
+    padding: 5px;
+    font-size: 1.2em;
 }
