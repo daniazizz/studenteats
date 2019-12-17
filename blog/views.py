@@ -6,7 +6,7 @@ from mapservice.models import EatingPlace
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
 from .forms import PostImageForm, PostForm
 from mapservice.forms import EatingPlaceFrom
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.forms import modelformset_factory
@@ -40,6 +40,8 @@ class EatingPlaceListView(LoginRequiredMixin, ListView):  # A class based view
     def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['selected_place'] = self.place
+        context['average_rating'] = round(self.place.posts.aggregate(Avg('rating'))['rating__avg'])
+        context['average_cost'] = round(self.place.posts.aggregate(Avg('cost'))['cost__avg'])
         context['title'] = self.place
         return context
 
@@ -213,6 +215,9 @@ def postCreate(request):
         p_form = PostForm(request.POST)
         pi_formset = PostImageFormSet(request.POST, request.FILES, queryset=PostImage.objects.none())
         ep_form = EatingPlaceFrom(request.POST)
+        rating = request.POST.get('rating')
+        cost = request.POST.get('cost')
+        
 
         if p_form.is_valid() and pi_formset.is_valid() and ep_form.is_valid():
             # EatingPlace
@@ -230,6 +235,8 @@ def postCreate(request):
             post_form = p_form.save(commit=False)
             post_form.author = request.user
             post_form.place = eating_place
+            post_form.rating = rating
+            post_form.cost = cost
             post_form.save()
 
             # Post Images

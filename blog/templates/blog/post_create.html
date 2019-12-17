@@ -1,14 +1,27 @@
 {% extends "blog/base.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
+{% endblock extra_css %}
+
 {% block content %}
   <div class="content-section">
       <form method="POST", enctype="multipart/form-data">
           {% csrf_token %}
           <fieldset class="form-group">
-              <legend class="border-bottom mb-4">Review</legend>
-              {{ p_form|crispy }}
-              {{ ep_form|crispy }}
-              {{ pi_formset }}
+            <legend class="border-bottom mb-4">Review</legend>
+            {{ p_form|crispy }}
+            {{ ep_form|crispy }}
+            <input id="rating" name="rating" type="hidden" value="0">
+            <!-- Reference: https://www.w3schools.com/howto/howto_css_star_rating.asp -->
+            <p>Rating: <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span> <span class="fa fa-star fa-lg"></span></p>
+            <input id="cost" name="cost" type="hidden" value="0">
+            <p>Cost: <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span></p>
+            {{ pi_formset }}
+              
           </fieldset>
           <div class="form-group">
               <button class="btn btn-outline-secondary" type="submit">Post</button>
@@ -16,3 +29,71 @@
       </form>
   </div>
 {% endblock content %}
+
+{% block extra_jss %}
+  <script>
+    var stars = document.getElementsByClassName("fa-star");
+    var dollars = document.getElementsByClassName("fa-eur");
+
+    var ratingInput = document.getElementById("rating");
+    var costInput = document.getElementById("cost");
+
+    function addHoverEffectOn(elements, className1, className2) {
+        for(let i = 0; i < elements.length; ++i){
+            let element = elements[i];
+            element.onmouseover = function() {
+                if(!element.classList.contains(className1)){
+                    for(k = 0; k <= i; ++k){
+                        elements[k].classList.add(className1);
+                        elements[k].classList.remove(className2);
+                    }
+                    for(k = elements.length-1; k > i; --k){
+                        if(elements[k].classList.contains(className2)){
+                            elements[k].classList.remove(className2);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function addOutFocusEffectOn(elements, className){
+        for(let i = 0; i < elements.length; ++i){
+            let element = elements[i];
+            element.onmouseout = function() {
+                if(element.classList.contains(className)){
+                    for(k = 0; k <= i; ++k){
+                        elements[k].classList.remove(className);
+                    }
+                }
+            }
+        }
+    }
+
+    function addClickEffectOn(elements, className){
+        for(let i = 0; i < elements.length; ++i){
+            let element = elements[i];
+            element.onclick = function() {
+                let value = i + 1;
+                if(className == "clicked")
+                    ratingInput.value = value;
+                else
+                    costInput.value = value;
+                for(k = 0; k <= i; ++k){
+                    elements[k].classList.add(className);
+                }
+            }
+        }
+    }
+
+    addHoverEffectOn(stars, "checked", "clicked");
+    addOutFocusEffectOn(stars, "checked");
+    addClickEffectOn(stars, "clicked");
+    addHoverEffectOn(dollars, "checked2", "clicked2");
+    addOutFocusEffectOn(dollars, "checked2");
+    addClickEffectOn(dollars, "clicked2");
+
+  </script>
+{% endblock extra_jss %}
+
+

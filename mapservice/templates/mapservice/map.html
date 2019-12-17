@@ -9,11 +9,10 @@
 
 {% block content %}
 
-    <center>
+
         <div id="map">
             {% leaflet_map "map_studenteats" callback="window.setupMap" %}
         </div>
-    </center>
     
 
     {%  if show_posts %}
@@ -31,7 +30,7 @@
                 let greenMarkerUrl = 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png';
 
                 function putOnMap(descr, latAndLong, markerUrl, name, address) {
-                    if(name != undefined)
+                    if(name !== undefined)
                         descr = '<a href="' + '{% url 'blog-map' %}' + '/' + name + '/' + address +'">' + descr + '</a>';
 
                     let iconMarker = new L.Icon({

@@ -37,22 +37,15 @@
 
             </div>
             <div class="navbar-nav mr-auto">
-            <!-- Search -->  <!-- It would be better to use django form for search (security reasons), also can be upgraded -->
               <form class="form-inline" action="{% url 'search-result' %}" method="GET">
                   <div class="input-group">
                     <input class="form-control form-control-sm" name="q" type="search" placeholder="Search" >
 
-                     <div class="btn-group">
-                         <button class="btn">Search</button>
-                         <button class="btn dropdown-toggle" data-toggle="dropdown">
-                             <span class="caret"></span>
-                         </button>
-                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                            <li><a tabindex="-1" href="#">By Post</a></li>
-                             <li><a tabindex="-1" href="#">By Restaurant</a></li>
-                             <li><a tabindex="-1" href="#">By Address</a></li>
-                        </ul>
-             </div>
+                     <div class="input-group-prepend">
+                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{% url 'blog-map' %}" id="basic-addon1">
+                        <img src="{% static 'blog/map_icon.png' %}" alt="Map" height="20">
+                      </a>
+                    </div>
                   </div>
               </form>
             </div>
@@ -174,7 +167,7 @@
 
 
      <!-- Site footer -->
-    <footer id="footer" class="site-footer">
+    <footer id="footer">
       <div class="container">
         <div class="row">
           <div class="col-sm-12 col-md-6">

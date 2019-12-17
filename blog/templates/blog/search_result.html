@@ -1,7 +1,7 @@
 {% extends "blog/base.html" %}
 {% block content %}
     <!-- The request still needs to be stripped down to the query -->
-    <h2 class="mb-3" >Search results for '{{ query }}' ({{ posts.count }})</h2>
+    <h2 id="snowflake" class="mb-3" >Search results for '{{ query }}' ({{ posts.count }})</h2>
     
     {% include 'blog/blocks/list-posts.html' %}
 

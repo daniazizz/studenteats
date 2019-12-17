@@ -1,20 +1,21 @@
 body {
-    background: url("wood.jpg") no-repeat fixed;
-    background-size: cover;
-    background-color: #f8f8f8;
-    color: #333333;
-    margin-top: 5rem;
-  width: 100%;
-  height: 100%;
+  background-size: cover;
+  background: #f8f8f8 url("wood.jpg") no-repeat fixed;
+  color: #333333;
+    /*margin-top: 5rem;*/
+    width: 100%;
   }
 
 html {
   width: 100%;
-  height: 100%;
 }
   
   h1, h2, h3, h4, h5, h6 {
     color: #2b2b2b;
+  }
+
+  #snowflake{
+      color: snow;
   }
   
   ul {
@@ -57,16 +58,13 @@ html {
   .site-header .navbar-nav .nav-link.active {
     font-weight: 500;
   }
-  
-  .content-section {
+
+   .content-section {
     background: #ffffff;
     padding: 10px 20px;
     border: 1px solid #dddddd;
-    border-radius: 15px;
+    border-radius: 3px;
     margin-bottom: 20px;
-    height: 25%;
-    width: 65%;
-    margin-left: 15%;
   }
   
   .article-title {
@@ -118,15 +116,15 @@ html {
 
   /* ---------------------------- FOOTER STYLE TEST ----------------------*/
 
-.site-footer
-{
+footer {
   background-color: #2b2b2b;
   opacity: 70%;
   padding:45px 0 20px;
   font-size: 15px;
   line-height: 20px;
   color: snow;
-  position: relative;
+  height: 30vh;
+  width: 100%;
 
 }
 .site-footer hr
@@ -199,3 +197,35 @@ a[href="?page="]{
    position: relative;
 
  }
+
+
+
+#logout {
+	margin: auto;
+	text-align: center;
+	height: 30vh;
+	width: 30vw;
+  margin-top: 5%;
+	background-color: white;
+    border-radius: 3px;
+	font-size: 1.2em;
+}
+
+#logo {
+	padding-top: 5%;
+	padding-bottom: 1%;
+	width:90%;
+	height: auto;
+}
+
+#goodbye {
+	width: 45%;
+	height:auto;
+	display:block;
+	margin-left: 23%;
+/*	margin-top, margin-bottom:auto;*/
+}
+
+#loginbutton {
+	margin-top: 5%;
+}
