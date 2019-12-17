@@ -1,16 +1,36 @@
 body {
-    background: rgb(118,118,118);
-    background: linear-gradient(180deg, rgba(118,118,118,1) 0%, rgba(60,60,60,1) 98%);
-    color: #333333;
-    margin-top: 5rem;
+  background-size: cover;
+  background: #f8f8f8 url("wood.jpg") no-repeat fixed;
+  color: #333333;
+    /*margin-top: 5rem;*/
+    width: 100%;
   }
+
+html {
+  width: 100%;
+}
   
   h1, h2, h3, h4, h5, h6 {
     color: #2b2b2b;
   }
+
+  #snowflake{
+      color: snow;
+  }
   
   ul {
     margin: 0;
+  }
+
+  #login {
+    width: 20vw;
+    position: relative;
+  }
+
+  #register{
+    width: 37vw;
+    position: fixed;
+
   }
   
   .bg-steel {
@@ -38,8 +58,8 @@ body {
   .site-header .navbar-nav .nav-link.active {
     font-weight: 500;
   }
-  
-  .content-section {
+
+   .content-section {
     background: #ffffff;
     padding: 10px 20px;
     border: 1px solid #dddddd;
@@ -52,7 +72,7 @@ body {
   }
   
   a.article-title:hover {
-    color: #428bca;
+    color: lightblue;
     text-decoration: none;
   }
   
@@ -93,3 +113,119 @@ body {
   .account-heading {
     font-size: 2.5rem;
   }
+
+  /* ---------------------------- FOOTER STYLE TEST ----------------------*/
+
+footer {
+  background-color: #2b2b2b;
+  opacity: 70%;
+  padding:45px 0 20px;
+  font-size: 15px;
+  line-height: 20px;
+  color: snow;
+  height: 30vh;
+  width: 100%;
+
+}
+.site-footer hr
+{
+  border-top-color:#bbb;
+  opacity:1;
+}
+
+.site-footer h6
+{
+  color:#fff;
+  font-size:16px;
+  text-transform:uppercase;
+  margin-top:5px;
+  letter-spacing:2px
+}
+.site-footer a
+{
+  color: snow;
+}
+.site-footer a:hover
+{
+  color:lightgreen;
+}
+.footer-links
+{
+  padding-left:0;
+  list-style:none
+}
+.footer-links li
+{
+  display:block
+}
+.footer-links a
+{
+  color:snow;
+}
+.footer-links a:active,.footer-links a:focus,.footer-links a:hover
+{
+  color: lightgreen;
+  text-decoration:none;
+}
+.footer-links.inline li
+{
+  display:inline-block
+}
+
+
+
+  #sharebuttons {
+  padding-left: 15%;
+  }
+
+/* footer will disappear if the screen is smaller than an ipad screen to make it responsive*/
+@media (max-width: 750px){
+    #footer {
+        display : none;
+        visibility : hidden;
+    }
+}
+
+a[href="?page="]{
+  margin: auto;
+  padding: auto;
+}
+
+ #sidebar {
+   margin-top: 50%;
+   margin-left: -250px;
+   position: relative;
+
+ }
+
+
+
+#logout {
+	margin: auto;
+	text-align: center;
+	height: 30vh;
+	width: 30vw;
+  margin-top: 5%;
+	background-color: white;
+    border-radius: 3px;
+	font-size: 1.2em;
+}
+
+#logo {
+	padding-top: 5%;
+	padding-bottom: 1%;
+	width:90%;
+	height: auto;
+}
+
+#goodbye {
+	width: 45%;
+	height:auto;
+	display:block;
+	margin-left: 23%;
+/*	margin-top, margin-bottom:auto;*/
+}
+
+#loginbutton {
+	margin-top: 5%;
+}

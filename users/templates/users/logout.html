@@ -1,9 +1,17 @@
 {% extends "blog/base.html" %}
+{% load static %}
 {% block content %}
-    <h2>You have been logged out!</h2>
-    <div class="border-top pt-3">
-        <small class="text-muted"> 
-             <a class="text-white" href="{% url 'login' %}">Log In Again</a> 
+    <h2 id="snowflake">You have been logged out!</h2>
+    <div id="logout">
+			<img src="{% static 'blog/logo2.png'%}" alt="studentEats logo" id="logo"/>
+			<p>You have been logged out!</p>
+			<!--<img src="goodbye.png" alt="goodbye" id="goodbye" />-->
+			<button onclick="window.location.href= '{% url 'login' %}' " type="button" class="btn btn-primary" id="loginbutton">Log in</button>
+		</div>
+  <!--  <div class="border-top pt-3">
+        <small class="text-muted">
+             <a class="text-white" href="{% url 'login' %}">Log In Again</a>
         </small>
     </div>
+    -->
 {% endblock content %}

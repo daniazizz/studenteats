@@ -37,18 +37,34 @@
 
             </div>
             <div class="navbar-nav mr-auto">
-            <!-- Search -->  <!-- It would be better to use django form for search (security reasons), also can be upgraded -->
               <form class="form-inline" action="{% url 'search-result' %}" method="GET">
                   <div class="input-group">
                     <input class="form-control form-control-sm" name="q" type="search" placeholder="Search" >
-                    <div class="input-group-prepend">
-                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{% url 'blog-map'%}" id="basic-addon1">
+
+                     <div class="input-group-prepend">
+                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{% url 'blog-map' %}" id="basic-addon1">
                         <img src="{% static 'blog/map_icon.png' %}" alt="Map" height="20">
                       </a>
                     </div>
                   </div>
               </form>
             </div>
+
+
+          <!-- ----------------------------------------- testing new search button -------------------------
+              <form class="form-inline" action="{#% url 'search-result' %#}" method="GET">
+                  <div class="input-group">
+                    <input class="form-control form-control-sm" name="q" type="search" placeholder="Search" >
+                    <div class="input-group-prepend">
+                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{#% url 'blog-map'%#}" id="basic-addon1">
+                        <img src="{#% static 'blog/map_icon.png' %#}" alt="Map" height="20">
+                      </a>
+                    </div>
+                  </div>
+              </form>
+          ----------------------------------------- testing new search button ---------------------------->
+
+
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
@@ -69,32 +85,12 @@
     </header>
 
         <main role="main" class="container">
-
               <div class="row">
-                <div class="col-md-12">
-                  {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                      {{ message }}
-                    </div>
-                    {% endfor %}
-                  {% endif %}
-              <!--  <div class="bg-image img1"></div>
-                <div class="bg-image img2"></div>
-                <div class="bg-image img3"></div>
-                <div class="bg-image img4"></div>
-                <div class="bg-image img5"></div>
-                <div class="bg-image img6"></div>
-                <div class="bg-image img7"></div>-->
-              {% block content %}{% endblock %}
-
-
-                </div>
-                <!-- A SIDEBAR
-                <div class="col-md-4">
+              <!-- A SIDEBAR
+                <div id="sidebar" class="col-md-4">
                   <div class="content-section">
-                    <h3>Our Sidebar</h3>
-                    <p class='text-muted'>You can put any information here you'd like.
+                    <h3>MEALS</h3>
+                    <p class='text-muted'>receipe of the day
                       <ul class="list-group">
                         <li class="list-group-item list-group-item-light">Latest Posts</li>
                         <li class="list-group-item list-group-item-light">Announcements</li>
@@ -103,7 +99,21 @@
                       </ul>
                     </p>
                   </div>
-                </div>-->
+                </div>
+                -->
+                <div class="col-md-12">
+                  {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                      {{ message }}
+                    </div>
+                    {% endfor %}
+                  {% endif %}
+              {% block content %}{% endblock %}
+
+
+                </div>
+
               </div>
 
             </main>
@@ -160,6 +170,49 @@
 
     {% block extra_jss %}
     {% endblock extra_jss %}
+
+
+     <!-- Site footer -->
+    <footer id="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <h6>About</h6>
+            <p class="text-justify">StudentEats.com is an initiative to help students find good and affordable places to eat.
+                StudentEats provides a platform where students can share their eating experience online.</p>
+          </div>
+
+          <div class="col-xs-6 col-md-3">
+            <h6>Categories</h6>
+            <ul class="footer-links">
+              <li><a href="#">Vegan</a></li>
+              <li><a href="#">Asian</a></li>
+              <li><a href="#">Italian</a></li>
+              <li><a href="#">Greek</a></li>
+            </ul>
+          </div>
+
+          <div class="col-xs-6 col-md-3">
+            <h6>Quick Links</h6>
+            <ul class="footer-links">
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Sitemap</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-sm-6 col-xs-12">
+            <p class="copyright-text">Copyright &copy; 2019 All Rights Reserved by <a href="#">StudentEats</a>.  </p>
+          </div>
+            <div id="sharebuttons" class="sharethis-inline-share-buttons"></div>
+        </div>
+      </div>
+</footer>
   </body>
 </html>
 
