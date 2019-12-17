@@ -1,4 +1,16 @@
 {% extends "blog/base.html" %}
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .checked {
+            color: orange;
+        }
+
+        .checked2 {
+            color: green;
+        }
+    </style>
+{% endblock extra_css %}
 
 {% block content %}
     <div class="content-section">
@@ -7,9 +19,9 @@
         <!-- <img class="rounded-circle account-img" src="{{ selected_user.profile.image.url }}"> -->
         <div class="media-body">
           <h2 class="account-heading">{{ selected_place.name }}</h2>
-          <p>Amount of posts: {{ selected_place.posts.count }}</p>
-          <p>Rating average: {{ average_rating }}</p>
-          <p>Cost average: {{ average_cost }}</p>
+          <p>Amount of posts: {{ selected_place.posts.count }}<br>
+             Rating average: {{ average_rating }} <span class="fa fa-star fa-lg"></span><span class="fa fa-star fa-lg"></span><span class="fa fa-star fa-lg"></span><span class="fa fa-star fa-lg"></span><span class="fa fa-star fa-lg"></span><br>
+             Cost average: {{ average_cost }} <span class="fa fa-eur fa-lg"></span><span class="fa fa-eur fa-lg"></span><span class="fa fa-eur fa-lg"></span><span class="fa fa-eur fa-lg"></span><span class="fa fa-eur fa-lg"></span></p>
         </div>
       </div>
     </div>
@@ -17,3 +29,19 @@
     {% include 'blog/blocks/list-posts.html'  %}
     {% include 'blog/blocks/paginated.html'  %}
 {% endblock content %}
+
+{% block extra_jss %}
+    <script>
+        var stars = document.getElementsByClassName("fa-star")
+        var dollars = document.getElementsByClassName("fa-eur");
+
+        function lightUp(rating, lst, htmlClassName){
+	        for(i = 0; i < rating; ++i){
+		        lst[i].classList.add(htmlClassName);
+	        }
+        }
+
+        lightUp({{ average_rating }}, stars, "checked");
+        lightUp({{ average_cost }}, dollars, "checked2");
+    </script>
+{% endblock extra_jss %}

@@ -40,8 +40,8 @@ class EatingPlaceListView(LoginRequiredMixin, ListView):  # A class based view
     def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['selected_place'] = self.place
-        context['average_rating'] = self.place.posts.aggregate(Avg('rating'))['rating__avg']
-        context['average_cost'] = self.place.posts.aggregate(Avg('cost'))['cost__avg']
+        context['average_rating'] = round(self.place.posts.aggregate(Avg('rating'))['rating__avg'])
+        context['average_cost'] = round(self.place.posts.aggregate(Avg('cost'))['cost__avg'])
         context['title'] = self.place
         return context
 
