@@ -1,5 +1,8 @@
 <!-- Block for pagination -->
 
+
+<div class="mx-auto">
+
 {% if is_paginated %}
   {% if page_obj.has_previous %}
     <a class="btn btn-outline-light mb-4"  href="?page=1">First</a>
@@ -20,3 +23,4 @@
   {% endif %}
 
 {% endif  %}
+</div>

@@ -41,14 +41,37 @@
               <form class="form-inline" action="{% url 'search-result' %}" method="GET">
                   <div class="input-group">
                     <input class="form-control form-control-sm" name="q" type="search" placeholder="Search" >
+
+                     <div class="btn-group">
+                         <button class="btn">Search</button>
+                         <button class="btn dropdown-toggle" data-toggle="dropdown">
+                             <span class="caret"></span>
+                         </button>
+                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                            <li><a tabindex="-1" href="#">By Post</a></li>
+                             <li><a tabindex="-1" href="#">By Restaurant</a></li>
+                             <li><a tabindex="-1" href="#">By Address</a></li>
+                        </ul>
+             </div>
+                  </div>
+              </form>
+            </div>
+
+
+          <!-- ----------------------------------------- testing new search button -------------------------
+              <form class="form-inline" action="{#% url 'search-result' %#}" method="GET">
+                  <div class="input-group">
+                    <input class="form-control form-control-sm" name="q" type="search" placeholder="Search" >
                     <div class="input-group-prepend">
-                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{% url 'blog-map'%}" id="basic-addon1">
-                        <img src="{% static 'blog/map_icon.png' %}" alt="Map" height="20">
+                      <a class="btn btn-light nav-item input-group-text rounded-right" href="{#% url 'blog-map'%#}" id="basic-addon1">
+                        <img src="{#% static 'blog/map_icon.png' %#}" alt="Map" height="20">
                       </a>
                     </div>
                   </div>
               </form>
-            </div>
+          ----------------------------------------- testing new search button ---------------------------->
+
+
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
@@ -69,32 +92,12 @@
     </header>
 
         <main role="main" class="container">
-
               <div class="row">
-                <div class="col-md-12">
-                  {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                      {{ message }}
-                    </div>
-                    {% endfor %}
-                  {% endif %}
-              <!--  <div class="bg-image img1"></div>
-                <div class="bg-image img2"></div>
-                <div class="bg-image img3"></div>
-                <div class="bg-image img4"></div>
-                <div class="bg-image img5"></div>
-                <div class="bg-image img6"></div>
-                <div class="bg-image img7"></div>-->
-              {% block content %}{% endblock %}
-
-
-                </div>
-                <!-- A SIDEBAR
-                <div class="col-md-4">
+              <!-- A SIDEBAR
+                <div id="sidebar" class="col-md-4">
                   <div class="content-section">
-                    <h3>Our Sidebar</h3>
-                    <p class='text-muted'>You can put any information here you'd like.
+                    <h3>MEALS</h3>
+                    <p class='text-muted'>receipe of the day
                       <ul class="list-group">
                         <li class="list-group-item list-group-item-light">Latest Posts</li>
                         <li class="list-group-item list-group-item-light">Announcements</li>
@@ -103,8 +106,23 @@
                       </ul>
                     </p>
                   </div>
-                </div>-->
+                </div>
+                -->
+                <div class="col-md-12">
+                  {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                      {{ message }}
+                    </div>
+                    {% endfor %}
+                  {% endif %}
+              {% block content %}{% endblock %}
+
+
+                </div>
+
               </div>
+
             </main>
 
     <!-- Optional JavaScript -->
@@ -153,10 +171,10 @@
 
     {% block extra_jss %}
     {% endblock extra_jss %}
-  </body>
-  <!-- Site footer -->
+
+
      <!-- Site footer -->
-    <footer class="site-footer">
+    <footer id="footer" class="site-footer">
       <div class="container">
         <div class="row">
           <div class="col-sm-12 col-md-6">
@@ -169,12 +187,9 @@
             <h6>Categories</h6>
             <ul class="footer-links">
               <li><a href="#">Vegan</a></li>
-              <li><a hhref="#">Asian</a></li>
+              <li><a href="#">Asian</a></li>
               <li><a href="#">Italian</a></li>
               <li><a href="#">Greek</a></li>
-             <!-- <li><a href="#"></a>American</li>
-              <li><a href="#">Desserts</a></li>
-                -->
             </ul>
           </div>
 
@@ -195,19 +210,10 @@
           <div class="col-md-8 col-sm-6 col-xs-12">
             <p class="copyright-text">Copyright &copy; 2019 All Rights Reserved by <a href="#">StudentEats</a>.  </p>
           </div>
-            <div class="sharethis-inline-share-buttons"></div>
- <!--
-          <div class="col-md-4 col-sm-6 col-xs-12">
-            <ul class="social-icons">
-              <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
-              <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
-              <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
-              <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
-            </ul>
-          </div>
-            -->
+            <div id="sharebuttons" class="sharethis-inline-share-buttons"></div>
         </div>
       </div>
 </footer>
+  </body>
 </html>
 
