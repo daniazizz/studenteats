@@ -2,7 +2,7 @@ body {
   background-size: cover;
   background: #f8f8f8 url("wood.jpg") no-repeat fixed;
   color: #333333;
-    /*margin-top: 5rem;*/
+    margin-top: 5rem;
     width: 100%;
   }
 
@@ -12,6 +12,7 @@ html {
   
   h1, h2, h3, h4, h5, h6 {
     color: #2b2b2b;
+    /* color: snow; */
   }
 
   #snowflake{
@@ -123,7 +124,7 @@ footer {
   font-size: 15px;
   line-height: 20px;
   color: snow;
-  height: 30vh;
+  height: auto;
   width: 100%;
 
 }
@@ -173,9 +174,13 @@ footer {
 }
 
 
+.test {
+  display: inline-block;
+}
 
   #sharebuttons {
-  padding-left: 15%;
+    padding-left: 15%;
+    display: inline-block;
   }
 
 /* footer will disappear if the screen is smaller than an ipad screen to make it responsive*/

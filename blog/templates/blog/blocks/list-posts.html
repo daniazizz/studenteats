@@ -23,7 +23,7 @@
             <!-- CAROUSEL -->
             {% include 'blog/blocks/carousel.html' %}
 
-            <p class="article-content">{{ post.content }}</p>
+            <!-- <p class="article-content">{{ post.content }}</p> -->
 
             <!-- Post like button: -->
             <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">

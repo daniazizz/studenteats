@@ -13,17 +13,18 @@
             <div class="article-metadata">
                 <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
                 <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
+                  <div id="sharebuttons" class="sharethis-inline-share-buttons"></div>
+                
                 <div>
                     {% if post.author == user %}
                     <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
                     <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
                     {% endif %}
                     
-
                     <p>Rating: {{ post.rating }} <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span><br>
                       Cost: {{ post.cost }} <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span></p>
                 </div>
-            </div>
+            <
             <h2 class="article-title">{{ post.title }}</h2>
             <!-- Eating place link -->
             <p>
