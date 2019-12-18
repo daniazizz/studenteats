@@ -219,6 +219,23 @@ class CommentAPI(APIView):
 
         return Response()
 
+class DeleteCommentAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        post_id = request.GET.get('post_id')
+        content = request.GET.get('content')
+        author_name = request.GET.get('author')
+
+        author = User.objects.get(username=author_name)
+        post = Post.objects.get(id=post_id)
+        
+        comment = Comment.objects.get(author=author, content=content, post=post)
+        comment.delete()
+
+        return Response()
+
 
 
 class GetEatingPlaceAPI(APIView):
