@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse, HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
-from blog.models import Post, PostImage
+from blog.models import Post, PostImage, Comment
 from mapservice.models import EatingPlace
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
 # Forms
@@ -201,6 +201,24 @@ class EatingPlacesAPI(APIView):
             "results": results,
         }
         return JsonResponse(data)
+
+
+class CommentAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        post_id = request.GET.get('post_id')
+        content = request.GET.get('content')
+        author_name = request.GET.get('author')
+
+        author = User.objects.get(username=author_name)
+        post = Post.objects.get(id=post_id)
+        new_comment = Comment(author=author, content=content, post=post)
+        new_comment.save()
+
+        return Response()
+
 
 
 class GetEatingPlaceAPI(APIView):

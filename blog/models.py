@@ -24,6 +24,14 @@ class Post(models.Model):
         return reverse('post-detail', kwargs={'pk': self.pk}) ## Returns the url to the details page of the current post AS A STRING
                                                             ## Difference between redirect and reverse: rederict, redirects the user to an url, while reverse returns the url as a string
 
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete = models.CASCADE, related_name='comments')
+    content = models.TextField(max_length=250)
+    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name='comments')
+
+    def __str__(self):
+        return f'{self.author.username} comment'
+
 class PostImage(models.Model):
     post = models.ForeignKey(Post, related_name='images', on_delete = models.CASCADE)
     image = models.ImageField(upload_to='post_images')
