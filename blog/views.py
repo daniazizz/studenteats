@@ -261,7 +261,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
 
 # Reference: https://stackoverflow.com/questions/34006994/how-to-upload-multiple-images-to-a-blog-post-in-django
 @login_required
-def postCreate(request):
+def postCreate(request, p_name=None):
     PostImageFormSet = modelformset_factory(PostImage,
                                             form=PostImageForm, extra=3)
 
@@ -312,11 +312,17 @@ def postCreate(request):
     else:
         p_form = PostForm()
         pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
+    
+    place = None
+
+    if p_name:
+        place = EatingPlace.objects.get(name=p_name)
 
     context = {
         'p_form': p_form,
         'pi_formset': pi_formset,
-        'title': 'New post'
+        'title': 'New post',
+        'place': place
     }
 
     return render(request, 'blog/post_create.html', context)
