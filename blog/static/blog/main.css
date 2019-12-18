@@ -17,7 +17,6 @@ h4,
 h5,
 h6 {
   color: #2b2b2b;
-  /* color: snow; */
 }
 
 #snowflake {
@@ -140,12 +139,12 @@ footer {
   background-color: #2b2b2b;
   opacity: 70%;
   padding: 45px 0 20px;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 20px;
   color: snow;
-  height: auto;
+  height: 5%;
   width: 100%;
-
+  text-align:center;
 }
 
 .site-footer hr {
@@ -154,7 +153,7 @@ footer {
 }
 
 .site-footer h6 {
-  color: #fff;
+  color: snow;
   font-size: 16px;
   text-transform: uppercase;
   margin-top: 5px;
@@ -171,11 +170,12 @@ footer {
 
 .footer-links {
   padding-left: 0;
-  list-style: none
+  list-style: none;
 }
 
 .footer-links li {
-  display: block
+  display: inline;
+
 }
 
 .footer-links a {
@@ -224,11 +224,10 @@ a[href="?page="] {
 }
 
 #logout {
-  margin: auto;
   text-align: center;
   height: 30vh;
   width: 30vw;
-  margin-top: 5%;
+  margin: 5% auto auto;
   background-color: white;
   border-radius: 3px;
   font-size: 1.2em;
