@@ -15,7 +15,7 @@ class Post(models.Model):
     rating = models.IntegerField(null=False, default=0)
     cost = models.IntegerField(null=False, default=0)
     # Eating Place
-    place = models.ForeignKey(EatingPlace, related_name='posts', null = True, blank=True, on_delete=models.CASCADE)
+    place = models.ForeignKey(EatingPlace, related_name='posts', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.title

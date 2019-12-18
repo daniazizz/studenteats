@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (
+from blog.views import (
     PostListView,
     PostDetailView, 
     PostDeleteView, 
@@ -16,7 +16,7 @@ from .views import (
     PostsAPI,
     SearchAutocompleteAPI
     ) 
-from . import views
+from blog import views
 
 
 urlpatterns = [
@@ -26,8 +26,10 @@ urlpatterns = [
     path('place/<str:name>', EatingPlaceListView.as_view(), name='place-profile'),
     path('search/', SearchResultListView.as_view(), name='search-result'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'), ## variable inside url (primary key)
-    #path('post/new/', PostCreateView.as_view(), name='post-create'), ## post creation
+    #Post create:
     path('post/new/', views.postCreate, name='post-create'), ## post creation
+    path('post/new/<str:p_name>/', views.postCreate, name='post-create-w-name'), ## post creation with name
+
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     path('follow/<int:su_pk>/', ProfileFollowToggle.as_view(), name='follow'),

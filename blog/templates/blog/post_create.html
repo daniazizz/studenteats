@@ -17,15 +17,23 @@
             <!-- Post creation form with styled with crispy-forms -->
             {{ p_form|crispy }}
 
-            <h3>Eating place:</h3>
-
             <!-- Input for place name -->
-            <label for="place-name">Place Name: </label>
-            <input id="place-name" type="text" name="place-name">
 
-            <!-- Input for place address -->
-            <label for="place-address">Place Address: </label>
-            <input id="place-address" type="text" name="place-address">
+            {% if place %}
+                <input id="place-name" type="hidden" name="place-name" value="{{ place.name }}" required>
+
+                <!-- Input for place address -->
+                <input id="place-address" type="hidden" name="place-address" value="{{ place.address }}" required>
+            {% else %}
+                <h3>Eating place:</h3>
+
+                <label for="place-name">Place Name: </label>
+                <input id="place-name" type="text" name="place-name" required>
+
+                <!-- Input for place address -->
+                <label for="place-address">Place Address: </label>
+                <input id="place-address" type="text" name="place-address" required>
+            {% endif %}
 
             <!-- Reference: https://www.w3schools.com/howto/howto_css_star_rating.asp -->
             <p>Rating: </p>
@@ -41,6 +49,8 @@
                 <!-- The euro signs -->
                 <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span>
             </div>
+
+            <!-- Pictures -->
             {{ pi_formset }}
               
           </fieldset>

@@ -1,14 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse, HttpResponse
-from django.contrib.auth.mixins import LoginRequiredMixin, \
-    UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
 from django.contrib.auth.models import User
-from .models import Post, PostImage
+from blog.models import Post, PostImage
 from mapservice.models import EatingPlace
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
 # Forms
-from .forms import PostImageForm, PostForm
+from blog.forms import PostImageForm, PostForm
 # Serializers
-from .serializers import EatingPlaceSerializer, PostSerializer
+from blog.serializers import EatingPlaceSerializer, PostSerializer
 
 from django.db.models import Q, Avg
 from django.contrib.auth.decorators import login_required
@@ -22,12 +21,10 @@ import json
 from django.http import JsonResponse
 
 
-class PostListView(LoginRequiredMixin, ListView):  # A class based view
+class PostListView(LoginRequiredMixin, ListView): 
     model = Post
-    template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts'  # This makes it so that the list of objects is called posts.
-    # as default, the name is ObjectList
-    ordering = ['-date_posted']  # Minus symbol to reverse ordering
+    template_name = 'blog/home.html'
+    context_object_name = 'posts' 
     paginate_by = 5
 
     def get_queryset(self):  # filters posts list to the ones from user
@@ -264,7 +261,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
 
 # Reference: https://stackoverflow.com/questions/34006994/how-to-upload-multiple-images-to-a-blog-post-in-django
 @login_required
-def postCreate(request):
+def postCreate(request, p_name=None):
     PostImageFormSet = modelformset_factory(PostImage,
                                             form=PostImageForm, extra=3)
 
@@ -315,11 +312,17 @@ def postCreate(request):
     else:
         p_form = PostForm()
         pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
+    
+    place = None
+
+    if p_name:
+        place = EatingPlace.objects.get(name=p_name)
 
     context = {
         'p_form': p_form,
         'pi_formset': pi_formset,
-        'title': 'New post'
+        'title': 'New post',
+        'place': place
     }
 
     return render(request, 'blog/post_create.html', context)
