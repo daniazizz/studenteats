@@ -1,54 +1,53 @@
 {% extends "blog/base.html" %}
 
-
 <!-- Code still needs to be restructured -->
 <script>
-{% block jquery %}
-$(".follow-btn").click(function(e){
-  e.preventDefault()
-  var this_ = $(this)
-  var followUrl = this_.attr("data-href")
-  $.ajax({
-    url: followUrl,
-    method: "GET",
-    data: {},
-    success: function(data){
-      console.log(data)
-      followersCount = data.followersCount
-      if (data.followed){
-        updateText(this_, "Unfollow")
-      } else {
-        updateText(this_, "Follow")
-      }
-      updateText($("#followersCount"), followersCount)
-    }, 
-    error: function(error){
-      console.log(error)
-      console.log("error")
-    }
-  })
-})
-{% endblock %}
+    {% block jquery %}
+    $(".follow-btn").click(function(e) {
+        e.preventDefault()
+        var this_ = $(this)
+        var followUrl = this_.attr("data-href")
+        $.ajax({
+            url: followUrl,
+            method: "GET",
+            data: {},
+            success: function(data) {
+                console.log(data)
+                followersCount = data.followersCount
+                if (data.followed) {
+                    updateText(this_, "Unfollow")
+                } else {
+                    updateText(this_, "Follow")
+                }
+                updateText($("#followersCount"), followersCount)
+            },
+            error: function(error) {
+                console.log(error)
+                console.log("error")
+            }
+        })
+    })
+    {% endblock %}
 </script>
 
 {% block content %}
-    <div class="content-section">
-      <div class="media">
+<div class="content-section">
+    <div class="media">
         <img class="rounded-circle account-img" src="{{ selected_user.profile.image.url }}">
         <div class="media-body">
-          <h2 class="account-heading">{{ selected_user.username }}</h2>
-          <!-- Abdoullah: the following/followers variables contain all the following/followers objects, you could display them as a list (like instagram)
+            <h2 class="account-heading">{{ selected_user.username }}</h2>
+            <!-- Abdoullah: the following/followers variables contain all the following/followers objects, you could display them as a list (like instagram)
           by looping through them -->
-          <p>Following: {{ following.count }}</p> 
-          <p>Followers: 
-            <span id='followersCount'>{{ followers.count }}</span>
-          </p>
-          <h5>Bio:</h5>
-          <p>{{ selected_user.profile.bio }}</p>
-          {% if selected_user == user %}
-               <div>
+            <p>Following: {{ following.count }}</p>
+            <p>Followers:
+                <span id='followersCount'>{{ followers.count }}</span>
+            </p>
+            <h5>Bio:</h5>
+            <p>{{ selected_user.profile.bio }}</p>
+            {% if selected_user == user %}
+            <div>
                 <a class="btn btn-secondary btn-sm mb-1" href="{% url 'profile_update'%}">Update</a>
-               </div>
+            </div>
             {% else %}
             <!-- Profile follow button: -->
             <a class="follow-btn btn btn-primary btn-sm mb-1" data-href="{% url 'api-follow' selected_user.id %}" href="{% url 'follow' selected_user.id %}">
@@ -57,12 +56,8 @@ $(".follow-btn").click(function(e){
               {% else %}
               Follow
               {% endif %}
-            </a>
-
-            {% endif %}
+            </a> {% endif %}
         </div>
-      </div>
     </div>
-    {% include 'blog/blocks/list-posts.html' %}
-    {% include 'blog/blocks/paginated.html'  %}
-{% endblock content %}
+</div>
+{% include 'blog/blocks/list-posts.html' %} {% include 'blog/blocks/paginated.html' %} {% endblock content %}

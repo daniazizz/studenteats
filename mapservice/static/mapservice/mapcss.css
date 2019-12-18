@@ -1,0 +1,27 @@
+#mapContainer {
+    padding: 15px;
+    border-radius: 5px;
+    background: white;
+}
+
+#map {
+    height: 75vh;
+}
+
+#notification {
+    background-color: #2b2b2b;
+    opacity: 90%;
+    color: snow;
+    text-align: center;
+    display: none;
+    padding: 5px;
+
+}
+
+#notif-text {
+
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 1.2em;
+    margin: auto;
+
+}

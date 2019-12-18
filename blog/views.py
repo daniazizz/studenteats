@@ -42,7 +42,7 @@ class EatingPlaceListView(LoginRequiredMixin, ListView):  # A class based view
     ordering = ['-date_posted']  # Minus symbol to reverse ordering
     paginate_by = 5
 
-    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
+    def get_context_data(self, **kwargs):  # Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['selected_place'] = self.place
         context['average_rating'] = round(self.place.posts.aggregate(Avg('rating'))['rating__avg'])
