@@ -274,6 +274,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
     def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['title'] = 'Post Detail'
+       #s context['comments'] = 'Post Detail'
         return context
 
 
