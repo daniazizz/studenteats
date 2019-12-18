@@ -1,55 +1,73 @@
 <!--  Block that displays all the posts -->
 {% load static %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
+<link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}"> {% for post in posts %}
+<article class="media content-section">
 
-{% for post in posts %}
-    <article class="media content-section">
-        <a class="mr-2" href="{% url 'profile' post.author.username %}">
-            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
-        </a>
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
-                <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
+    <div class="media-body">
+        <!-- Post Header -->
+        <div class="article-metadata">
+            <div style="display: inline-block;">
+                <a class="mr-2" href="{% url 'profile' post.author.username %}">
+                    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
+                </a>
             </div>
+            <div style="display: inline-block; vertical-align: middle;">
+                <div>
+                    <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
+                </div>
+                <div>
+                    <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
+                </div>
+                <div>
+                    Review for:
+                    <a href="{% url 'place-profile' post.place.name %}">{{ post.place.name }}</a>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Post Body -->
+        <div >
             <h2>
                 <a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a>
             </h2>
 
-            <p>Rating: <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span><br>
-               Cost: <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span></p>
+        <p>Rating: <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span>
+            <br> Cost: <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span></p>
 
-            <!-- CAROUSEL -->
+        <!-- CAROUSEL -->
+        <div style="align-items: center;">
             {% include 'blog/blocks/carousel.html' %}
+        </div>
+        
 
-            <p class="article-content">{{ post.content }}</p>
+        <p class="article-content">{{ post.content }}</p>
 
-            <!-- Post like button: -->
-            <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
+        <!-- Post like button: -->
+        <a class="like-btn btn btn-success btn-sm mb-1" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
                 {% if user in post.likes.all %}
                     {{ post.likes.count }} Unlike
                 {% else %}
                     {{ post.likes.count }} Like
                 {% endif %}
             </a>
-
         </div>
-    </article>
+        
+    </div>
+</article>
 
 <script>
     var stars = document.getElementsByClassName("star-{{ forloop.counter }}");
     var euros = document.getElementsByClassName("euro-{{ forloop.counter }}");
 
-    function lightUp(rating, lst, className){
-        for(i = 0; i < rating; ++i){
+    function lightUp(rating, lst, className) {
+        for (i = 0; i < rating; ++i) {
             lst[i].classList.add(className);
         }
     }
 
-    lightUp({{ post.rating }}, stars, "checked");
-    lightUp({{ post.cost }}, euros, "checked2");
-
+    lightUp({{post.rating}}, stars, "checked");
+    lightUp({{post.cost}}, euros, "checked2");
 </script>
 {% endfor %}
-
