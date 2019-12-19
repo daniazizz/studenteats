@@ -1,8 +1,7 @@
 {% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <p style="font-family: Verdana, Geneva, sans-serif; position: center; color: white; padding-left: 80%; font-size: large;"> StudentEats, the place to be !</p>
-  <div  id="login" class="content-section">
+      <div  id="login" class="content-section">
       <form method="POST">
           {% csrf_token %}
           <fieldset class="form-group">
