@@ -1,13 +1,15 @@
+
+
 body {
-  background-size: cover;
-  background: #f8f8f8 url("wood.jpg") no-repeat fixed;
-  color: #333333;
-  margin-top: 5rem;
-  width: 100%;
+	background-size: cover;
+	background: #f8f8f8 url("wood.jpg") no-repeat fixed;
+	color: #333333;
+	margin-top: 5rem;
+	width: 100%;
 }
 
 html {
-  width: 100%;
+	width: 100%;
 }
 
 h1,
@@ -16,238 +18,272 @@ h3,
 h4,
 h5,
 h6 {
-  color: #2b2b2b;
+	color: #2b2b2b;
 }
 
 #snowflake {
-  color: snow;
+	color: snow;
 }
 
 ul {
-  margin: 0;
+	margin: 0;
 }
 
 #login {
-  width: 20vw;
-  position: relative;
+	width: 20vw;
+	position: relative;
 }
 
 #register {
-  width: 37vw;
+	width: 37vw;
 }
 
 .bg-steel {
-  background-color: #f8f8f8;
+	background-color: #f8f8f8;
 }
 
 .site-header .navbar-nav .nav-link {
-  color: #000000;
+	color: #000000;
 }
 
 .form-control:focus {
-  border-color: #707070;
-  box-shadow: none;
-  -webkit-box-shadow: none;
+	border-color: #707070;
+	box-shadow: none;
+	-webkit-box-shadow: none;
 }
 
+
 /*  Making sure the image inside a carousel takes 100% of the width  */
+
 .carousel-item img {
-  margin: auto;
+	margin: auto;
 }
 
 .carousel {
-  background-color: #535353;
+	background-color: #535353;
 }
 
-
 .site-header .navbar-nav .nav-link:hover {
-  color: #535353;
+	color: #535353;
 }
 
 .site-header .navbar-nav .nav-link.active {
-  font-weight: 500;
+	font-weight: 500;
 }
 
 .content-section {
-  background: #ffffff;
-  padding: 10px 20px;
-  border: 1px solid #dddddd;
-  border-radius: 3px;
-  margin-bottom: 20px;
+	background: #ffffff;
+	padding: 10px 20px;
+	border: 1px solid #dddddd;
+	border-radius: 3px;
+	margin-bottom: 20px;
 }
 
 .article-title {
-  color: #444444;
+	color: #444444;
 }
 
 a.article-title:hover {
-  color: lightblue;
-  text-decoration: none;
+	color: lightblue;
+	text-decoration: none;
 }
 
 .article-content {
-  white-space: pre-line;
+	white-space: pre-line;
 }
 
 .article-img {
-  height: 65px;
-  width: 65px;
-  margin-right: 16px;
+	height: 65px;
+	width: 65px;
+	margin-right: 16px;
 }
 
 .article-metadata {
-  padding-bottom: 1px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3
+	padding-bottom: 1px;
+	margin-bottom: 4px;
+	border-bottom: 1px solid #e3e3e3
 }
 
 .article-metadata a:hover {
-  color: #333;
-  text-decoration: none;
+	color: #333;
+	text-decoration: none;
 }
 
 .article-svg {
-  width: 25px;
-  height: 25px;
-  vertical-align: middle;
+	width: 25px;
+	height: 25px;
+	vertical-align: middle;
 }
 
 .account-img {
-  height: 125px;
-  width: 125px;
-  margin-right: 20px;
-  margin-bottom: 16px;
+	height: 125px;
+	width: 125px;
+	margin-right: 20px;
+	margin-bottom: 16px;
 }
 
 .account-heading {
-  font-size: 2.5rem;
+	font-size: 2.5rem;
 }
 
+
 /* Moddifying autocomplete z-index */
+
 .ui-autocomplete {
-  z-index: 9999 !important;
+	z-index: 9999 !important;
 }
 
 .ui-autocomplete.ui-widget {
-  font-size: 14px !important;
+	font-size: 14px !important;
 }
 
 
 /* ---------------------------- FOOTER STYLE TEST ----------------------*/
 
 footer {
-  background-color: #2b2b2b;
-  opacity: 70%;
-  padding: 45px 0 20px;
-  font-size: 17px;
-  line-height: 20px;
-  color: snow;
-  height: 5%;
-  width: 100%;
-  text-align:center;
+	background-color: #2b2b2b;
+	opacity: 70%;
+	padding: 25px 0 20px;
+	font-size: 17px;
+	line-height: 20px;
+	color: snow;
+	width: 100%;
+	text-align: center;
 }
 
 .site-footer hr {
-  border-top-color: #bbb;
-  opacity: 1;
+	border-top-color: #bbb;
+	opacity: 1;
 }
 
 .site-footer h6 {
-  color: snow;
-  font-size: 16px;
-  text-transform: uppercase;
-  margin-top: 5px;
-  letter-spacing: 2px
+	color: snow;
+	font-size: 16px;
+	text-transform: uppercase;
+	margin-top: 5px;
+	letter-spacing: 2px
 }
 
 .site-footer a {
-  color: snow;
+	color: snow;
 }
 
 .site-footer a:hover {
-  color: lightgreen;
+	color: lightgreen;
 }
 
 .footer-links {
-  padding-left: 0;
-  list-style: none;
+	padding-left: 0;
+	list-style: none;
 }
 
 .footer-links li {
-  display: inline;
-
+	display: inline;
 }
 
 .footer-links a {
-  color: snow;
+	color: snow;
 }
 
 .footer-links a:active,
 .footer-links a:focus,
 .footer-links a:hover {
-  color: lightgreen;
-  text-decoration: none;
+	color: lightgreen;
+	text-decoration: none;
 }
 
 .footer-links.inline li {
-  display: inline-block
+	display: inline-block
 }
 
-
 .test {
-  display: inline-block;
+	display: inline-block;
 }
 
 #sharebuttons {
-  padding-left: 15%;
-  display: inline-block;
+	padding-left: 15%;
+	display: inline-block;
 }
 
+
 /* footer will disappear if the screen is smaller than an ipad screen to make it responsive*/
+
 @media (max-width: 750px) {
-  #footer {
-    display: none;
-    visibility: hidden;
-  }
+	#footer {
+		display: none;
+		visibility: hidden;
+	}
 }
 
 a[href="?page="] {
-  margin: auto;
-  padding: auto;
-}
-
-#sidebar {
-  margin-top: 50%;
-  margin-left: -250px;
-  position: relative;
-
+	margin: auto;
+	padding: auto;
 }
 
 #logout {
-  text-align: center;
-  height: 30vh;
-  width: 30vw;
-  margin: 5% auto auto;
-  background-color: white;
-  border-radius: 3px;
-  font-size: 1.2em;
+	text-align: center;
+	height: 30vh;
+	width: 30vw;
+	margin: 5% auto auto;
+	background-color: white;
+	border-radius: 3px;
+	font-size: 1.2em;
 }
 
 #logo {
-  padding-top: 5%;
-  padding-bottom: 1%;
-  width: 90%;
-  height: auto;
+	padding-top: 5%;
+	padding-bottom: 1%;
+	width: 90%;
+	height: auto;
 }
 
 #goodbye {
-  width: 45%;
-  height: auto;
-  display: block;
-  margin-left: 23%;
-  /*	margin-top, margin-bottom:auto;*/
+	width: 45%;
+	height: auto;
+	display: block;
+	margin-left: 23%;
+	/*	margin-top, margin-bottom:auto;*/
 }
 
 #loginbutton {
-  margin-top: 5%;
+	margin-top: 5%;
+}
+
+
+/*  -------SIDEBAR BUTTON  STYLING*/
+
+
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+}
+
+.dropdown-content a:hover {
+	background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+	display: block;
+}
+
+.dropbtn {
+	background-color: transparent;
+	color: black;
+	padding: 16px;
+	font-size: 16px;
+	margin: auto;
+	border: none;
+		}
+
+
+/* sidebar list*/
+#ctr{
+	text-align: center;
+	position: center;
 }
