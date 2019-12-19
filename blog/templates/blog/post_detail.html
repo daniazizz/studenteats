@@ -185,6 +185,7 @@ textarea {
 
 
   submitButton.onclick = function() {
+      if(userComment.value !== ""){
       let comment = userComment.value;
       $.ajax({
           url: '{% url "comment" %}',
@@ -200,6 +201,7 @@ textarea {
           }
        });
       userComment.value = "";
+      }
   }
 </script>
 
