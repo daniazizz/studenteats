@@ -21,6 +21,10 @@ import json
 from django.http import JsonResponse
 
 
+def apipageview(request):
+    return render(request, 'blog/api-page.html')
+    
+
 class PostListView(LoginRequiredMixin, ListView): 
     model = Post
     template_name = 'blog/home.html'
@@ -248,6 +252,16 @@ class GetEatingPlaceAPI(APIView):
         queryset = EatingPlace.objects.filter(name=q)
         serializer = EatingPlaceSerializer(queryset, many=True)
         print(q)
+
+        return Response(serializer.data)
+
+class EPAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        queryset = EatingPlace.objects.all()
+        serializer = EatingPlaceSerializer(queryset, many=True)
 
         return Response(serializer.data)
 
