@@ -127,7 +127,7 @@ textarea {
   var firstComment = true;
 
 
-  function createComment(commentOfUser, userName, comment_id, mayDelete, datum, urllelienetpuissttcamarcheetpuistusaveetaprestunrunlesiteetcamarcheetonvarater) {
+  function createComment(commentOfUser, userName, comment_id, mayDelete, datum, userURL) {
       if(firstComment){
           let intro = document.getElementById("intro");
           intro.parentNode.removeChild(intro);
@@ -142,7 +142,7 @@ textarea {
       date.innerText = datum;
       date.classList.add("text-muted");*/
       let paraph = document.createElement("p");/*.innerText*/ //= commentOfUser;
-      username.innerHTML = '<a href="' + urllelienetpuissttcamarcheetpuistusaveetaprestunrunlesiteetcamarcheetonvarater + '">' + userName  + '</a>' + " - " + "<small>" + datum  + "</small>";
+      username.innerHTML = '<a href="' + userURL + '">' + userName  + '</a>' + " - " + "<small>" + datum  + "</small>";
       //username.appendChild(date);
       paraph.innerText = commentOfUser;
       newComment.appendChild(username);

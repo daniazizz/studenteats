@@ -25,6 +25,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 //https://stackoverflow.com/questions/30190268/leaflet-how-to-add-click-event-listener-to-popup
 function putOnMap(name, address, latAndLong, markerUrl) {
     let myPopUp = L.DomUtil.create('div');
+    
     if(address !== undefined){
         myPopUp.innerHTML = '<p class="redirect">' + name + '</p>'; //descr = name;//'<a href="' + '{% url 'blog-map' %}' + '/' + name + '/' + address +'">' + descr + '</a>';
         myPopUp.onclick = function() {
