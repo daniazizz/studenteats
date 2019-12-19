@@ -10,8 +10,8 @@
                     <p class='text-muted' id="ctr"> Look up for a recipe!
                       <ul class="list-group">
                         <li class="list-group-item list-group-item-light" id="ctr">
-                            <input id="search">
-                            <button onclick="getRecipe(document.getElementById('search').value)">Search</button>
+                            <input type="text" id="searchIngredient" value="">
+                            <button id="searchApiButton">Search</button>
                         </li>
                         <li style="height: 10vh" class="list-group-item list-group-item-light" id="ctr">
                             <div id="title"></div>
@@ -35,7 +35,14 @@
 
 <script>
     const APIKEY = "5a0fbb4c82c94fde8b38e9ae2cd04bb9";
+    let searchButtonApi = document.getElementById("searchApiButton");
+    let ingredientToSearch = document.getElementById("searchIngredient");
 
+    searchButtonApi.onclick = function() {
+        let ingredient = ingredientToSearch.value;
+        getRecipe(ingredient);
+    }
+    
     function getsource(id) {
         $.ajax({
             url: "https://api.spoonacular.com/recipes/" + id + "/information?apiKey=" + APIKEY,
@@ -57,7 +64,7 @@
                 document.getElementById("cookingTime").innerHTML= "<p> Cooking time: " + res.results[0].readyInMinutes + " minutes </p>";
                 getsource(res.results[0].id);
             },
-            fail: (e) => {alert("shit");}
+            failure: (e) => {alert("fail");}
         });
     }
 </script>
