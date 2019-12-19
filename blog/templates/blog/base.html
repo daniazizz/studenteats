@@ -24,8 +24,11 @@
 </head>
 
 <body>
+<div id="wrapper">
 
-    <header class="site-header">
+	<div id="pagecontent">
+
+	<header class="site-header">
         <nav class="navbar navbar-expand-md navbar-light bg-steel fixed-top">
             <div class="container">
                 <a class="navbar-brand mr-4" href="{% url 'blog-home' %}"><img src="{% static 'blog/logo2.png' %}" alt="StudentEats logo" width="250"></a>
@@ -60,7 +63,7 @@
 
                         <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
                              <div class="dropdown">
-                                <button class="dropbtn nav-item nav-link">Receipe Idea</button>
+                                <a class="nav-item nav-link">Recipe Idea</a>
                                 <div class="dropdown-content">
                                     {% include 'blog/recipeAPI.html' %}
                                 </div>
@@ -75,16 +78,19 @@
         </nav>
     </header>
 
-    <main role="main" class="container">
+    <main style="margin-top: 10vh" role="main" class="container">
 
         <div class="row">
 
             <div class="col-md-12">
-                {% if messages %} {% for message in messages %}
+                {% if messages %}
+                    {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
                     {{ message }}
                 </div>
-                {% endfor %} {% endif %} {% block content %} {% endblock %}
+                    {% endfor %}
+                {% endif %}
+                {% block content %}  {% endblock %}
 
             </div>
 
@@ -92,7 +98,18 @@
 
     </main>
 
-    {% include 'blog/newfootertest.html' %}
+	</div>
+
+	<div id="push"></div>
+</div>
+
+
+
+    <div id="FOOTERTEST">
+
+	{% include 'blog/newfootertest.html' %}
+
+    </div>
 
     <!-- Optional JavaScript -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
