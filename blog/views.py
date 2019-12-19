@@ -217,21 +217,22 @@ class CommentAPI(APIView):
         new_comment = Comment(author=author, content=content, post=post)
         new_comment.save()
 
-        return Response()
+        data= {
+            "comment_id": new_comment.id,
+            "date": new_comment.date_posted
+        }
+
+        return Response(data)
 
 class DeleteCommentAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        post_id = request.GET.get('post_id')
-        content = request.GET.get('content')
-        author_name = request.GET.get('author')
-
-        author = User.objects.get(username=author_name)
-        post = Post.objects.get(id=post_id)
+        comment_id = request.GET.get('comment_id')
+        print(comment_id)
         
-        comment = Comment.objects.get(author=author, content=content, post=post)
+        comment = Comment.objects.get(id=comment_id)
         comment.delete()
 
         return Response()

@@ -6,12 +6,13 @@
 
 #commentSection {
     background-color: white;
-    width: 50%;
+    width: 100%;
     font-family: Arial, sans-serif;
     /*padding-bottom: 10%;*/
      /* height: 50%;*/
     border-radius: 5px;
     background-color: transparent;
+
 }
 
 #postedComments {
@@ -29,7 +30,7 @@
 
 textarea {
     display: block;
-    width: 80%;
+    width: 100%;
     resize: none;
     outline: none;
     height: 100px;
@@ -92,20 +93,20 @@ textarea {
         {% endif %}
       </a>
     </div>
-  </div>
-</article>
-
-<div id="commentSection">
+  <div id="commentSection" class="mt-3">
   <div id="postedComments">
     <p id="intro">Be the first to react</p>
   </div>
   <div id="textSection">
-      <textarea name="userComment" id="userComment" maxlength="200"></textarea>
+      <textarea name="userComment" id="userComment" maxlength="200" placeholder="Leave a comment" class="mt-2"></textarea>
     <!--<input name="userComment" id="userComment" type="text"></input>-->
     <button id="trigger" class="btn btn-primary mt-2">Comment!</button>
   </div>
 </div>
 <div id="push"></div>
+  </div>
+
+</article>
 
 <script>
   var stars = document.getElementsByClassName("fa-star");
@@ -126,52 +127,65 @@ textarea {
   var firstComment = true;
 
 
-  function createComment(commentOfUser, userName) {
+  function createComment(commentOfUser, userName, comment_id, mayDelete, datum, urllelienetpuissttcamarcheetpuistusaveetaprestunrunlesiteetcamarcheetonvarater) {
       if(firstComment){
           let intro = document.getElementById("intro");
           intro.parentNode.removeChild(intro);
           firstComment = false;
-      }
-      let buttonDelete = document.createElement("button");
-      buttonDelete.innerHTML = "Delete fdp";
-      buttonDelete.classList.add("btn");
-      buttonDelete.classList.add("btn-danger");
-
-      buttonDelete.onclick = function() {
-          $.ajax({
-            url: '{% url "comment" %}',
-            method: "GET",
-            data: {
-              'content': comment,
-              'author': '{{ user.username }}',
-              'post_id': '{{ post.id }}'
-            }
-        });
       }
 
       let newComment = document.createElement("div");
       newComment.classList.add("oldComment");
       let username = document.createElement("p");
       username.classList.add("authorName");
-      let paraph = document.createElement("p")/*.innerText*/ //= commentOfUser;
-      username.innerText = userName + ":";
+      /*let date = document.createElement("small");
+      date.innerText = datum;
+      date.classList.add("text-muted");*/
+      let paraph = document.createElement("p");/*.innerText*/ //= commentOfUser;
+      username.innerHTML = '<a href="' + urllelienetpuissttcamarcheetpuistusaveetaprestunrunlesiteetcamarcheetonvarater + '">' + userName  + '</a>' + " - " + "<small>" + datum  + "</small>";
+      //username.appendChild(date);
       paraph.innerText = commentOfUser;
       newComment.appendChild(username);
+     // newComment.appendChild(date);
       newComment.appendChild(paraph);
-      newComment.appendChild(buttonDelete);
       postedComments.prepend(newComment);
+
+      if(mayDelete){
+      let buttonDelete = document.createElement("button");
+      buttonDelete.innerHTML = "Delete";
+      buttonDelete.classList.add("btn");
+      buttonDelete.classList.add("btn-sm");
+      buttonDelete.classList.add("btn-danger");
+
+      buttonDelete.onclick = function() {
+          $.ajax({
+            url: '{% url "comment-delete" %}',
+            method: "GET",
+            data: {
+              'comment_id': comment_id
+            },
+            success: function() {
+                newComment.parentNode.removeChild(newComment);
+            }
+        });
+      }
+      newComment.appendChild(buttonDelete);
+      }
   }
 
   {% for z in post.comments.all %}
       //z.author.profile.image
       //console.log("  {{ z.author.username}}");
-    createComment("{{ z.content }}", "{{ z.author.username}}");
+      {% if z.author == user %}
+       createComment("{{ z.content }}", "{{ z.author.username}}", {{ z.id}}, true, "{{ z.date_posted }}", "{% url 'profile' z.author %}");
+      {%  else %}
+         createComment("{{ z.content }}", "{{ z.author.username}}", {{ z.id}}, false, "{{ z.date_posted }}", "{% url 'profile' z.author %}");
+      {% endif %}
   {% endfor %}
 
 
   submitButton.onclick = function() {
       let comment = userComment.value;
-      createComment(comment, "{{ user.username }}");
       $.ajax({
           url: '{% url "comment" %}',
           method: "GET",
@@ -179,6 +193,10 @@ textarea {
               'content': comment,
               'author': '{{ user.username }}',
               'post_id': '{{ post.id }}'
+          },
+          success : function(data) {
+              createComment(comment, "{{ user.username }}", data.comment_id, true, "now");
+              console.log(typeof data.date);
           }
        });
       userComment.value = "";
