@@ -15,7 +15,8 @@ from blog.views import (
     GetEatingPlaceAPI,
     PostsAPI,
     SearchAutocompleteAPI,
-    CommentAPI
+    CommentAPI,
+    DeleteCommentAPI
     ) 
 from blog import views
 
@@ -35,6 +36,7 @@ urlpatterns = [
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     
     path('comment/', CommentAPI.as_view(), name='comment'),
+    path('comment/delete/', DeleteCommentAPI.as_view(), name='comment-delete'), 
     path('follow/<int:su_pk>/', ProfileFollowToggle.as_view(), name='follow'),
     path('api/follow/<int:su_pk>/', ProfileFollowAPIToggle.as_view(), name='api-follow'),
     path('like/<int:sp_pk>/', PostLikeToggle.as_view(), name='post-like'),

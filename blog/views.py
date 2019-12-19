@@ -217,6 +217,24 @@ class CommentAPI(APIView):
         new_comment = Comment(author=author, content=content, post=post)
         new_comment.save()
 
+        data= {
+            "comment_id": new_comment.id,
+            "date": new_comment.date_posted
+        }
+
+        return Response(data)
+
+class DeleteCommentAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        comment_id = request.GET.get('comment_id')
+        print(comment_id)
+        
+        comment = Comment.objects.get(id=comment_id)
+        comment.delete()
+
         return Response()
 
 
@@ -274,6 +292,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
     def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['title'] = 'Post Detail'
+       #s context['comments'] = 'Post Detail'
         return context
 
 
