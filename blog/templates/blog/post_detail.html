@@ -3,7 +3,6 @@
 
 {% block extra_css %}
 <style>
-
 #commentSection {
     background-color: white;
     width: 100%;
@@ -12,22 +11,17 @@
      /* height: 50%;*/
     border-radius: 5px;
    /* background-color: transparent;*/
-
 }
-
 #postedComments {
     height: 300px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
-
 #userComment {
 }
-
 #push {
     margin-bottom: 5%;
 }
-
 textarea {
     display: block;
     width: 100%;
@@ -35,18 +29,15 @@ textarea {
     outline: none;
     height: 100px;
 }
-
 .authorName {
     font-weight: bold;
 }
-
 .oldComment {
     background-color: snow;
     border-radius: 2px;
     margin-bottom: 1%;
     padding: 1%;
 }
-
 </style>
 {% endblock extra_css %}
 {% block content %}
@@ -111,29 +102,23 @@ textarea {
 <script>
   var stars = document.getElementsByClassName("fa-star");
   var euros = document.getElementsByClassName("fa-eur");
-
   function lightUp(rating, lst, className) {
     for (i = 0; i < rating; ++i) {
       lst[i].classList.add(className);
     }
   }
-
   lightUp({{ post.rating }}, stars, "checked");
   lightUp({{ post.cost }}, euros, "checked2");
-
   var submitButton = document.getElementById("trigger");
   var userComment = document.getElementById("userComment");
   var postedComments = document.getElementById("postedComments");
   var firstComment = true;
-
-
   function createComment(commentOfUser, userName, comment_id, mayDelete, datum, userURL) {
       if(firstComment){
           let intro = document.getElementById("intro");
           intro.parentNode.removeChild(intro);
           firstComment = false;
       }
-
       let newComment = document.createElement("div");
       newComment.classList.add("oldComment");
       let username = document.createElement("p");
@@ -149,14 +134,12 @@ textarea {
      // newComment.appendChild(date);
       newComment.appendChild(paraph);
       postedComments.prepend(newComment);
-
       if(mayDelete){
       let buttonDelete = document.createElement("button");
       buttonDelete.innerHTML = "Delete";
       buttonDelete.classList.add("btn");
       buttonDelete.classList.add("btn-sm");
       buttonDelete.classList.add("btn-danger");
-
       buttonDelete.onclick = function() {
           $.ajax({
             url: '{% url "comment-delete" %}',
@@ -172,7 +155,6 @@ textarea {
       newComment.appendChild(buttonDelete);
       }
   }
-
   {% for z in post.comments.all %}
       //z.author.profile.image
       //console.log("  {{ z.author.username}}");
@@ -182,8 +164,6 @@ textarea {
          createComment("{{ z.content }}", "{{ z.author.username}}", {{ z.id}}, false, "{{ z.date_posted }}", "{% url 'profile' z.author %}");
       {% endif %}
   {% endfor %}
-
-
   submitButton.onclick = function() {
       if(userComment.value !== ""){
       let comment = userComment.value;
@@ -206,4 +186,3 @@ textarea {
 </script>
 
 {% endblock content %}
-
