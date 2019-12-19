@@ -43,7 +43,7 @@
       <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
       <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
 
-      <div style="display: inline-block;">
+      <div style="margin-left: 2%; display: inline-block;">
         {% if post.author == user %}
         <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
         <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a>

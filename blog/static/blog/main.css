@@ -29,11 +29,12 @@ ul {
 
 #login {
   width: 20vw;
-  position: relative;
+    position: relative;
 }
 
 #register {
   width: 37vw;
+
 }
 
 .bg-steel {
@@ -138,11 +139,10 @@ a.article-title:hover {
 footer {
   background-color: #2b2b2b;
   opacity: 70%;
-  padding: 45px 0 20px;
+  padding: 25px 0 20px;
   font-size: 17px;
   line-height: 20px;
   color: snow;
-  height: 5%;
   width: 100%;
   text-align:center;
 }
