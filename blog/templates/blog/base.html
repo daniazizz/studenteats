@@ -133,23 +133,26 @@
             $(".like-btn").click(function(e) {
                 e.preventDefault()
                 var this_ = $(this)
-                var likeUrl = this_.attr("data-href")
+                var likeUrl = "{% url 'api-toggle' %}"
+                var postId = this_.attr("data-id")
                 $.ajax({
                     url: likeUrl,
                     method: "GET",
-                    data: {},
+                    data: {
+                        'id': postId,
+                        'type': 'like'
+                    },
                     success: function(data) {
                         console.log(data)
-                        likeCount = data.likeCount
-                        if (data.liked) {
+                        likeCount = data.count
+                        if (data.toggled) {
                             updateText(this_, likeCount + " Unlike")
                         } else {
                             updateText(this_, likeCount + " Like")
                         }
                     },
-                    error: function(error) {
+                    error: function(error){
                         console.log(error)
-                        console.log("error")
                     }
                 })
             })

@@ -1,34 +1,6 @@
 {% extends "blog/base.html" %}
 
 <!-- Code still needs to be restructured -->
-<script>
-    {% block jquery %}
-    $(".follow-btn").click(function(e) {
-        e.preventDefault()
-        var this_ = $(this)
-        var followUrl = this_.attr("data-href")
-        $.ajax({
-            url: followUrl,
-            method: "GET",
-            data: {},
-            success: function(data) {
-                console.log(data)
-                followersCount = data.followersCount
-                if (data.followed) {
-                    updateText(this_, "Unfollow")
-                } else {
-                    updateText(this_, "Follow")
-                }
-                updateText($("#followersCount"), followersCount)
-            },
-            error: function(error) {
-                console.log(error)
-                console.log("error")
-            }
-        })
-    })
-    {% endblock %}
-</script>
 
 {% block content %}
 <div class="content-section">
@@ -50,7 +22,7 @@
             </div>
             {% else %}
             <!-- Profile follow button: -->
-            <a class="follow-btn btn btn-primary btn-sm mb-1" data-href="{% url 'api-follow' selected_user.id %}" href="{% url 'follow' selected_user.id %}">
+            <a class="follow-btn btn btn-primary btn-sm mb-1" data-id="{{ selected_user.id }}" href="{% url 'follow' selected_user.id %}">
               {% if selected_user.profile in user.profile.following.all %}
               Unfollow
               {% else %}
@@ -63,3 +35,33 @@
 {% include 'blog/blocks/list-posts.html' %}
     {% include 'blog/blocks/paginated.html' %}
 {% endblock content %}
+
+
+<script>
+    {% block jquery %}
+    $(".follow-btn").click(function(e) {
+        e.preventDefault()
+        var this_ = $(this)
+        var followUrl = "{% url 'api-toggle' %}"
+        var userId = this_.attr("data-id")
+        $.ajax({
+            url: followUrl,
+            method: "GET",
+            data: {
+                "id": userId,
+                "type": 'follow'
+            },
+            success: function(data) {
+                console.log(data)
+                followersCount = data.count
+                if (data.toggled) {
+                    updateText(this_, "Unfollow")
+                } else {
+                    updateText(this_, "Follow")
+                }
+                updateText($("#followersCount"), followersCount)
+            }
+        })
+    })
+    {% endblock %}
+</script>

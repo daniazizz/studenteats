@@ -44,7 +44,7 @@
         </div>
 
         <!-- Post like button: -->
-        <a class="like-btn btn btn-success btn-sm mb-1 mt-2" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
+        <a class="like-btn btn btn-success btn-sm mb-1 mt-2" data-id = "{{ post.id }}" href="{% url 'post-like' post.id %}">
                 {% if user in post.likes.all %}
                     {{ post.likes.count }} Unlike
                 {% else %}
