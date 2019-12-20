@@ -1,9 +1,7 @@
 <!--  Block that displays all the posts -->
 {% load static %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}"> 
-
-{% for post in posts %}
+<link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}"> {% for post in posts %}
 <article class="media content-section">
 
     <div class="media-body">
@@ -25,26 +23,26 @@
                     Review for:
                     <a href="{% url 'place-profile' post.place.name %}">{{ post.place.name }}</a>
                 </div>
-                
+
             </div>
         </div>
 
         <!-- Post Body -->
-        <div >
+        <div>
             <h2>
                 <a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a>
             </h2>
 
-        <p>Rating: <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span>
-            <br> Cost: <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span></p>
+            <p>Rating: <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span>
+                <br> Cost: <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span></p>
 
-        <!-- CAROUSEL -->
-        <div style="align-items: center;">
-            {% include 'blog/blocks/carousel.html' %}
-        </div>
+            <!-- CAROUSEL -->
+            <div style="align-items: center;">
+                {% include 'blog/blocks/carousel.html' %}
+            </div>
 
-        <!-- Post like button: -->
-        <a class="like-btn btn btn-success btn-sm mb-1 mt-2" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
+            <!-- Post like button: -->
+            <a class="like-btn btn btn-success btn-sm mb-1 mt-2" data-href="{% url 'api-post-like' post.id %}" href="{% url 'post-like' post.id %}">
                 {% if user in post.likes.all %}
                     {{ post.likes.count }} Unlike
                 {% else %}
@@ -52,7 +50,7 @@
                 {% endif %}
             </a>
         </div>
-        
+
     </div>
 </article>
 
@@ -66,7 +64,15 @@
         }
     }
 
-    lightUp({{post.rating}}, stars, "checked");
-    lightUp({{post.cost}}, euros, "checked2");
+    lightUp({
+        {
+            post.rating
+        }
+    }, stars, "checked");
+    lightUp({
+        {
+            post.cost
+        }
+    }, euros, "checked2");
 </script>
 {% endfor %}

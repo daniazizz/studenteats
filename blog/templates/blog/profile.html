@@ -36,8 +36,6 @@
         <img class="rounded-circle account-img" src="{{ selected_user.profile.image.url }}">
         <div class="media-body">
             <h2 class="account-heading">{{ selected_user.username }}</h2>
-            <!-- Abdoullah: the following/followers variables contain all the following/followers objects, you could display them as a list (like instagram)
-          by looping through them -->
             <p>Following: {{ following.count }}</p>
             <p>Followers:
                 <span id='followersCount'>{{ followers.count }}</span>
