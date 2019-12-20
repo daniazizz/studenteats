@@ -7,18 +7,16 @@ from blog.views import (
     SearchResultListView, 
     PostUpdateView, 
     ProfileFollowToggle,
-    ProfileFollowAPIToggle,
     PostLikeToggle,
-    PostLikeAPIToggle,
     EatingPlaceListView,
     EatingPlacesAPI,
     GetEatingPlaceAPI,
     PostsAPI,
     SearchAutocompleteAPI,
     CommentAPI,
-    DeleteCommentAPI,
     EPAPI,
-    apipageview
+    apipageview,
+    ToggleAPI
     ) 
 from blog import views
 
@@ -38,15 +36,13 @@ urlpatterns = [
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     
     path('comment/', CommentAPI.as_view(), name='comment'),
-    path('comment/delete/', DeleteCommentAPI.as_view(), name='comment-delete'), 
     path('follow/<int:su_pk>/', ProfileFollowToggle.as_view(), name='follow'),
-    path('api/follow/<int:su_pk>/', ProfileFollowAPIToggle.as_view(), name='api-follow'),
     path('like/<int:sp_pk>/', PostLikeToggle.as_view(), name='post-like'),
 
     path('api', apipageview, name='api-page'), 
 
     # APIs
-    path('api/like/<int:sp_pk>/', PostLikeAPIToggle.as_view(), name='api-post-like'),
+    path('api/toggle/', ToggleAPI.as_view(), name='api-toggle'),
     path('api/Eatingplaces/', EatingPlacesAPI.as_view(), name='api-eatingplaces'),
     path('api/SearchAutocomplete/', SearchAutocompleteAPI.as_view(), name='api-search-autocomplete'),
     path('api/GetEatingplace/', GetEatingPlaceAPI.as_view(), name='api-get-eatingplace'),

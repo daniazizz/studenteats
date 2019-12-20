@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse, HttpResponse
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin  # Login required for posting,... User has to be the author for updating
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from blog.models import Post, PostImage, Comment
 from mapservice.models import EatingPlace
@@ -31,43 +31,54 @@ class PostListView(LoginRequiredMixin, ListView):
     context_object_name = 'posts' 
     paginate_by = 5
 
-    def get_queryset(self):  # filters posts list to the ones from user
+    # Filtering out the posts to the ones that are related to the users following and his own posts
+    def get_queryset(self):
         user = self.request.user
         following = user.profile.following.all()
-        return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by(
-            '-date_posted')  # Filtering out the posts to the posts of following or own posts
+        return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by('-date_posted')
 
 
-# View handeling the eating place page:
-class EatingPlaceListView(LoginRequiredMixin, ListView):  # A class based view
+# View handeling eating place profile:
+class EatingPlaceListView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'blog/place_profile.html'
     context_object_name = 'posts'
-    ordering = ['-date_posted']  # Minus symbol to reverse ordering
     paginate_by = 5
 
-    def get_context_data(self, **kwargs):  # Adding extra data in the context to pass on the template
+    # Overriding the default get_context_data method, to add more context
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        avg_rating = 0
+        avg_cost = 0
+        posts = self.place.posts.all()
+
+        # Checks wether or not there are posts related to the place.
+        if posts:
+            # Calculates the average
+            avg_rating = round(posts.aggregate(Avg('rating'))['rating__avg'])
+            avg_cost = round(posts.aggregate(Avg('cost'))['cost__avg'])
+
         context['selected_place'] = self.place
-        context['average_rating'] = round(self.place.posts.aggregate(Avg('rating'))['rating__avg'])
-        context['average_cost'] = round(self.place.posts.aggregate(Avg('cost'))['cost__avg'])
+        context['average_rating'] = avg_rating
+        context['average_cost'] = avg_cost
         context['title'] = self.place
         return context
 
-    def get_queryset(self):  # filters posts list to the ones from user
+    # Overriding the default get_queryset method, to only output posts related to the selected place
+    def get_queryset(self):
         self.place = get_object_or_404(EatingPlace, name=self.kwargs.get('name'))
-        return Post.objects.filter(place=self.place).order_by('-date_posted')
+        return self.place.posts.all().order_by('-date_posted')
 
 
-class ProfileListView(LoginRequiredMixin, ListView):  # A class based view
+# View handeling user profiles
+class ProfileListView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'blog/profile.html'
-    context_object_name = 'posts'  # This makes it so that the list of objects is called posts.
-    # as default, the name is ObjectList
-    ordering = ['-date_posted']  # Minus symbol to reverse ordering
+    context_object_name = 'posts'
     paginate_by = 5
 
-    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
+    # Passing extra data in the context
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['selected_user'] = self.user
         context['following'] = self.user.profile.following.all()
@@ -75,9 +86,10 @@ class ProfileListView(LoginRequiredMixin, ListView):  # A class based view
         context['title'] = self.user
         return context
 
-    def get_queryset(self):  # filters posts list to the ones from user
+    # Overriding the default get_queryset method, to only output posts related to the selected user
+    def get_queryset(self):
         self.user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=self.user).order_by('-date_posted')
+        return self.user.posts.all().order_by('-date_posted')
 
 
 class ProfileFollowToggle(RedirectView):
@@ -110,59 +122,50 @@ class PostLikeToggle(RedirectView):
         return reverse('post-detail', args=[s_post_id])
 
 
-class ProfileFollowAPIToggle(APIView):
+# API View handeling the 'toggling' logic
+class ToggleAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]  # differnce with ToeknAuthentication??
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, format=None, **kwargs):
-        s_user_id = self.kwargs['su_pk']
-        s_user = get_object_or_404(User, id=s_user_id)
-        c_user = self.request.user
-        followed = False
-        if c_user.is_authenticated and c_user != s_user:  # A user cannot follow himself
-            if s_user.profile in c_user.profile.following.all():
-                c_user.profile.following.remove(s_user.profile)
-                followed = False
+    def post(self, request, format=None, **kwargs):
+        type_ = request.POST.get('type')
+        id = request.POST.get('id')
+        current_user = self.request.user
+
+        toggled = 'undefined'
+        count = 'undefined'
+
+        def toggle(el, set_):
+            if el in set_.all():
+                set_.remove(el)
+                toggled = False
             else:
-                c_user.profile.following.add(s_user.profile)
-                followed = True
-        followersCount = s_user.profile.followers.count()
+                set_.add(el)
+                toggled = True
+
+            return toggled
+            
+
+        if current_user.is_authenticated:
+            if type_ == 'like':
+                selected_post = get_object_or_404(Post, id=id)
+                toggled = toggle(current_user, selected_post.likes)
+                count = selected_post.likes.count()
+
+            elif type_ == 'follow':
+                selected_user = get_object_or_404(User, id=id)
+                toggled = toggle(selected_user.profile, current_user.profile.following)
+                count = selected_user.profile.followers.count()
+
         data = {
-            "followed": followed,
-            "followersCount": followersCount
+            "toggled": toggled,
+            "count": count
         }
 
         return Response(data)
-
-
-class PostLikeAPIToggle(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None, **kwargs):
-        s_post_id = self.kwargs['sp_pk']
-        s_post = get_object_or_404(Post, id=s_post_id)
-        c_user = self.request.user
-        liked = False
-
-        if c_user.is_authenticated:
-            if c_user in s_post.likes.all():
-                s_post.likes.remove(c_user)
-                liked = False
-            else:
-                s_post.likes.add(c_user)
-                liked = True
-
-        data = {
-            "liked": liked,
-            "likeCount": s_post.likes.count()
-        }
-
-        return Response(data)
-
-
+       
 class SearchAutocompleteAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
+    authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None, **kwargs):
@@ -207,14 +210,16 @@ class EatingPlacesAPI(APIView):
         return JsonResponse(data)
 
 
+# API view handeling the comments logic
 class CommentAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, format=None):
-        post_id = request.GET.get('post_id')
-        content = request.GET.get('content')
-        author_name = request.GET.get('author')
+    # Adding a comment
+    def post(self, request, format=None):
+        post_id = request.POST.get('post_id')
+        content = request.POST.get('content')
+        author_name = request.POST.get('author')
 
         author = User.objects.get(username=author_name)
         post = Post.objects.get(id=post_id)
@@ -222,25 +227,21 @@ class CommentAPI(APIView):
         new_comment.save()
 
         data= {
-            "comment_id": new_comment.id,
-            "date": new_comment.date_posted
+            "comment_id": new_comment.id
         }
 
         return Response(data)
 
-class DeleteCommentAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None):
-        comment_id = request.GET.get('comment_id')
-        print(comment_id)
-        
+    # Deleting a comment
+    def delete(self, request, format=None):
+        comment_id = request.POST.get('comment_id')  
         comment = Comment.objects.get(id=comment_id)
-        comment.delete()
+
+        # Checking if the user trying to delete the comment, is the author of the comment
+        if request.user == comment.author:
+            comment.delete()
 
         return Response()
-
 
 
 class GetEatingPlaceAPI(APIView):

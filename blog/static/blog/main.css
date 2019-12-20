@@ -243,8 +243,8 @@ footer {
 	display: inline-block;
 }
 
-#sharebuttons {
-	padding-left: 15%;
+#footersharebuttons {
+	margin: auto;
 	display: inline-block;
 }
 
@@ -252,7 +252,7 @@ footer {
 /* footer will disappear if the screen is smaller than an ipad screen to make it responsive*/
 
 @media (max-width: 750px) {
-	#footer {
+	#footersharebuttons {
 		display: none;
 		visibility: hidden;
 	}

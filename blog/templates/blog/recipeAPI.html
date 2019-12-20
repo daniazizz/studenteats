@@ -11,7 +11,7 @@
                       <ul class="list-group">
                         <li class="list-group-item list-group-item-light" id="ctr">
                             <input type="text" id="searchIngredient" value="">
-                            <button id="searchApiButton">Search</button>
+                            <button id="searchApiButton" class="btn btn-sm btn-primary mb-1">Search</button>
                         </li>
                         <li style="height: 7vh" class="list-group-item list-group-item-light" id="ctr">
                             <div id="title"></div>
@@ -23,7 +23,7 @@
                           <a id="cookingTime"></a>
                         </li>
                         <li class="list-group-item list-group-item-light" id="ctr">
-                             <a style="color: #2b2b2b" href="" id="sourceLink"> Check out the Recipe! </a>
+                             <a href="" id="sourceLink"> Check out the Recipe! </a>
                         </li>
                       </ul>
                     </p>
@@ -41,7 +41,7 @@
     searchButtonApi.onclick = function() {
         let ingredient = ingredientToSearch.value;
         getRecipe(ingredient);
-    }
+    };
     
     function getsource(id) {
         $.ajax({
@@ -50,7 +50,8 @@
 
 
                 document.getElementById("sourceLink").href = res.sourceUrl;
-            }
+            },
+            failure: () => {alert("ERROR: Webservice not available");}
         });
     }
 
@@ -60,11 +61,11 @@
             success: function(res) {
 
                 document.getElementById("title").innerHTML = "<p>" + res.results[0].title + "</p>";
-                document.getElementById("mealImage").innerHTML = "<img src='"+res.baseUri+res.results[0].image+"' width='250vw' height='200vh'/>";
+                document.getElementById("mealImage").innerHTML = "<img src='" + res.baseUri+res.results[0].image + "' width='250vw' height='200vh'/>";
                 document.getElementById("cookingTime").innerHTML= "<p> Cooking time: " + res.results[0].readyInMinutes + " minutes </p>";
                 getsource(res.results[0].id);
             },
-            failure: (e) => {alert("fail");}
+            failure: () => {alert("ERROR: Webservice not available");}
         });
     }
 </script>
