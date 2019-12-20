@@ -28,7 +28,7 @@
                 <h3>Eating place:</h3>
 
                 <label for="place-name">Place Name: </label>
-                <input id="place-name" type="text" name="place-name" required>
+                <input id="place-name" type="text" name="place-name" autocomplete="off" required>
 
                 <!-- Input for place address -->
                 <label for="place-address">Place Address: </label>
@@ -60,42 +60,6 @@
       </form>
   </div>
 {% endblock content %}
-<script>
-{% block jquery %}
-jQuery(function() {
-    $("#place-name").on('keyup', function(){
-        var value = $(this).val();
-        $.ajax({
-            url: "{% url 'api-eatingplaces' %}",
-            data: {
-            'query': value
-            },
-            dataType: 'json',
-            success: function (data) {
-                list = data.results;
-                $("#place-name").autocomplete({
-                source: list,
-                minLength: 1,
-                select: function(event, ui) {
-                    var place_name = ui.item.value
-                    $.get(
-                        '{% url 'api-get-eatingplace' %}',
-                        {'query': place_name},
-                        function(data) {
-                            var place_address = data[0].address
-                            console.log(place_address);
-                            $("#place-address").val(place_address);
-                        },
-                        'json'
-                     )
-                }
-                });
-            }
-        });
-    });
-});
-{% endblock %}
-</script>
 
 
 
@@ -162,6 +126,38 @@ jQuery(function() {
     addOutFocusEffectOn(dollars, "checked2");
     addClickEffectOn(dollars, "clicked2");
 
+    jQuery(function() {
+    $("#place-name").on('keyup', function(){
+        var value = $(this).val();
+        $.ajax({
+            url: "{% url 'api-eatingplaces' %}",
+            data: {
+            'query': value
+            },
+            dataType: 'json',
+            success: function (data) {
+                list = data.results;
+                $("#place-name").autocomplete({
+                source: list,
+                minLength: 1,
+                select: function(event, ui) {
+                    var place_name = ui.item.value
+                    $.get(
+                        '{% url 'api-get-eatingplace' %}',
+                        {'query': place_name},
+                        function(data) {
+                            var place_address = data[0].address
+                            console.log(place_address);
+                            $("#place-address").val(place_address);
+                        },
+                        'json'
+                     )
+                }
+                });
+            }
+        });
+    });
+});
   </script>
 {% endblock extra_jss %}
 

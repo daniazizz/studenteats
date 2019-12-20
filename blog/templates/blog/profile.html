@@ -1,7 +1,5 @@
 {% extends "blog/base.html" %}
 
-<!-- Code still needs to be restructured -->
-
 {% block content %}
 <div class="content-section">
     <div class="media">
@@ -37,8 +35,9 @@
 {% endblock content %}
 
 
+
+{% block extra_jss %}
 <script>
-    {% block jquery %}
     $(".follow-btn").click(function(e) {
         e.preventDefault()
         var this_ = $(this)
@@ -63,5 +62,5 @@
             }
         })
     })
-    {% endblock %}
 </script>
+{% endblock %}

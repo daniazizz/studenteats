@@ -121,40 +121,41 @@ class PostLikeToggle(RedirectView):
                 messages.success(self.request, f'You liked {s_post}')
         return reverse('post-detail', args=[s_post_id])
 
+
+# API View handeling the 'toggling' logic
 class ToggleAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]  # differnce with ToeknAuthentication??
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, format=None, **kwargs):
-        type_ = request.GET.get('type')
-        id = request.GET.get('id')
-        c_user = self.request.user
+    def post(self, request, format=None, **kwargs):
+        type_ = request.POST.get('type')
+        id = request.POST.get('id')
+        current_user = self.request.user
 
-        toggled = 'error'
-        count = 'error'
+        toggled = 'undefined'
+        count = 'undefined'
 
-        if c_user.is_authenticated:
+        def toggle(el, set_):
+            if el in set_.all():
+                set_.remove(el)
+                toggled = False
+            else:
+                set_.add(el)
+                toggled = True
+
+            return toggled
+            
+
+        if current_user.is_authenticated:
             if type_ == 'like':
                 selected_post = get_object_or_404(Post, id=id)
-                if c_user in selected_post.likes.all():
-                    selected_post.likes.remove(c_user)
-                    toggled = False
-                else:
-                    selected_post.likes.add(c_user)
-                    toggled = True
+                toggled = toggle(current_user, selected_post.likes)
                 count = selected_post.likes.count()
 
             elif type_ == 'follow':
                 selected_user = get_object_or_404(User, id=id)
-                if c_user != selected_user and selected_user.profile in c_user.profile.following.all():
-                    c_user.profile.following.remove(selected_user.profile)
-                    toggled = False
-                else:
-                    c_user.profile.following.add(selected_user.profile)
-                    toggled = True
-
+                toggled = toggle(selected_user.profile, current_user.profile.following)
                 count = selected_user.profile.followers.count()
-
 
         data = {
             "toggled": toggled,
@@ -209,14 +210,16 @@ class EatingPlacesAPI(APIView):
         return JsonResponse(data)
 
 
+# API view handeling the comments logic
 class CommentAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, format=None):
-        post_id = request.GET.get('post_id')
-        content = request.GET.get('content')
-        author_name = request.GET.get('author')
+    # Adding a comment
+    def post(self, request, format=None):
+        post_id = request.POST.get('post_id')
+        content = request.POST.get('content')
+        author_name = request.POST.get('author')
 
         author = User.objects.get(username=author_name)
         post = Post.objects.get(id=post_id)
@@ -229,19 +232,16 @@ class CommentAPI(APIView):
 
         return Response(data)
 
-class DeleteCommentAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None):
-        comment_id = request.GET.get('comment_id')
-        print(comment_id)
-        
+    # Deleting a comment
+    def delete(self, request, format=None):
+        comment_id = request.POST.get('comment_id')  
         comment = Comment.objects.get(id=comment_id)
-        comment.delete()
+
+        # Checking if the user trying to delete the comment, is the author of the comment
+        if request.user == comment.author:
+            comment.delete()
 
         return Response()
-
 
 
 class GetEatingPlaceAPI(APIView):

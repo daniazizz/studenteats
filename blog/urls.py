@@ -14,7 +14,6 @@ from blog.views import (
     PostsAPI,
     SearchAutocompleteAPI,
     CommentAPI,
-    DeleteCommentAPI,
     EPAPI,
     apipageview,
     ToggleAPI
@@ -37,7 +36,6 @@ urlpatterns = [
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     
     path('comment/', CommentAPI.as_view(), name='comment'),
-    path('comment/delete/', DeleteCommentAPI.as_view(), name='comment-delete'), 
     path('follow/<int:su_pk>/', ProfileFollowToggle.as_view(), name='follow'),
     path('like/<int:sp_pk>/', PostLikeToggle.as_view(), name='post-like'),
 

@@ -97,7 +97,11 @@ textarea {
 <div id="push"></div>
   </div>
 
-</article>
+</article> 
+
+  {% endblock content %}
+  
+{% block extra_jss %}
 
 <script>
   var stars = document.getElementsByClassName("fa-star");
@@ -142,8 +146,8 @@ textarea {
       buttonDelete.classList.add("btn-danger");
       buttonDelete.onclick = function() {
           $.ajax({
-            url: '{% url "comment-delete" %}',
-            method: "GET",
+            url: '{% url "comment" %}',
+            method: "DELETE",
             data: {
               'comment_id': comment_id
             },
@@ -155,6 +159,8 @@ textarea {
       newComment.appendChild(buttonDelete);
       }
   }
+
+
   {% for z in post.comments.all %}
       //z.author.profile.image
       //console.log("  {{ z.author.username}}");
@@ -164,12 +170,14 @@ textarea {
          createComment("{{ z.content }}", "{{ z.author.username}}", {{ z.id}}, false, "{{ z.date_posted }}", "{% url 'profile' z.author %}");
       {% endif %}
   {% endfor %}
+
+
   submitButton.onclick = function() {
       if(userComment.value !== ""){
       let comment = userComment.value;
       $.ajax({
           url: '{% url "comment" %}',
-          method: "GET",
+          method: "POST",
           data: {
               'content': comment,
               'author': '{{ user.username }}',
@@ -177,12 +185,13 @@ textarea {
           },
           success : function(data) {
               createComment(comment, "{{ user.username }}", data.comment_id, true, "now");
-              console.log(typeof data.date);
           }
        });
       userComment.value = "";
       }
   }
-</script>
+</script>         
+{% endblock %}
 
-{% endblock content %}
+  
+
