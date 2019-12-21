@@ -2,219 +2,106 @@
 {% load static %}
 
 {% block extra_css %}
-<style>
-#commentSection {
-    background-color: white;
-    width: 100%;
-    font-family: Arial, sans-serif;
-    padding: 10px;
-     /* height: 50%;*/
-   /* background-color: transparent;*/
-   border-style: inset;
-   border-width: 1px;
-}
-#postedComments {
-    height: 300px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-#userComment {
-}
-#push {
-    margin-bottom: 5%;
-}
-textarea {
-    display: block;
-    width: 100%;
-    resize: none;
-    outline: none;
-    height: 100px;
-}
-.authorName {
-    font-weight: bold;
-}
-.oldComment {
-    background-color: snow;
-    border-radius: 2px;
-    margin-bottom: 1%;
-    padding: 1%;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="{% static 'blog/post_detail.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}" />
 {% endblock extra_css %}
+
 {% block content %}
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
-
-
 <article class="media content-section">
+    <div class="media-body">
+        <!-- Post Header -->
+        <div class="article-metadata">
+            <div style="display: inline-block;">
+                <a class="mr-2" href="{% url 'profile' post.author.username %}">
+                    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
+                </a>
+            </div>
+            <div style="display: inline-block; vertical-align: middle;">
+                <div>
+                    <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a> {% if post.author == user %}
+                    <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
+                    <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a> {% endif %}
+                </div>
+                <div>
+                    <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
+                </div>
 
-  <div class="media-body">
-      <!-- Post Header -->
-      <div class="article-metadata">
-          <div style="display: inline-block;">
-              <a class="mr-2" href="{% url 'profile' post.author.username %}">
-                  <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
-              </a>
-          </div>
-          <div style="display: inline-block; vertical-align: middle;">
-              <div>
-                  <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
-                  {% if post.author == user %}
-                  <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
-                  <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
-                  {% endif %}
-              </div>
-              <div>
-                  <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
-              </div>
+                <div>
+                    Review for:
+                    <a href="{% url 'place-profile' post.place.name %}">{{ post.place.name }}</a>
+                </div>
 
-              <div>
-                  Review for:
-                  <a href="{% url 'place-profile' post.place.name %}">{{ post.place.name }}</a>
-              </div>
+            </div>
+            <!-- Share buttons -->
 
-          </div>
-          <!-- Share buttons -->
-          
-      </div>
+        </div>
 
-      <!-- Post Body -->
-      <div>
-          <h2>
+        <!-- Post Body -->
+        <div>
+            <h2>
               <a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a>
           </h2>
 
-          <p>Rating: <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span>
-              <br> Cost: <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span></p>
+            <p>Rating: <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span>
+                <br> Cost: <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span></p>
 
-          <!-- CAROUSEL -->
-          <div>
-              {% include 'blog/blocks/carousel.html' %}
-          </div>
-          <p class="article-content mt-3">{{ post.content }}</p>
+            <!-- CAROUSEL -->
+            <div>
+                {% include 'blog/blocks/carousel.html' %}
+            </div>
+            <p class="article-content mt-3">{{ post.content }}</p>
 
-      <!-- Post like button: -->
-      <div>
-        <a class="like-btn btn btn-success btn-sm mb-1 mt-2" data-id = "{{ post.id }}" href="{% url 'post-like' post.id %}">
-          {% if user in post.likes.all %}
-              {{ post.likes.count }} Unlike
-          {% else %}
-              {{ post.likes.count }} Like
-          {% endif %}
-        </a>
-        <div style="float: right;" id="sharebuttons" class="sharethis-inline-share-buttons"></div>
-      </div>
+            <!-- Post like button: -->
+            <div>
+                <a class="like-btn btn btn-success btn-sm mb-1 mt-2" data-id="{{ post.id }}" href="{% url 'post-like' post.id %}">
+                {% if user in post.likes.all %}
+                {{ post.likes.count }} Unlike
+                {% else %}
+                {{ post.likes.count }} Like
+                {% endif %}
+                </a>
+                <div style="float: right;" id="sharebuttons" class="sharethis-inline-share-buttons"></div>
+            </div>
+        </div>
+
+        <section id="commentSection" class="mt-3">
+            <div id="postedComments">
+                <p id="intro">Be the first to react</p>
+            </div>
+            <div id="textSection">
+                <textarea name="userComment" id="userComment" maxlength="200" placeholder="Leave a comment" class="mt-2"></textarea>
+                <button id="trigger" class="btn btn-primary mt-2">Comment!</button>
+            </div>
+        </section>
+        <div id="push"></div>
     </div>
-
-      <div id="commentSection" class="mt-3">
-        <div id="postedComments">
-          <p id="intro">Be the first to react</p>
-        </div>
-        <div id="textSection">
-          <textarea name="userComment" id="userComment" maxlength="200" placeholder="Leave a comment" class="mt-2"></textarea>
-          <button id="trigger" class="btn btn-primary mt-2">Comment!</button>
-        </div>
-      </div>
-      <div id="push"></div>
-        </div>
-
-  </div>
 </article>
+{% endblock content %}
 
-  {% endblock content %}
-  
 {% block extra_jss %}
-
+<script src="{% static 'blog/post_detail.js'%}"></script>
 <script>
-  var stars = document.getElementsByClassName("fa-star");
-  var euros = document.getElementsByClassName("fa-eur");
-  function lightUp(rating, lst, className) {
-    for (i = 0; i < rating; ++i) {
-      lst[i].classList.add(className);
+    var stars = document.getElementsByClassName("fa-star");
+    var euros = document.getElementsByClassName("fa-eur");
+
+    function lightUp(rating, lst, className) {
+        for (i = 0; i < rating; ++i) {
+            lst[i].classList.add(className);
+        }
     }
-  }
-  lightUp({{ post.rating }}, stars, "checked");
-  lightUp({{ post.cost }}, euros, "checked2");
-  var submitButton = document.getElementById("trigger");
-  var userComment = document.getElementById("userComment");
-  var postedComments = document.getElementById("postedComments");
-  var firstComment = true;
-  function createComment(commentOfUser, userName, comment_id, mayDelete, datum, userURL) {
-      if(firstComment){
-          let intro = document.getElementById("intro");
-          intro.parentNode.removeChild(intro);
-          firstComment = false;
-      }
-      let newComment = document.createElement("div");
-      newComment.classList.add("oldComment");
-      let username = document.createElement("p");
-      username.classList.add("authorName");
-      /*let date = document.createElement("small");
-      date.innerText = datum;
-      date.classList.add("text-muted");*/
-      let paraph = document.createElement("p");/*.innerText*/ //= commentOfUser;
-      username.innerHTML = '<a href="' + userURL + '">' + userName  + '</a>' + " - " + "<small>" + datum  + "</small>";
-      //username.appendChild(date);
-      paraph.innerText = commentOfUser;
-      newComment.appendChild(username);
-     // newComment.appendChild(date);
-      newComment.appendChild(paraph);
-      postedComments.prepend(newComment);
-      if(mayDelete){
-      let buttonDelete = document.createElement("button");
-      buttonDelete.innerHTML = "Delete";
-      buttonDelete.classList.add("btn");
-      buttonDelete.classList.add("btn-sm");
-      buttonDelete.classList.add("btn-danger");
-      buttonDelete.onclick = function() {
-          $.ajax({
-            url: '{% url "comment" %}',
-            method: "DELETE",
-            data: {
-              'comment_id': comment_id
-            },
-            success: function() {
-                newComment.parentNode.removeChild(newComment);
-            }
-        });
-      };
-      newComment.appendChild(buttonDelete);
-      }
-  }
 
+    lightUp({{ post.rating }}, stars, "checked");
+    lightUp({{ post.cost }}, euros, "checked2");
 
-  {% for z in post.comments.all %}
-      //z.author.profile.image
-      //console.log("  {{ z.author.username}}");
-      {% if z.author == user %}
-       createComment("{{ z.content }}", "{{ z.author.username}}", {{ z.id}}, true, "{{ z.date_posted }}", "{% url 'profile' z.author %}");
-      {%  else %}
-         createComment("{{ z.content }}", "{{ z.author.username}}", {{ z.id}}, false, "{{ z.date_posted }}", "{% url 'profile' z.author %}");
-      {% endif %}
-  {% endfor %}
+    linkToSubmitButton("{% url 'comment' %}", "{{ user.username }}", "{{ post.id }}", '{% url "profile" user.username %}');
 
-
-  submitButton.onclick = function() {
-      if(userComment.value !== ""){
-      let comment = userComment.value;
-      $.ajax({
-          url: '{% url "comment" %}',
-          method: "POST",
-          data: {
-              'content': comment,
-              'author': '{{ user.username }}',
-              'post_id': '{{ post.id }}'
-          },
-          success : function(data) {
-              createComment(comment, "{{ user.username }}", data.comment_id, true, "now");
-          }
-       });
-      userComment.value = "";
-      }
-  }
-</script>         
-{% endblock %}
-
-  
-
+    {% for comment in post.comments.all %}
+    {% if comment.author == user %}
+    createComment("{{ comment.content }}", "{{ comment.author.username}}", {{ comment.id }}, true, "{{ comment.date_posted }}", "{% url 'profile' comment.author %}", "{% url 'comment' %}");
+    {% else %}
+    createComment("{{ comment.content }}", "{{ comment.author.username}}", {{ comment.id }}, false, "{{ comment.date_posted }}", "{% url 'profile' comment.author %}", "{% url 'comment' %}");
+    {% endif %}
+    {% endfor %}
+</script>
+{% endblock extra_jss %}
