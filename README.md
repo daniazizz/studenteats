@@ -1,5 +1,5 @@
 # STUDENTEATS
-## A web application for students to share their favorite places to eat.
+## A web application for students to share their favorite places to eat
 
 ### Prerequisites
 ```
