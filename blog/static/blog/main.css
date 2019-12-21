@@ -1,29 +1,25 @@
 /* -- new footer test */
-* { /* alle elementen resetten, best de Yahoo! reset gebruiken of iets vergelijkbaars */
-
-	margin: 0;
-}
 
 body,
-html { /* De body en html 100% hoogte geven */
+html {
+	/* De body en html 100% hoogte geven */
 	height: 100%;
 }
 
-
-#wrapper { /* negatieve margin is gelijk aan hoogte van de footer */
+#wrapper {
+	/* negatieve margin is gelijk aan hoogte van de footer */
 	min-height: 100%;
 	height: auto !important;
 	height: 100%;
-	margin: 0 auto -100px;
+	margin: 0 auto -1%;
 }
 
-#push, #FOOTERTEST { /* De body en html 100% hoogte geven */
-	height: 100px;
+#push,
+#footerpush {
+	/* De body en html 100% hoogte geven */
+	height: 1%;
+	width: 100%;
 }
-
-
-
-
 
 body {
 	background-size: cover;
@@ -59,8 +55,24 @@ ul {
 	position: relative;
 }
 
+@media (max-width: 750px) {
+	#login {
+		width: 70vw;
+		margin: auto;
+		margin-top: 10%;
+	}
+}
+
 #register {
 	width: 37vw;
+}
+
+@media (max-width: 750px) {
+	#register {
+		width: 75vw;
+		height: auto;
+		margin: 10% auto auto;
+	}
 }
 
 .bg-steel {
@@ -88,7 +100,11 @@ ul {
 	background-color: #535353;
 }
 
-
+@media (max-width: 750px) {
+	#respcarousel {
+		width: 300px;
+	}
+}
 
 .site-header .navbar-nav .nav-link:hover {
 	color: #333333;
@@ -227,8 +243,8 @@ footer {
 	display: inline-block;
 }
 
-#sharebuttons {
-	padding-left: 15%;
+#footersharebuttons {
+	margin: auto;
 	display: inline-block;
 }
 
@@ -236,7 +252,7 @@ footer {
 /* footer will disappear if the screen is smaller than an ipad screen to make it responsive*/
 
 @media (max-width: 750px) {
-	#footer {
+	#footersharebuttons {
 		display: none;
 		visibility: hidden;
 	}
@@ -255,6 +271,14 @@ a[href="?page="] {
 	background-color: white;
 	border-radius: 3px;
 	font-size: 1.2em;
+}
+
+@media (max-width: 750px) {
+	#logout {
+		width: 70vw;
+		margin: auto;
+		margin-top: 10%;
+	}
 }
 
 #logo {
@@ -279,7 +303,6 @@ a[href="?page="] {
 
 /*  -------SIDEBAR BUTTON  STYLING*/
 
-
 .dropdown {
 	display: inline-block;
 }
@@ -299,10 +322,10 @@ a[href="?page="] {
 }
 
 
-
-
 /* sidebar list*/
-#ctr{
+
+#ctr {
 	text-align: center;
 	position: center;
 }
+
