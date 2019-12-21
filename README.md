@@ -20,6 +20,11 @@ pip install six
 pip install geopy
 ```
 
+### Running the application
+
+You can run the application by executing this command :
+```python manage.py runserver```
+
 ##### **CREDENTIALS**
 * username: 
 * password:

@@ -292,6 +292,7 @@ a[href="?page="] {
 	display: none;
 	position: absolute;
 	z-index: 1;
+	right: 0;
 }
 
 .dropdown-content a:hover {
@@ -309,4 +310,5 @@ a[href="?page="] {
 	text-align: center;
 	position: center;
 }
+
 
