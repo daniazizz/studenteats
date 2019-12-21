@@ -161,8 +161,8 @@
 
             // End of AJAX CSRF-TOKEN validation setup (taken from django documentation)
 
-            // Reference: https://www.youtube.com/watch?v=pkPRtQf6oQ8&t=1549s
-            // Handling the like button logic with ajax
+            // Inspiration for like button, ref: https://www.youtube.com/watch?v=pkPRtQf6oQ8&t=1549s
+            // Handling the like button logic with ajax:
             $(".like-btn").click(function(e) {
                 e.preventDefault()
                 var this_ = $(this)
@@ -189,6 +189,8 @@
                     }
                 })
             })
+            
+            // Autocomplete searchbar using ajax:
             jQuery(function() {
                 var search = $("#search")
                 search.on('keyup', function() {

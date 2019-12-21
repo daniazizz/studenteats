@@ -9,7 +9,7 @@ from blog.views import (
     ProfileFollowToggle,
     PostLikeToggle,
     EatingPlaceListView,
-    EatingPlacesAPI,
+    EatingPlaceAutocompleteAPI,
     GetEatingPlaceAPI,
     PostsAPI,
     SearchAutocompleteAPI,
@@ -39,13 +39,17 @@ urlpatterns = [
     path('follow/<int:su_pk>/', ProfileFollowToggle.as_view(), name='follow'),
     path('like/<int:sp_pk>/', PostLikeToggle.as_view(), name='post-like'),
 
-    path('api', apipageview, name='api-page'), 
+    path('api', apipageview, name='api-page'),
+    path('replace', apipageview, name='api-page'),
+
 
     # APIs
     path('api/toggle/', ToggleAPI.as_view(), name='api-toggle'),
-    path('api/Eatingplaces/', EatingPlacesAPI.as_view(), name='api-eatingplaces'),
+    path('api/Eatingplaces/', EatingPlaceAutocompleteAPI.as_view(), name='api-eatingplace-autocomplete'),
     path('api/SearchAutocomplete/', SearchAutocompleteAPI.as_view(), name='api-search-autocomplete'),
     path('api/GetEatingplace/', GetEatingPlaceAPI.as_view(), name='api-get-eatingplace'),
+
+    # Public APIs
     path('api/Posts/', PostsAPI.as_view(), name='api-posts'),
     path('api/EPS/', EPAPI.as_view(), name='api-ep')
 ]

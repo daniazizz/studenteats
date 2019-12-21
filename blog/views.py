@@ -20,25 +20,29 @@ from geopy.geocoders import Bing
 import json
 from django.http import JsonResponse
 
-
+# A very simple function-based view for the api page
 def apipageview(request):
     return render(request, 'blog/api-page.html')
     
-
+## Class-based ListView for the home page
+# It provides:
+# - Pagination
+# - A filtered Post queryset
 class PostListView(LoginRequiredMixin, ListView): 
     model = Post
     template_name = 'blog/home.html'
     context_object_name = 'posts' 
     paginate_by = 5
 
-    # Filtering out the posts to the ones that are related to the users following and his own posts
+    # Filtering out the posts to the ones that are related to the users' following,  and his own posts
     def get_queryset(self):
         user = self.request.user
         following = user.profile.following.all()
         return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by('-date_posted')
 
 
-# View handeling eating place profile:
+## Class-based ListView handeling eating place profile:
+# Providing pagination, aswell as a filtered queryset of Posts and other data in context
 class EatingPlaceListView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'blog/place_profile.html'
@@ -52,9 +56,9 @@ class EatingPlaceListView(LoginRequiredMixin, ListView):
         avg_cost = 0
         posts = self.place.posts.all()
 
-        # Checks wether or not there are posts related to the place.
+        # Checks wether or not there is atleast one post related to the place.
         if posts:
-            # Calculates the average
+            # Calculates the average rating and cost
             avg_rating = round(posts.aggregate(Avg('rating'))['rating__avg'])
             avg_cost = round(posts.aggregate(Avg('cost'))['cost__avg'])
 
@@ -92,199 +96,10 @@ class ProfileListView(LoginRequiredMixin, ListView):
         return self.user.posts.all().order_by('-date_posted')
 
 
-class ProfileFollowToggle(RedirectView):
-    def get_redirect_url(self, *arg, **kwargs):
-        s_user_id = self.kwargs['su_pk']
-        s_user = get_object_or_404(User, id=s_user_id)
-        c_user = self.request.user
-        if c_user.is_authenticated:
-            if s_user.profile in c_user.profile.following.all():
-                c_user.profile.following.remove(s_user.profile)
-                messages.warning(self.request, f'You unfollowed {s_user}')
-            else:
-                c_user.profile.following.add(s_user.profile)
-                messages.success(self.request, f'You followed {s_user}')
-        return reverse('profile', args=[s_user.username])
-
-
-class PostLikeToggle(RedirectView):
-    def get_redirect_url(self, *arg, **kwargs):
-        s_post_id = self.kwargs['sp_pk']
-        s_post = get_object_or_404(Post, id=s_post_id)
-        c_user = self.request.user
-        if c_user.is_authenticated:
-            if c_user in s_post.likes.all():
-                s_post.likes.remove(c_user)
-                messages.warning(self.request, f'You unliked {s_post}')
-            else:
-                s_post.likes.add(c_user)
-                messages.success(self.request, f'You liked {s_post}')
-        return reverse('post-detail', args=[s_post_id])
-
-
-# API View handeling the 'toggling' logic
-class ToggleAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # differnce with ToeknAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, format=None, **kwargs):
-        type_ = request.POST.get('type')
-        id = request.POST.get('id')
-        current_user = self.request.user
-
-        toggled = 'undefined'
-        count = 'undefined'
-
-        def toggle(el, set_):
-            if el in set_.all():
-                set_.remove(el)
-                toggled = False
-            else:
-                set_.add(el)
-                toggled = True
-
-            return toggled
-            
-
-        if current_user.is_authenticated:
-            if type_ == 'like':
-                selected_post = get_object_or_404(Post, id=id)
-                toggled = toggle(current_user, selected_post.likes)
-                count = selected_post.likes.count()
-
-            elif type_ == 'follow':
-                selected_user = get_object_or_404(User, id=id)
-                toggled = toggle(selected_user.profile, current_user.profile.following)
-                count = selected_user.profile.followers.count()
-
-        data = {
-            "toggled": toggled,
-            "count": count
-        }
-
-        return Response(data)
-       
-class SearchAutocompleteAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None, **kwargs):
-        q = request.GET.get('query', '')
-        posts = Post.objects.filter(title__startswith=q)
-        users = User.objects.filter(username__startswith=q)
-        places = EatingPlace.objects.filter(name__startswith=q)
-        locations = EatingPlace.objects.filter(address__icontains=q)
-
-        results = []
-
-        for r in posts:
-            results.append(r.title)
-        for r in users:
-            results.append(r.username)
-        for r in places:
-            results.append(r.name)
-        for r in locations:
-            results.append(r.address)
-
-        data = {
-            "results": results,
-        }
-        return JsonResponse(data)
-
-
-class EatingPlacesAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None, **kwargs):
-        q = request.GET.get('query', '')
-        queryset = EatingPlace.objects.filter(name__startswith=q)
-        results = []
-
-        for r in queryset:
-            results.append(r.name)
-
-        data = {
-            "results": results,
-        }
-        return JsonResponse(data)
-
-
-# API view handeling the comments logic
-class CommentAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    # Adding a comment
-    def post(self, request, format=None):
-        post_id = request.POST.get('post_id')
-        content = request.POST.get('content')
-        author_name = request.POST.get('author')
-
-        author = User.objects.get(username=author_name)
-        post = Post.objects.get(id=post_id)
-        new_comment = Comment(author=author, content=content, post=post)
-        new_comment.save()
-
-        data= {
-            "comment_id": new_comment.id
-        }
-
-        return Response(data)
-
-    # Deleting a comment
-    def delete(self, request, format=None):
-        comment_id = request.POST.get('comment_id')  
-        comment = Comment.objects.get(id=comment_id)
-
-        # Checking if the user trying to delete the comment, is the author of the comment
-        if request.user == comment.author:
-            comment.delete()
-
-        return Response()
-
-
-class GetEatingPlaceAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None, **kwargs):
-        q = request.GET.get('query', '')
-        queryset = EatingPlace.objects.filter(name=q)
-        serializer = EatingPlaceSerializer(queryset, many=True)
-        print(q)
-
-        return Response(serializer.data)
-
-class EPAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None, **kwargs):
-        queryset = EatingPlace.objects.all()
-        serializer = EatingPlaceSerializer(queryset, many=True)
-
-        return Response(serializer.data)
-
-
-class PostsAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  # difference with TokenAuthentication??
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None, **kwargs):
-        queryset = Post.objects.all()
-        serializer = PostSerializer(queryset, many=True)
-
-        return Response(serializer.data)
-
-
 class SearchResultListView(LoginRequiredMixin, ListView):  # A class based view
     model = Post
-    template_name = 'blog/search_result.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts'  # This makes it so that the list of objects is called posts.
-
-    # as default, the name is ObjectList
-    # paginate_by = 5
+    template_name = 'blog/search_result.html'  
+    context_object_name = 'posts'  
 
     def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
@@ -311,9 +126,9 @@ class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
         return context
 
 
-# Reference: https://stackoverflow.com/questions/34006994/how-to-upload-multiple-images-to-a-blog-post-in-django
 @login_required
 def postCreate(request, p_name=None):
+    # Inspiration for the multiple images ref: https://stackoverflow.com/questions/34006994/how-to-upload-multiple-images-to-a-blog-post-in-django
     PostImageFormSet = modelformset_factory(PostImage,
                                             form=PostImageForm, extra=3)
 
@@ -379,7 +194,7 @@ def postCreate(request, p_name=None):
 
     return render(request, 'blog/post_create.html', context)
 
-
+# Class based UpdateView for updating posts
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
@@ -391,21 +206,24 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
-    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
+    ## Adding extra data in the context to pass on the template:
+    def get_context_data(self, **kwargs):  
         context = super().get_context_data(**kwargs)
+        # The post object is used by the template to complete the rating and cost fields
         context['post'] = self.get_object()
         return context
 
     def form_valid(self, form):
+        # Reading the rating and cost fields from the form
         rating = self.request.POST.get('rating')
         cost = self.request.POST.get('cost')
-        form.instance.author = self.request.user  ## Setting the author to the current logged in user
+        form.instance.author = self.request.user 
         form.instance.cost = cost
         form.instance.rating = rating
         return super().form_valid(form)
 
 
-# Uses UserPassesTestMixin to check if the user requesting a post deletion is the author of that post
+# Uses UserPassesTestMixin to check if the user requesting a post deletion, is the author of that post
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     success_url = '/'
@@ -413,3 +231,207 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+
+## These two redirection toggles, are used when javascript is disabled on the user's browser: 
+
+# Class-based RedirectView handeling the follow toggle logic in a redirection manner 
+class ProfileFollowToggle(RedirectView):
+    def get_redirect_url(self, *arg, **kwargs):
+        s_user_id = self.kwargs['su_pk']
+        s_user = get_object_or_404(User, id=s_user_id)
+        c_user = self.request.user
+        if c_user.is_authenticated:
+            if s_user.profile in c_user.profile.following.all():
+                c_user.profile.following.remove(s_user.profile)
+                messages.warning(self.request, f'You unfollowed {s_user}')
+            else:
+                c_user.profile.following.add(s_user.profile)
+                messages.success(self.request, f'You followed {s_user}')
+        return reverse('profile', args=[s_user.username])
+
+# Same as above, but for likes
+class PostLikeToggle(RedirectView):
+    def get_redirect_url(self, *arg, **kwargs):
+        s_post_id = self.kwargs['sp_pk']
+        s_post = get_object_or_404(Post, id=s_post_id)
+        c_user = self.request.user
+        if c_user.is_authenticated:
+            if c_user in s_post.likes.all():
+                s_post.likes.remove(c_user)
+                messages.warning(self.request, f'You unliked {s_post}')
+            else:
+                s_post.likes.add(c_user)
+                messages.success(self.request, f'You liked {s_post}')
+        return reverse('post-detail', args=[s_post_id])
+
+
+## API View handeling the 'toggling' logic (For AJAX calls)
+# Used for like and follow functionalities
+class ToggleAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication] 
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format=None, **kwargs):
+        # 'type' could be 'like' or 'follow'
+        type_ = request.POST.get('type')
+        id_ = request.POST.get('id')
+        current_user = self.request.user
+        # Toggled, a boolean variable representing the state of the toggle
+        toggled = 'undefined'
+        # Count, a number representing the amount of objects (likes, followers) 
+        count = 'undefined'
+
+        # This method removes or adds an element to a set, depending on whether or not it is a memeber of the set.
+        def toggle(el, set_):
+            if el in set_.all():
+                set_.remove(el)
+                toggled = False
+            else:
+                set_.add(el)
+                toggled = True
+
+            return toggled
+            
+        # Uses the 'type' to trigger the correct functionality
+        if current_user.is_authenticated:
+            if type_ == 'like':
+                selected_post = get_object_or_404(Post, id=id_)
+                toggled = toggle(current_user, selected_post.likes)
+                count = selected_post.likes.count()
+
+            elif type_ == 'follow':
+                selected_user = get_object_or_404(User, id=id_)
+                toggled = toggle(selected_user.profile, current_user.profile.following)
+                count = selected_user.profile.followers.count()
+
+        data = {
+            "toggled": toggled,
+            "count": count
+        }
+
+        return Response(data)
+
+## This api is used for the autocomplete functionality on the search field in the navigation bar.
+# Returns a Json response with a listing of all post titles, usernames addresses eating place names/adresses starting with a given query
+class SearchAutocompleteAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        # The query:
+        q = request.GET.get('query', '')
+        # Filterning out the sets:
+        posts = Post.objects.filter(title__startswith=q)
+        users = User.objects.filter(username__startswith=q)
+        places = EatingPlace.objects.filter(name__startswith=q)
+        locations = EatingPlace.objects.filter(address__icontains=q)
+        # Building the result:
+        results = []
+
+        for r in posts:
+            results.append(r.title)
+        for r in users:
+            results.append(r.username)
+        for r in places:
+            results.append(r.name)
+        for r in locations:
+            results.append(r.address)
+
+        data = {
+            "results": results,
+        }
+        return JsonResponse(data)
+
+
+# API view handeling the comments logic
+class CommentAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    # Adding a comment (post request)
+    def post(self, request, format=None):
+        # Fetching the needed information from the request:
+        post_id = request.POST.get('post_id')
+        content = request.POST.get('content')
+        author_name = request.POST.get('author')
+        # Getting the related author and post:
+        author = User.objects.get(username=author_name)
+        post = Post.objects.get(id=post_id)
+        # Creating the comment and saving it:
+        new_comment = Comment(author=author, content=content, post=post)
+        new_comment.save()
+        # Returning the id of the new comment:
+        data= {
+            "comment_id": new_comment.id
+        }
+        return Response(data)
+
+    # Deleting a comment (delete request)
+    def delete(self, request, format=None):
+        # Fetching the information:
+        comment_id = request.POST.get('comment_id')
+        # Getting the related comment:
+        comment = Comment.objects.get(id=comment_id)
+
+        # Checking if the user trying to delete the comment, is the author of the comment:
+        if request.user == comment.author:
+            comment.delete()
+
+        return Response()
+
+# API used for the eating place name field autocomplete when creating a new post
+class EatingPlaceAutocompleteAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication] 
+    permission_classes = [permissions.IsAuthenticated]
+    # Returns a Json response with all the Eating Places names that start with a given query
+    def get(self, request, format=None, **kwargs):
+        # Fetching the query from the get request:
+        q = request.GET.get('query', '')
+        # Filtering out the set of Eating places
+        queryset = EatingPlace.objects.filter(name__startswith=q)
+        # Building the result:
+        results = []
+
+        for r in queryset:
+            results.append(r.name)
+
+        data = {
+            "results": results,
+        }
+        return JsonResponse(data)
+
+## API that provides the data of a specific eating place using a serializer
+# Used for auto-completion of the address field inside a 'new-post form'.
+class GetEatingPlaceAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        q = request.GET.get('query', '')
+        queryset = EatingPlace.objects.filter(name=q)
+        serializer = EatingPlaceSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+## Public API that provides a listing of all the eating places currently inside the database.
+# Makes use the EatingPlaceSerializer to serialize the data of the EatingPlace objects
+class EPAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        queryset = EatingPlace.objects.all()
+        serializer = EatingPlaceSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+## Public API that provides a listing of all the posts currently inside the database.
+# Very similair to the method above
+class PostsAPI(APIView):
+    authentication_classes = [authentication.SessionAuthentication] 
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None, **kwargs):
+        queryset = Post.objects.all()
+        serializer = PostSerializer(queryset, many=True)
+
+        return Response(serializer.data)

@@ -38,6 +38,10 @@
 
 {% block extra_jss %}
 <script>
+    function updateText(obj, newLabel) {
+                obj.text(newLabel)
+            }
+
     $(".follow-btn").click(function(e) {
         e.preventDefault()
         var this_ = $(this)
@@ -45,13 +49,12 @@
         var userId = this_.attr("data-id")
         $.ajax({
             url: followUrl,
-            method: "GET",
+            method: "POST",
             data: {
                 "id": userId,
                 "type": 'follow'
             },
             success: function(data) {
-                console.log(data)
                 followersCount = data.count
                 if (data.toggled) {
                     updateText(this_, "Unfollow")

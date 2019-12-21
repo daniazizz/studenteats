@@ -130,7 +130,7 @@
     $("#place-name").on('keyup', function(){
         var value = $(this).val();
         $.ajax({
-            url: "{% url 'api-eatingplaces' %}",
+            url: "{% url 'api-eatingplace-autocomplete' %}",
             data: {
             'query': value
             },
@@ -147,7 +147,6 @@
                         {'query': place_name},
                         function(data) {
                             var place_address = data[0].address
-                            console.log(place_address);
                             $("#place-address").val(place_address);
                         },
                         'json'
