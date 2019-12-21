@@ -9,7 +9,7 @@ pip package installer
 
 ### Installing
 
-After installing the prerequisites, you can execute `./packtoinstall.sh` on your `bash` terminal or do it manually:
+After installing the prerequisites, you can execute `./packtoinstall.sh` on your **`bash`** terminal or do it manually:
 
 ```
 pip install Django
