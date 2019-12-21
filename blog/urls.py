@@ -16,7 +16,8 @@ from blog.views import (
     CommentAPI,
     EPAPI,
     apipageview,
-    ToggleAPI
+    ToggleAPI,
+    DiscoverView
     ) 
 from blog import views
 
@@ -27,6 +28,7 @@ urlpatterns = [
     # Eating place profile:
     path('place/<str:name>', EatingPlaceListView.as_view(), name='place-profile'),
     path('search/', SearchResultListView.as_view(), name='search-result'),
+    path('discover/', DiscoverView.as_view(), name='discover'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'), ## variable inside url (primary key)
     #Post create:
     path('post/new/', views.postCreate, name='post-create'), ## post creation

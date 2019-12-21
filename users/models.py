@@ -3,16 +3,22 @@ from django.contrib.auth.models import User
 from PIL import Image
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Fields:
+    
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
     bio = models.TextField(max_length=150, default='') 
-    following = models.ManyToManyField('self', symmetrical = False, blank=True, related_name='followers') ## symmetrical = False makes it so that the follow relationship is unidirectional
-    ##Reference https://www.caktusgroup.com/blog/2009/08/14/creating-recursive-symmetrical-many-to-many-relationships-in-django/
+
+    # Relationships:
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Recursieve relationship inspired by ref: https://www.caktusgroup.com/blog/2009/08/14/creating-recursive-symmetrical-many-to-many-relationships-in-django/
+    following = models.ManyToManyField('self', symmetrical = False, blank=True, related_name='followers') 
+
+
     def __str__(self):
         return f'{self.user.username} Profile'
     
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)## Calling parent class' save method
+        super().save(*args, **kwargs)
 
         img = Image.open(self.image.path)
 

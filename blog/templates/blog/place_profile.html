@@ -10,11 +10,11 @@
       <div class="media">
         <div class="media-body">
           <h2 class="account-heading">{{ selected_place.name }}</h2>
-          <p><b>Amount of posts:</b><i>{{ selected_place.posts.count }}</i> <br>
+          <p><b>Amount of posts:</b> <i>{{ selected_place.posts.count }}</i> <br>
              <b>Rating average:</b> <span class="fa fa-star fa-lg"></span><span class="fa fa-star fa-lg"></span><span class="fa fa-star fa-lg"></span><span class="fa fa-star fa-lg"></span><span class="fa fa-star fa-lg"></span><br>
              <b>Cost average:</b>  <span class="fa fa-eur fa-lg"></span><span class="fa fa-eur fa-lg"></span><span class="fa fa-eur fa-lg"></span><span class="fa fa-eur fa-lg"></span><span class="fa fa-eur fa-lg"></span>
               <br>
-             <b>Location:</b><i>{{ selected_place.address }} </i> 
+             <b>Location:</b> <i>{{ selected_place.address }} </i> 
           </p>
 
             <a class="btn btn-primary" href="{% url 'post-create-w-name' selected_place.name %}">Write a review</a>

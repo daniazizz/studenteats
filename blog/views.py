@@ -9,7 +9,7 @@ from blog.forms import PostImageForm, PostForm
 # Serializers
 from blog.serializers import EatingPlaceSerializer, PostSerializer
 
-from django.db.models import Q, Avg
+from django.db.models import Q, Avg, Count
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.forms import modelformset_factory
@@ -115,6 +115,21 @@ class SearchResultListView(LoginRequiredMixin, ListView):  # A class based view
             return Post.objects.filter(Q(title__icontains=query) | Q(author__username__icontains=query) | Q(
                 place__name__icontains=query) | Q(place__address__icontains=query)).order_by('-date_posted')
 
+class DiscoverView(LoginRequiredMixin, ListView):  # A class based view
+    model = Post
+    template_name = 'blog/discover.html'  
+    context_object_name = 'posts'
+    paginate_by = 5
+
+
+    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Discover'
+        return context
+
+    def get_queryset(self):  ## filters posts list to the ones from user
+            return Post.objects.all().annotate(likes_count=Count('likes')).order_by('-likes_count', '-date_posted')
+
 
 class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
     model = Post
@@ -129,8 +144,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
 @login_required
 def postCreate(request, p_name=None):
     # Inspiration for the multiple images ref: https://stackoverflow.com/questions/34006994/how-to-upload-multiple-images-to-a-blog-post-in-django
-    PostImageFormSet = modelformset_factory(PostImage,
-                                            form=PostImageForm, extra=3)
+    PostImageFormSet = modelformset_factory(PostImage, form=PostImageForm, extra=3)
 
     if request.method == 'POST':
 
@@ -148,7 +162,6 @@ def postCreate(request, p_name=None):
         if p_form.is_valid() and pi_formset.is_valid():
             if location!=None:
                 # EatingPlace
-                print(location)
                 latitude = location.latitude
                 longitude = location.longitude
 

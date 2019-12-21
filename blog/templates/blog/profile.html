@@ -6,8 +6,8 @@
         <img class="rounded-circle account-img" src="{{ selected_user.profile.image.url }}">
         <div class="media-body">
             <h2 class="account-heading">{{ selected_user.username }}</h2>
-            <p>Following: {{ following.count }}</p>
-            <p>Followers:
+            <p><u>Following:</u>  {{ following.count }}</p>
+            <p><u>Followers:</u>
                 <span id='followersCount'>{{ followers.count }}</span>
             </p>
             <h5>Bio:</h5>
@@ -29,7 +29,7 @@
     </div>
 </div>
 {% include 'blog/blocks/list-posts.html' %}
-    {% include 'blog/blocks/paginated.html' %}
+{% include 'blog/blocks/paginated.html' %}
 {% endblock content %}
 
 

@@ -7,45 +7,50 @@ from mapservice.models import EatingPlace
 
 
 class Post(models.Model):
+    # Fields: 
     title = models.CharField(max_length=100)
     content = models.TextField(max_length=500)
     date_posted = models.DateTimeField(default = timezone.now)
-    author = models.ForeignKey(User, on_delete = models.CASCADE, related_name='posts')
-    likes = models.ManyToManyField(User, blank=True, related_name='likers')
     rating = models.IntegerField(null=False, default=0)
     cost = models.IntegerField(null=False, default=0)
-    # Eating Place
+
+    # Ralationships:
     place = models.ForeignKey(EatingPlace, related_name='posts', on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete = models.CASCADE, related_name='posts')
+    likes = models.ManyToManyField(User, blank=True, related_name='likers')
 
     def __str__(self):
         return self.title
     
-    def get_absolute_url(self):
-        return reverse('post-detail', kwargs={'pk': self.pk}) ## Returns the url to the details page of the current post AS A STRING
-                                                            ## Difference between redirect and reverse: rederict, redirects the user to an url, while reverse returns the url as a string
 
 class Comment(models.Model):
-    author = models.ForeignKey(User, on_delete = models.CASCADE, related_name='comments')
+    # Fields:
     content = models.TextField(max_length=250)
-    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name='comments')
     date_posted = models.DateTimeField(default=timezone.now)
+
+    # Relationships:
+    author = models.ForeignKey(User, on_delete = models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name='comments')
 
     def __str__(self):
         return f'{self.author.username} comment'
 
 class PostImage(models.Model):
-    post = models.ForeignKey(Post, related_name='images', on_delete = models.CASCADE)
+    # Fields:
     image = models.ImageField(upload_to='post_images')
+
+    # Relationships:
+    post = models.ForeignKey(Post, related_name='images', on_delete = models.CASCADE)
 
     def __str__(self):
         return f'{self.post} PostImage'
 
     def save(self):
-        super().save()## Calling parent class' save method
-
+        super().save()
         img = Image.open(self.image.path)
 
-        if img.height > 300 or img.width > 300:## Resizes the post image if its too large
+        # Resizing the image if its too large (300x300)
+        if img.height > 300 or img.width > 300:
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
