@@ -1,13 +1,31 @@
-STUDENTEATS: a web application for students to share their favorite places to eat.
+# STUDENTEATS
+## A web application for students to share their favorite places to eat
 
+### Prerequisites
+```
+python (latest version)
+pip package installer
+```
 
-You will have to install some packages before running the server: [Python has to be installed on your machine (obviously)]
-1) django:                  pip install Django
-2) crispy forms:            pip install django-crispy-forms
-3) pillow:                  pip install pillow
-4) django rest framework:   pip install djangorestframework
-5) leaflet:                 pip install django-leaflet
-6) six:                     pip install six
-7) geopy:                   pip install geopy
+### Installing
 
-OR : you can listen to the REAL boss and run ./packtoinstall.sh on your bash terminal 😉😉
+After installing the prerequisites, you can execute `./packtoinstall.sh` on your **`bash`** terminal or do it manually:
+
+```
+pip install Django
+pip install django-crispy-forms
+pip install pillow
+pip install djangorestframework
+pip install six
+pip install geopy
+```
+
+##### **CREDENTIALS**
+* username: 
+* password:
+
+##### For any questions please contact us:
+* [Abdoullah El Yachouti](mailto:Abdoullah.El.Yachouti@vub.be) 
+* [Daniel Boustani](mailto:Daniel.Boustani@vub.be) 
+* [Dani Aziz](mailto:Dani.Aziz@vub.be) 
+

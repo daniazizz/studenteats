@@ -5,5 +5,4 @@ pip install django-crispy-forms
 pip install pillow
 pip install djangorestframework
 pip install six
-pip install django-leaflet
 pip install geopy

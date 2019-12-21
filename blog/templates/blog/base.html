@@ -110,14 +110,14 @@
 	<footer id="footerpush">
     <div class="row">
   <div class="col-sm-4">
-      <p style="text-align: center" class="copyright-text">Copyright &copy; 2019 All Rights Reserved by <a id="snowflake" href="{% url 'blog-home' %}">StudentEats</a>. </p>
+      <p style="text-align: center" class="copyright-text">Copyright &copy; 2019 All Rights Reserved by <a href="{% url 'blog-home' %}">StudentEats</a>. </p>
   </div>
   <div class="col-sm-4">
       <ul class="footer-links">
-              <li><a class="mr-2" href="{% url 'blog-home' %}">Home</a></li>
-              <li><a class="mr-2" href="{% url 'blog-map' %}">Map</a></li>
-              <li><a class="mr-2" href="{% url 'discover' %}">Discover</a></li>
-              <li><a class="mr-2" href="{% url 'api-page' %}">API</a></li>
+              <li><a class="mr-2" href="{% url 'blog-home' %}"><u>Home</u></a></li>
+              <li><a class="mr-2" href="{% url 'blog-map' %}"><u>Map</u></a></li>
+              <li><a class="mr-2" href="{% url 'discover' %}"><u>Discover</u></a></li>
+              <li><a class="mr-2" href="{% url 'api-page' %}"><u>API</u></a></li>
             </ul>
   </div>
   <div  id="footersharebuttons" class="col-sm-4">
@@ -181,10 +181,10 @@
             // Inspiration for like button, ref: https://www.youtube.com/watch?v=pkPRtQf6oQ8&t=1549s
             // Handling the like button logic with ajax:
             $(".like-btn").click(function(e) {
-                e.preventDefault()
-                var this_ = $(this)
-                var likeUrl = "{% url 'api-toggle' %}"
-                var postId = this_.attr("data-id")
+                e.preventDefault();
+                var this_ = $(this);
+                var likeUrl = "{% url 'api-toggle' %}";
+                var postId = this_.attr("data-id");
                 $.ajax({
                     url: likeUrl,
                     method: "POST",
@@ -193,8 +193,8 @@
                         'type': 'like'
                     },
                     success: function(data) {
-                        console.log(data)
-                        likeCount = data.count
+                        console.log(data);
+                        likeCount = data.count;
                         if (data.toggled) {
                             updateText(this_, likeCount + " Unlike")
                         } else {
@@ -205,11 +205,11 @@
                         console.log(error)
                     }
                 })
-            })
+            });
             
             // Autocomplete searchbar using ajax:
             jQuery(function() {
-                var search = $("#search")
+                var search = $("#search");
                 search.on('keyup', function() {
                     var value = $(this).val();
                     $.ajax({
