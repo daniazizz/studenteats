@@ -56,16 +56,28 @@ ul {
 }
 
 @media (max-width: 750px) {
-	#login {
+	#login{
 		width: 70vw;
 		margin: auto;
 		margin-top: 10%;
 	}
 }
 
+@media (min-width: 750px) and (max-width: 1500px) {
+	#login {
+		width: 35vw;
+		margin-right: 75vw;
+		margin-top: 10%;
+	}
+}
+
+
+
+
 #register {
 	width: 37vw;
 }
+
 
 @media (max-width: 750px) {
 	#register {
@@ -90,7 +102,7 @@ ul {
 }
 
 
-/*  Making sure the image inside a carousel takes 100% of the width  */
+/*  styling carousel  */
 
 .carousel-item img {
 	margin: auto;
@@ -100,9 +112,14 @@ ul {
 	background-color: #535353;
 }
 
-@media (max-width: 750px) {
-	#respcarousel {
-		width: 300px;
+@media (max-width: 999px) {
+	.carouselresp {
+		width: 100%;
+	}
+}
+@media (min-width: 1000px) {
+	.carouselresp {
+		width: 50%;
 	}
 }
 
@@ -181,7 +198,7 @@ a.article-title:hover {
 }
 
 
-/* ---------------------------- FOOTER STYLE TEST ----------------------*/
+/* ---------------------------- footer style ----------------------*/
 
 footer {
 	background-color: #2b2b2b;
@@ -190,29 +207,8 @@ footer {
 	font-size: 17px;
 	line-height: 20px;
 	color: snow;
-	width: 100%;
+	min-width: 100%;
 	text-align: center;
-}
-
-.site-footer hr {
-	border-top-color: #bbb;
-	opacity: 1;
-}
-
-.site-footer h6 {
-	color: snow;
-	font-size: 16px;
-	text-transform: uppercase;
-	margin-top: 5px;
-	letter-spacing: 2px
-}
-
-.site-footer a {
-	color: snow;
-}
-
-.site-footer a:hover {
-	color: lightgreen;
 }
 
 .footer-links {
@@ -235,16 +231,13 @@ footer {
 	text-decoration: none;
 }
 
-.footer-links.inline li {
-	display: inline-block
-}
 
 .test {
 	display: inline-block;
 }
 
 #footersharebuttons {
-	margin: auto;
+	padding-right: 5vw;
 	display: inline-block;
 }
 

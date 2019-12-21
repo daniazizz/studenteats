@@ -1,9 +1,9 @@
 <!-- CAROUSEL -->
 {% if post.images.count != 0 %}
 <!-- A carousel is only created when there is atleast one image in the post-->
-<div id="respcarousel post-carousel-{{forloop.counter }}" class="carousel slide w-50" data-interval="false" data-ride="carousel">
+<div id="post-carousel-{{forloop.counter }}" class="carousel slide carouselresp" data-interval="false" data-ride="carousel">
     <!-- data-interval = autoslide -->
-    <div id="respcarousel" class="carousel-inner">
+    <div class="carousel-inner">
         {% for image in post.images.all %} {% if forloop.first %}
         <div class="carousel-item active">
             <img class="d-block" src="{{ image.image.url }}" alt="First slide">
