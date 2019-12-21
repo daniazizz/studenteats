@@ -1,7 +1,11 @@
 {% extends "blog/base.html" %}
 {% block content %}
     {% if posts.count == 0 %}
-    <h3 id="snowflake">Follow users</h3>
+    <div class="content-section">
+        <h3><u>Follow users to see posts in your feed:</u></h3>
+        <h4><a href="{% url 'discover' %}">Discover</a></h4>
+        <h4><a href="{% url 'blog-map' %}">Map</a></h4>
+    </div>
     {% endif %}
 
     {% include "blog/blocks/list-posts.html" %}
