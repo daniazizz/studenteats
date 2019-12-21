@@ -1,18 +1,10 @@
 from django.contrib.auth.models import User
 from mapservice.models import EatingPlace
 from .models import Post
-
 from rest_framework import serializers
 
+# Serializers, used to serialize the data of models
 
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['name', ]
-
-
-# Post serializer
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
     class Meta:

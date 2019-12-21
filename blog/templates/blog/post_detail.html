@@ -7,10 +7,11 @@
     background-color: white;
     width: 100%;
     font-family: Arial, sans-serif;
-    /*padding-bottom: 10%;*/
+    padding: 10px;
      /* height: 50%;*/
-    border-radius: 5px;
    /* background-color: transparent;*/
+   border-style: inset;
+   border-width: 1px;
 }
 #postedComments {
     height: 300px;
@@ -45,58 +46,81 @@ textarea {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
 
-<article class="media content-section">
-  <a class="mr-2" href="{% url 'profile' post.author.username %}">
-    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
-  </a>
-  <div class="media-body">
-    <div class="article-metadata">
-      <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
-      <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
 
-      <div style="margin-left: 2%; display: inline-block;">
-        {% if post.author == user %}
-        <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
-        <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
-        {% endif %}
+<article class="media content-section">
+
+  <div class="media-body">
+      <!-- Post Header -->
+      <div class="article-metadata">
+          <div style="display: inline-block;">
+              <a class="mr-2" href="{% url 'profile' post.author.username %}">
+                  <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="author's image">
+              </a>
+          </div>
+          <div style="display: inline-block; vertical-align: middle;">
+              <div>
+                  <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
+                  {% if post.author == user %}
+                  <a class="btn btn-secondary btn-sm mb-1" href="{% url 'post-update' post.id %}">Update</a>
+                  <a class="btn btn-danger btn-sm mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
+                  {% endif %}
+              </div>
+              <div>
+                  <small class="text-muted">{{ post.date_posted |date:"F d, Y"}}</small>
+              </div>
+
+              <div>
+                  Review for:
+                  <a href="{% url 'place-profile' post.place.name %}">{{ post.place.name }}</a>
+              </div>
+
+          </div>
+          <!-- Share buttons -->
+          
       </div>
 
-      <div style="display: inline-block; float: right;" id="sharebuttons" class="sharethis-inline-share-buttons"></div>
+      <!-- Post Body -->
+      <div>
+          <h2>
+              <a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a>
+          </h2>
 
+          <p>Rating: <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span> <span class="fa fa-star fa-lg star-{{ forloop.counter }}"></span>
+              <br> Cost: <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span> <span class="fa fa-eur fa-lg euro-{{ forloop.counter }}"></span></p>
 
-      <p>Rating: <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span> <span class="fa fa-star fa-lg star"></span><br>
-        Cost: <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span> <span class="fa fa-eur fa-lg euro"></span></p>
-      <h2 class="article-title">{{ post.title }}</h2>
-      <!-- Eating place link -->
-      <p>
-        Eating place: <a href="{% url 'place-profile' post.place %}">{{ post.place.name }}</a>
-      </p>
-      <!-- CAROUSEL -->
-      {% include 'blog/blocks/carousel.html' %}
-      <p class="article-content mt-3">{{ post.content }}</p>
+          <!-- CAROUSEL -->
+          <div>
+              {% include 'blog/blocks/carousel.html' %}
+          </div>
+          <p class="article-content mt-3">{{ post.content }}</p>
 
       <!-- Post like button: -->
-      <a class="like-btn btn btn-success btn-sm mb-1" data-id = "{{ post.id }}" href="{% url 'post-like' post.id %}">
-        {% if user in post.likes.all %}
-        {{ post.likes.count }} Unlike
-        {% else %}
-        {{ post.likes.count }} Like
-        {% endif %}
-      </a>
+      <div>
+        <a class="like-btn btn btn-success btn-sm mb-1 mt-2" data-id = "{{ post.id }}" href="{% url 'post-like' post.id %}">
+          {% if user in post.likes.all %}
+              {{ post.likes.count }} Unlike
+          {% else %}
+              {{ post.likes.count }} Like
+          {% endif %}
+        </a>
+        <div style="float: right;" id="sharebuttons" class="sharethis-inline-share-buttons"></div>
+      </div>
     </div>
-  <div id="commentSection" class="mt-3">
-  <div id="postedComments">
-    <p id="intro">Be the first to react</p>
-  </div>
-  <div id="textSection">
-      <textarea name="userComment" id="userComment" maxlength="200" placeholder="Leave a comment" class="mt-2"></textarea>
-    <button id="trigger" class="btn btn-primary mt-2">Comment!</button>
-  </div>
-</div>
-<div id="push"></div>
-  </div>
 
-</article> 
+      <div id="commentSection" class="mt-3">
+        <div id="postedComments">
+          <p id="intro">Be the first to react</p>
+        </div>
+        <div id="textSection">
+          <textarea name="userComment" id="userComment" maxlength="200" placeholder="Leave a comment" class="mt-2"></textarea>
+          <button id="trigger" class="btn btn-primary mt-2">Comment!</button>
+        </div>
+      </div>
+      <div id="push"></div>
+        </div>
+
+  </div>
+</article>
 
   {% endblock content %}
   
