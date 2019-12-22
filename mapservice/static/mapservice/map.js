@@ -57,7 +57,7 @@ function putOnMap(name, address, latAndLong, markerUrl) {
         shadowSize: [41, 41]
     });
     let marker = L.marker(latAndLong, {icon: iconMarker}).addTo(map);
-    marker.bindPopup(myPopUp);
+    marker.bindPopup(popUp);
     marker.on('mouseover', (e) => {marker.openPopup()});
     return marker;
 }
