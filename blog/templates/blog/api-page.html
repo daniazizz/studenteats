@@ -2,7 +2,7 @@
 <div class="content-section mt-6">
     <h1>Provided API</h1>
     <h4>The information in our database can be accessed by sending a GET request to the following links:</h4>
-    <h6 class="mt-4">For a listing of all the posts:  <a href="http://127.0.0.1:8000/api/Posts">{% url 'api-posts' %}</a></h6>
+    <h6 class="mt-4">For a listing of all the posts:  <a href="{% url 'api-posts' %}">{% url 'api-posts' %}</a></h6>
 
     <p>
         <u>Example output:</u>
@@ -27,7 +27,7 @@
         <br>
     </p>
 
-    <h6>For a listing of all the eating places:  <a href="http://127.0.0.1:8000/api/EPS">{% url 'api-ep' %}</a></h6>
+    <h6>For a listing of all the eating places:  <a href="{% url 'api-ep' %}">{% url 'api-ep' %}</a></h6>
 
     <p>
         <u>Example output:</u>

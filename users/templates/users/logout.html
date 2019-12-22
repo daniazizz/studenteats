@@ -3,14 +3,8 @@
 {% block content %}
     <div id="logout">
 			<img src="{% static 'blog/logo2.png'%}" alt="studentEats logo" id="logo"/>
-			<p>You have been logged out!</p>
-			<button onclick="window.location.href= '{% url 'login' %}' " type="button" class="btn btn-primary" id="loginbutton">Log in</button>
+            <p>You have been logged out!</p>
+            <a href="{% url 'login' %}" class="btn btn-primary">Log in</a>
 		</div>
-  <!--  <div class="border-top pt-3">
-        <small class="text-muted">
-             <a class="text-white" href="{% url 'login' %}">Log In Again</a>
-        </small>
-    </div>
-    -->
 {% endblock content %}
 

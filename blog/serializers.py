@@ -3,7 +3,7 @@ from mapservice.models import EatingPlace
 from .models import Post
 from rest_framework import serializers
 
-# Serializers, used to serialize the data of models
+# Serializers, these are used to serialize the data of models (used by the api views)
 
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()

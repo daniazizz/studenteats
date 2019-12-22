@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from mapservice.models import EatingPlace
 
-
+# Model representing posts
 class Post(models.Model):
     # Fields: 
     title = models.CharField(max_length=100)
@@ -26,7 +26,7 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
 
-
+# Model representing comments
 class Comment(models.Model):
     # Fields:
     content = models.TextField(max_length=250)
@@ -39,7 +39,7 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.author.username} comment'
 
-
+# Model representing post-images
 class PostImage(models.Model):
     # Fields:
     image = models.ImageField(upload_to='post_images')

@@ -14,15 +14,13 @@
           <fieldset class="form-group">
             <legend class="border-bottom mb-4">Review</legend>
 
-            <!-- Post creation form with styled with crispy-forms -->
+            <!-- Post creation form styled with crispy-forms -->
             {{ p_form|crispy }}
-
-            <!-- Input for place name -->
-
+            
+            <!-- Depending on whether or not a place is given, these input fields are visible or not visible -->
+            <!-- If the page is accessed from an eating place profile 'write a review', these fields are already filled in -->
             {% if place %}
                 <input id="place-name" type="hidden" name="place-name" value="{{ place.name }}" required>
-
-                <!-- Input for place address -->
                 <input id="place-address" type="hidden" name="place-address" value="{{ place.address }}" required>
             {% else %}
                 <h3>Eating place:</h3>
@@ -50,7 +48,7 @@
                 <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span>
             </div>
 
-            <!-- Pictures -->
+            <!-- Post images formset-->
             {{ pi_formset }}
               
           </fieldset>
@@ -66,6 +64,8 @@
 <script src="{% static 'blog/rating-icons.js' %}"></script>
 
 <script>
+// Autocomplete place-name field in the form:
+// The place-names get fetched from the back end, and provided as suggestions
 jQuery(function() {
     $("#place-name").on('keyup', function(){
         var value = $(this).val();
@@ -80,6 +80,7 @@ jQuery(function() {
                 $("#place-name").autocomplete({
                     source: list,
                     minLength: 1,
+                    // On selecting a suggestion, the place-address field gets auto-filled
                     select: function(event, ui) {
                         var place_name = ui.item.value;
                         $.get(

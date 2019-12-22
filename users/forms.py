@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
 
+# Class-based forms for user refistration, user update and profile update
+
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField()
 
