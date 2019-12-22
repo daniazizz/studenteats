@@ -27,8 +27,7 @@
 {% endblock content %}
 
 {% block extra_jss %}
-    <script src="{% static 'blog/get-ratings.js'%}"></script>
-    <script src="{% static 'blog/lightup-rating.js' %}"></script>
+    <script src="{% static 'blog/get-ratings.js' %}"></script>
     <script>
         lightUp({{ average_rating }}, stars, "checked");
         lightUp({{ average_cost }}, euros, "checked2");

@@ -4,7 +4,10 @@
 <link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
 
 <script src="{% static 'blog/lightup-rating.js' %}"></script>
-
+<script>
+    var allStars;
+    var allEuros;
+</script>
 {% for post in posts %}
 <article class="media content-section">
 
@@ -59,10 +62,10 @@
 </article>
 
 <script>
-    var stars = document.getElementsByClassName("star-{{ forloop.counter }}");
-    var euros = document.getElementsByClassName("euro-{{ forloop.counter }}");
+    allStars = document.getElementsByClassName("star-{{ forloop.counter }}");
+    allEuros = document.getElementsByClassName("euro-{{ forloop.counter }}");
 
-    lightUp({{post.rating}}, stars, "checked");
-    lightUp({{post.cost}}, euros, "checked2");
+    lightUp({{post.rating}}, allStars, "checked");
+    lightUp({{post.cost}}, allEuros, "checked2");
 </script>
 {% endfor %}
