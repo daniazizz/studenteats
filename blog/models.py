@@ -14,14 +14,17 @@ class Post(models.Model):
     rating = models.IntegerField(null=False, default=0)
     cost = models.IntegerField(null=False, default=0)
 
-    # Ralationships:
+    # Relationships:
     place = models.ForeignKey(EatingPlace, related_name='posts', on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(User, on_delete = models.CASCADE, related_name='posts')
     likes = models.ManyToManyField(User, blank=True, related_name='likers')
 
     def __str__(self):
         return self.title
-    
+
+    def get_absolute_url(self):
+        return reverse('post-detail', kwargs={'pk': self.pk})
+
 
 class Comment(models.Model):
     # Fields:

@@ -29,79 +29,11 @@
 {% endblock content %}
 
 {% block extra_jss %}
-    <script>
-    var stars = document.getElementsByClassName("fa-star");
-    var dollars = document.getElementsByClassName("fa-eur");
-
-    var ratingInput = document.getElementById("rating");
-    var costInput = document.getElementById("cost");
-
-    function addHoverEffectOn(elements, className1, className2) {
-        for(let i = 0; i < elements.length; ++i){
-            let element = elements[i];
-            element.onmouseover = function() {
-                if(!element.classList.contains(className1)){
-                    for(k = 0; k <= i; ++k){
-                        elements[k].classList.add(className1);
-                        elements[k].classList.remove(className2);
-                    }
-                    for(k = elements.length-1; k > i; --k){
-                        if(elements[k].classList.contains(className2)){
-                            elements[k].classList.remove(className2);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    function addOutFocusEffectOn(elements, className){
-        for(let i = 0; i < elements.length; ++i){
-            let element = elements[i];
-            element.onmouseout = function() {
-                if(element.classList.contains(className)){
-                    for(k = 0; k <= i; ++k){
-                        elements[k].classList.remove(className);
-                    }
-                }
-            }
-        }
-    }
-
-    function addClickEffectOn(elements, className){
-        for(let i = 0; i < elements.length; ++i){
-            let element = elements[i];
-            element.onclick = function() {
-                let value = i + 1;
-                if(className == "clicked")
-                    ratingInput.value = value;
-                else
-                    costInput.value = value;
-                for(k = 0; k <= i; ++k){
-                    elements[k].classList.add(className);
-                }
-            }
-        }
-    }
-
-    var stars = document.getElementsByClassName("fa-star");
-    var euros = document.getElementsByClassName("fa-eur");
-
-    function lightUp(rating, lst, className){
-        for(i = 0; i < rating; ++i){
-            lst[i].classList.add(className);
-        }
-    }
-
-    lightUp({{ post.rating }}, stars, "checked");
-    lightUp({{ post.cost }}, euros, "checked2");
-
-    addHoverEffectOn(stars, "checked", "clicked");
-    addOutFocusEffectOn(stars, "checked");
-    addClickEffectOn(stars, "clicked");
-    addHoverEffectOn(dollars, "checked2", "clicked2");
-    addOutFocusEffectOn(dollars, "checked2");
-    addClickEffectOn(dollars, "clicked2");
-
-  </script>
+<script src="{% static 'blog/get-ratings.js'%}"></script>
+<script src="{% static 'blog/rating-icons.js' %}"></script>
+<script src="{% static 'blog/lightup-rating.js' %}"></script>
+<script>
+    lightUp({{ post.rating }}, stars, "clicked");
+    lightUp({{ post.cost }}, euros, "clicked2");
+</script>
 {% endblock extra_jss %}

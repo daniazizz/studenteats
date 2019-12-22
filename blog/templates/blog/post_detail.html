@@ -81,16 +81,9 @@
 
 {% block extra_jss %}
 <script src="{% static 'blog/post_detail.js'%}"></script>
+<script src="{% static 'blog/get-ratings.js' %}"></script>
+<script src="{% static 'blog/lightup-rating.js' %}"></script>
 <script>
-    var stars = document.getElementsByClassName("fa-star");
-    var euros = document.getElementsByClassName("fa-eur");
-
-    function lightUp(rating, lst, className) {
-        for (i = 0; i < rating; ++i) {
-            lst[i].classList.add(className);
-        }
-    }
-
     lightUp({{ post.rating }}, stars, "checked");
     lightUp({{ post.cost }}, euros, "checked2");
 

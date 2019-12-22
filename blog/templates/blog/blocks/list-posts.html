@@ -1,7 +1,11 @@
 <!--  Block that displays all the posts -->
 {% load static %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}"> {% for post in posts %}
+<link rel="stylesheet" href="{% static 'blog/rating-icons.css' %}">
+
+<script src="{% static 'blog/lightup-rating.js' %}"></script>
+
+{% for post in posts %}
 <article class="media content-section">
 
     <div class="media-body">
@@ -57,12 +61,6 @@
 <script>
     var stars = document.getElementsByClassName("star-{{ forloop.counter }}");
     var euros = document.getElementsByClassName("euro-{{ forloop.counter }}");
-
-    function lightUp(rating, lst, className) {
-        for (i = 0; i < rating; ++i) {
-            lst[i].classList.add(className);
-        }
-    }
 
     lightUp({{post.rating}}, stars, "checked");
     lightUp({{post.cost}}, euros, "checked2");
