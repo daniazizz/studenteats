@@ -20,18 +20,20 @@ from geopy.geocoders import Bing
 import json
 from django.http import JsonResponse
 
+
 # A very simple function-based view for the api page
 def apipageview(request):
     return render(request, 'blog/api-page.html')
-    
+
+
 ## Class-based ListView for the home page
 # It provides:
 # - Pagination
 # - A filtered Post queryset
-class PostListView(LoginRequiredMixin, ListView): 
+class PostListView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'blog/home.html'
-    context_object_name = 'posts' 
+    context_object_name = 'posts'
     paginate_by = 5
 
     # Filtering out the posts to the ones that are related to the users' following,  and his own posts
@@ -98,8 +100,8 @@ class ProfileListView(LoginRequiredMixin, ListView):
 
 class SearchResultListView(LoginRequiredMixin, ListView):  # A class based view
     model = Post
-    template_name = 'blog/search_result.html'  
-    context_object_name = 'posts'  
+    template_name = 'blog/search_result.html'
+    context_object_name = 'posts'
 
     def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
@@ -115,12 +117,12 @@ class SearchResultListView(LoginRequiredMixin, ListView):  # A class based view
             return Post.objects.filter(Q(title__icontains=query) | Q(author__username__icontains=query) | Q(
                 place__name__icontains=query) | Q(place__address__icontains=query)).order_by('-date_posted')
 
+
 class DiscoverView(LoginRequiredMixin, ListView):  # A class based view
     model = Post
-    template_name = 'blog/discover.html'  
+    template_name = 'blog/discover.html'
     context_object_name = 'posts'
     paginate_by = 5
-
 
     def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
@@ -128,7 +130,7 @@ class DiscoverView(LoginRequiredMixin, ListView):  # A class based view
         return context
 
     def get_queryset(self):  ## filters posts list to the ones from user
-            return Post.objects.all().annotate(likes_count=Count('likes')).order_by('-likes_count', '-date_posted')
+        return Post.objects.all().annotate(likes_count=Count('likes')).order_by('-likes_count', '-date_posted')
 
 
 class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
@@ -137,7 +139,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
     def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
         context = super().get_context_data(**kwargs)
         context['title'] = 'Post Detail'
-       #s context['comments'] = 'Post Detail'
+        # s context['comments'] = 'Post Detail'
         return context
 
 
@@ -157,16 +159,17 @@ def postCreate(request, p_name=None):
 
         locator = Bing(api_key="AozreVUVlwxpZVbVcf6FErTup90eXr3DFSdlltU6m5JHLRuVh0Cp3A5PGh1OzVZC")
         location = locator.geocode(place_address)
-        
 
         if p_form.is_valid() and pi_formset.is_valid():
-            if location!=None:
+            if location != None:
                 # EatingPlace
                 latitude = location.latitude
                 longitude = location.longitude
 
                 # Can use default to ignore some fields in get
-                eating_place, _ = EatingPlace.objects.get_or_create(address=place_address, defaults={'name': place_name, 'latitude': latitude, 'longitude': longitude})
+                eating_place, _ = EatingPlace.objects.get_or_create(address=place_address,
+                                                                    defaults={'name': place_name, 'latitude': latitude,
+                                                                              'longitude': longitude})
 
                 # Post
                 post_form = p_form.save(commit=False)
@@ -192,7 +195,7 @@ def postCreate(request, p_name=None):
     else:
         p_form = PostForm()
         pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
-    
+
     place = None
 
     if p_name:
@@ -207,6 +210,7 @@ def postCreate(request, p_name=None):
 
     return render(request, 'blog/post_create.html', context)
 
+
 # Class based UpdateView for updating posts
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
@@ -220,7 +224,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return False
 
     ## Adding extra data in the context to pass on the template:
-    def get_context_data(self, **kwargs):  
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # The post object is used by the template to complete the rating and cost fields
         context['post'] = self.get_object()
@@ -230,7 +234,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         # Reading the rating and cost fields from the form
         rating = self.request.POST.get('rating')
         cost = self.request.POST.get('cost')
-        form.instance.author = self.request.user 
+        form.instance.author = self.request.user
         form.instance.cost = cost
         form.instance.rating = rating
         return super().form_valid(form)
@@ -245,7 +249,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author
 
-## These two redirection toggles, are used when javascript is disabled on the user's browser: 
+
+## These two redirection toggles, are used when javascript is disabled on the user's browser:
 
 # Class-based RedirectView handeling the follow toggle logic in a redirection manner 
 class ProfileFollowToggle(RedirectView):
@@ -261,6 +266,7 @@ class ProfileFollowToggle(RedirectView):
                 c_user.profile.following.add(s_user.profile)
                 messages.success(self.request, f'You followed {s_user}')
         return reverse('profile', args=[s_user.username])
+
 
 # Same as above, but for likes
 class PostLikeToggle(RedirectView):
@@ -281,7 +287,7 @@ class PostLikeToggle(RedirectView):
 ## API View handeling the 'toggling' logic (For AJAX calls)
 # Used for like and follow functionalities
 class ToggleAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication] 
+    authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format=None, **kwargs):
@@ -304,7 +310,7 @@ class ToggleAPI(APIView):
                 toggled = True
 
             return toggled
-            
+
         # Uses the 'type' to trigger the correct functionality
         if current_user.is_authenticated:
             if type_ == 'like':
@@ -324,8 +330,11 @@ class ToggleAPI(APIView):
 
         return Response(data)
 
-## This api is used for the autocomplete functionality on the search field in the navigation bar.
-# Returns a Json response with a listing of all post titles, usernames addresses eating place names/adresses starting with a given query
+
+# This api is used for the autocomplete functionality on the search field in the navigation bar. Returns a Json
+# response with a listing of all post titles, usernames addresses eating place names/adresses starting with a given
+# query
+
 class SearchAutocompleteAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -374,7 +383,7 @@ class CommentAPI(APIView):
         new_comment = Comment(author=author, content=content, post=post)
         new_comment.save()
         # Returning the id of the new comment:
-        data= {
+        data = {
             "comment_id": new_comment.id
         }
         return Response(data)
@@ -392,10 +401,12 @@ class CommentAPI(APIView):
 
         return Response()
 
+
 # API used for the eating place name field autocomplete when creating a new post
 class EatingPlaceAutocompleteAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication] 
+    authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
     # Returns a Json response with all the Eating Places names that start with a given query
     def get(self, request, format=None, **kwargs):
         # Fetching the query from the get request:
@@ -413,10 +424,11 @@ class EatingPlaceAutocompleteAPI(APIView):
         }
         return JsonResponse(data)
 
-## API that provides the data of a specific eating place using a serializer
+
+# API that provides the data of a specific eating place using a serializer
 # Used for auto-completion of the address field inside a 'new-post form'.
 class GetEatingPlaceAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  
+    authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None, **kwargs):
@@ -425,10 +437,11 @@ class GetEatingPlaceAPI(APIView):
         serializer = EatingPlaceSerializer(queryset, many=True)
         return Response(serializer.data)
 
-## Public API that provides a listing of all the eating places currently inside the database.
+
+# Public API that provides a listing of all the eating places currently inside the database.
 # Makes use the EatingPlaceSerializer to serialize the data of the EatingPlace objects
 class EPAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  
+    authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None, **kwargs):
@@ -437,10 +450,12 @@ class EPAPI(APIView):
 
         return Response(serializer.data)
 
-## Public API that provides a listing of all the posts currently inside the database.
+
+# Public API that provides a listing of all the posts currently inside the database.
 # Very similair to the method above
+
 class PostsAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication] 
+    authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None, **kwargs):

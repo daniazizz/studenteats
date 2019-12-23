@@ -9,7 +9,7 @@
 
 {% block content %}
   <div class="content-section">
-      <form method="POST", enctype="multipart/form-data">
+      <form method="POST" , enctype="multipart/form-data">
           {% csrf_token %}
           <fieldset class="form-group">
             <legend class="border-bottom mb-4">Review</legend>
@@ -49,7 +49,6 @@
                 <!-- The euro signs -->
                 <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span> <span class="fa fa-eur fa-lg"></span>
             </div>
-
             <!-- Pictures -->
             {{ pi_formset }}
               
