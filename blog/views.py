@@ -22,6 +22,7 @@ from django.http import JsonResponse
 
 
 # A very simple function-based view for the api page
+@login_required
 def apipageview(request):
     return render(request, 'blog/api-page.html')
 
@@ -43,7 +44,7 @@ class PostListView(LoginRequiredMixin, ListView):
         return Post.objects.filter(Q(author=user) | Q(author__profile__in=following)).order_by('-date_posted')
 
 
-## Class-based ListView handeling eating place profile:
+# Class-based ListView handeling eating place profile:
 # Providing pagination, aswell as a filtered queryset of Posts and other data in context
 class EatingPlaceListView(LoginRequiredMixin, ListView):
     model = Post
@@ -98,48 +99,51 @@ class ProfileListView(LoginRequiredMixin, ListView):
         return self.user.posts.all().order_by('-date_posted')
 
 
-class SearchResultListView(LoginRequiredMixin, ListView):  # A class based view
+class SearchResultListView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'blog/search_result.html'
     context_object_name = 'posts'
 
-    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q')
         context['title'] = 'Search results'
         return context
 
-    def get_queryset(self):  ## filters posts list to the ones from user
+    def get_queryset(self):
         query = self.request.GET.get('q')
-        if query == None:  ## If the query is empty, return all posts
+        # If the query is empty, return all posts
+        if query == None:
             return Post.objects.all().order_by('-date_posted')
+        # Else, filter the posts to the ones that contain the 'query' value in the title | author_username | place_name | place_address
         else:
             return Post.objects.filter(Q(title__icontains=query) | Q(author__username__icontains=query) | Q(
                 place__name__icontains=query) | Q(place__address__icontains=query)).order_by('-date_posted')
 
-
-class DiscoverView(LoginRequiredMixin, ListView):  # A class based view
+# Simple class-based view, managing the discover page
+class DiscoverView(LoginRequiredMixin, ListView):
     model = Post
-    template_name = 'blog/discover.html'
+    template_name = 'blog/discover.html'  
     context_object_name = 'posts'
     paginate_by = 5
 
-    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
+
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Discover'
         return context
 
-    def get_queryset(self):  ## filters posts list to the ones from user
-        return Post.objects.all().annotate(likes_count=Count('likes')).order_by('-likes_count', '-date_posted')
+    # Providing a listing of all the posts, ordered by likes_count, and date_posted
+    def get_queryset(self):
+            return Post.objects.all().annotate(likes_count=Count('likes')).order_by('-likes_count', '-date_posted')
 
 
-class PostDetailView(LoginRequiredMixin, DetailView):  # A class based view
+class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
 
-    def get_context_data(self, **kwargs):  ## Adding extra data in the context to pass on the template
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Post Detail'
-        # s context['comments'] = 'Post Detail'
         return context
 
 
@@ -149,7 +153,7 @@ def postCreate(request, p_name=None):
     PostImageFormSet = modelformset_factory(PostImage, form=PostImageForm, extra=3)
 
     if request.method == 'POST':
-
+        # Fetching the information from the forms / input fields
         p_form = PostForm(request.POST)
         pi_formset = PostImageFormSet(request.POST, request.FILES, queryset=PostImage.objects.none())
         rating = request.POST.get('rating')
@@ -157,19 +161,20 @@ def postCreate(request, p_name=None):
         place_name = request.POST.get('place-name')
         place_address = request.POST.get('place-address')
 
+        # Calling the Bing webservice, to locate the address
         locator = Bing(api_key="AozreVUVlwxpZVbVcf6FErTup90eXr3DFSdlltU6m5JHLRuVh0Cp3A5PGh1OzVZC")
         location = locator.geocode(place_address)
 
         if p_form.is_valid() and pi_formset.is_valid():
-            if location != None:
-                # EatingPlace
+            # If the address is located (is valid), continue
+            if location!=None:
+                # EatingPlace:
+                # getting the longitude and latitude
                 latitude = location.latitude
                 longitude = location.longitude
 
-                # Can use default to ignore some fields in get
-                eating_place, _ = EatingPlace.objects.get_or_create(address=place_address,
-                                                                    defaults={'name': place_name, 'latitude': latitude,
-                                                                              'longitude': longitude})
+                # Getting the Eating place object with that address, or creating a new one
+                eating_place, _ = EatingPlace.objects.get_or_create(address=place_address, defaults={'name': place_name, 'latitude': latitude, 'longitude': longitude})
 
                 # Post
                 post_form = p_form.save(commit=False)
@@ -180,6 +185,7 @@ def postCreate(request, p_name=None):
                 post_form.save()
 
                 # Post Images
+                # looping through all the images uploaded, and creating PostImage objects
                 for form in pi_formset.cleaned_data:
                     if form:
                         image = form['image']
@@ -189,15 +195,19 @@ def postCreate(request, p_name=None):
                 messages.success(request, f'Posted "{post_form}"')
                 return redirect("/")
             else:
+                # Address not located by webservice
                 messages.warning(request, f'Invalid address "{place_address}"')
         else:
             print(p_form.errors, pi_formset.errors)
     else:
+        # Providing empty forms on a get request
         p_form = PostForm()
         pi_formset = PostImageFormSet(queryset=PostImage.objects.none())
-
+    
     place = None
 
+    # If a place-name is provided in the url, then the related place object is provided to the template
+    # Happens when a post is created for a specific place (write a review button, in place-profile)
     if p_name:
         place = EatingPlace.objects.get(name=p_name)
 
@@ -209,7 +219,6 @@ def postCreate(request, p_name=None):
     }
 
     return render(request, 'blog/post_create.html', context)
-
 
 # Class based UpdateView for updating posts
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -249,8 +258,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author
 
-
-## These two redirection toggles, are used when javascript is disabled on the user's browser:
+## These two redirection toggles, are used when javascript is disabled in the user's browser:
 
 # Class-based RedirectView handeling the follow toggle logic in a redirection manner 
 class ProfileFollowToggle(RedirectView):
@@ -330,11 +338,8 @@ class ToggleAPI(APIView):
 
         return Response(data)
 
-
-# This api is used for the autocomplete functionality on the search field in the navigation bar. Returns a Json
-# response with a listing of all post titles, usernames addresses eating place names/adresses starting with a given
-# query
-
+## This api is used for the autocomplete functionality on the search field in the navigation bar.
+# Returns a Json response with a listing of all post titles, usernames addresses eating place names/adresses starting with a given query
 class SearchAutocompleteAPI(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -424,11 +429,10 @@ class EatingPlaceAutocompleteAPI(APIView):
         }
         return JsonResponse(data)
 
-
-# API that provides the data of a specific eating place using a serializer
+## API that provides the data of a specific eating place using a serializer
 # Used for auto-completion of the address field inside a 'new-post form'.
 class GetEatingPlaceAPI(APIView):
-    authentication_classes = [authentication.SessionAuthentication]
+    authentication_classes = [authentication.SessionAuthentication]  
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None, **kwargs):

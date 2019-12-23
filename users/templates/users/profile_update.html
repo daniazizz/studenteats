@@ -9,7 +9,8 @@
           <p class="text-secondary">{{ user.email }}</p>
         </div>
       </div>
-      <form method="POST", enctype="multipart/form-data"> <!-- we add enctype to make sure the image gets saved in the background -->
+      <!-- added enctype attribute to make sure the image gets saved in the background -->
+      <form method="POST", enctype="multipart/form-data"> 
           {% csrf_token %}
           <fieldset class="form-group">
               <legend class="border-bottom mb-4">Profile info</legend>
