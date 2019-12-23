@@ -1,25 +1,19 @@
-
-{% block extra_css %}
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-{% endblock %}
-
-
+<!-- Recipe Idea using the Food Api where users can query any type of food and get a recipe         -->
                   <div class="content-section">
-                    <h6 id="ctr">Need help for you next meal?</h6>
+                    <h6 id="ctr"> Need help for you next meal?</h6>
                     <p class='text-muted' id="ctr"> Look up for a recipe!
                       <ul class="list-group">
                         <li class="list-group-item list-group-item-light" id="ctr">
-                            <input type="text" id="searchIngredient" value="">
+                            <input type="text" id="searchRecipe" value="">
                             <button id="searchApiButton" class="btn btn-sm btn-primary mb-1 mt-1">Search</button>
                         </li>
-                        <li style="height: 7vh" class="list-group-item list-group-item-light" id="ctr">
+                        <li class="list-group-item list-group-item-light recipeTitle" id="ctr">
                             <div id="title"></div>
                         </li>
-                        <li style="height: 25vh" class="list-group-item list-group-item-light" id="ctr">
-                            <a style="height: inherit" id="mealImage"></a>
+                        <li class="list-group-item list-group-item-light recipeImage" id="ctr">
+                            <a class="recipeImage" id="mealImage"></a>
                         </li>
-                      <li style="color: #2b2b2b; height: 5vh;" class="list-group-item list-group-item-light" id="ctr">
+                      <li class="list-group-item list-group-item-light recipeTime" id="ctr">
                           <a id="cookingTime"></a>
                         </li>
                         <li class="list-group-item list-group-item-light" id="ctr">
@@ -31,19 +25,18 @@
 
 
 {% block extra_jss %}
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
 
 <script>
     const APIKEY = "5a0fbb4c82c94fde8b38e9ae2cd04bb9";
     let searchButtonApi = document.getElementById("searchApiButton");
-    let ingredientToSearch = document.getElementById("searchIngredient");
+    let recipeToSearch = document.getElementById("searchRecipe");
 
-    searchButtonApi.onclick = function() {
-        let ingredient = ingredientToSearch.value;
-        getRecipe(ingredient);
+    searchButtonApi.onclick = function() { //search button in the recipe idea interface
+        let recipe = recipeToSearch.value;
+        getRecipe(recipe);
     };
     
-    function getsource(id) {
+    function getsource(id) {  //this function is used to retrieve the url of the recipe where you can find additional information around that recipe
         $.ajax({
             url: "https://api.spoonacular.com/recipes/" + id + "/information?apiKey=" + APIKEY,
             success: function(res) {
@@ -54,7 +47,7 @@
         });
     }
 
-    function getRecipe(q) {
+    function getRecipe(q) { // this function is used to get the different elements that are displayed in the recipe idea interface ; title, image, cooking time and the recipe id that will be used in the function above (getSource)
         $.ajax({
             url: "https://api.spoonacular.com/recipes/search?apiKey=" + APIKEY + "&number=1&query=" + q,
             success: function(res) {

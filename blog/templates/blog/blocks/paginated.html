@@ -1,13 +1,8 @@
 <!-- Block for pagination -->
 
 {% if is_paginated %}
-    <style>
-        #paginated-div {
-            margin:auto;
-        }
-    </style>
 
-    <div id="wrapper-paginated" style="text-align: center">
+    <div id="wrapper-paginated">
         <div id="paginated-div">
         {% if page_obj.has_previous %}
             <a class="btn btn-outline-light mb-4"  href="?page=1">First</a>

@@ -1,5 +1,5 @@
 {% extends "blog/base.html" %}
-{% block content %}
+{% block content %} <!-- page that will be displayed when users query  something in the search bar -->
 
     <h2 id="snowflake" class="mb-3" >Search results for '{{ query }}' ({{ posts.count }})</h2>
     {% include 'blog/blocks/list-posts.html' %}

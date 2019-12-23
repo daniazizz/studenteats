@@ -1,13 +1,10 @@
-/* -- new footer test */
 
 body,
 html {
-	/* De body en html 100% hoogte geven */
 	height: 100%;
 }
 
 #wrapper {
-	/* negatieve margin is gelijk aan hoogte van de footer */
 	min-height: 100%;
 	height: auto !important;
 	margin: 0 auto;
@@ -18,6 +15,7 @@ html {
 	height: 3%;
 	width: 100%;
 }
+
 
 body {
 	background-size: cover;
@@ -33,6 +31,20 @@ h1, h2, h3, h4, h5, h6 {
 	color: #2b2b2b;
 }
 
+#wrapper-paginated {
+	text-align: center;
+}
+#paginated-div {
+	margin:auto;
+}
+
+main{
+	margin-top: 10vh;
+}
+
+#copyrightText{
+	text-align: center;
+}
 #snowflake {
 	color: snow;
 }
@@ -282,7 +294,7 @@ a[href="?page="] {
 }
 
 
-/*  -------SIDEBAR BUTTON  STYLING*/
+/*  -------RECIPE IDEA BUTTON  STYLING*/
 
 .dropdown {
 	display: inline-block;
@@ -304,11 +316,23 @@ a[href="?page="] {
 }
 
 
-/* sidebar list*/
+/* RECIPE IDEA DROPDOWN list*/
 
 #ctr {
 	text-align: center;
 	position: center;
 }
 
+.recipeTitle {
+	height: 7vh;
+}
+
+.recipeImage {
+	height: 25vh;
+}
+
+.recipeTime {
+	color: #2b2b2b;
+	height: 5vh;
+}
 

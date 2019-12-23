@@ -9,14 +9,14 @@
 
 {% block content %}
   <div class="content-section">
-      <form method="POST", enctype="multipart/form-data">
+      <form method="POST" , enctype="multipart/form-data">
           {% csrf_token %}
           <fieldset class="form-group">
             <legend class="border-bottom mb-4">Review</legend>
 
             <!-- Post creation form styled with crispy-forms -->
             {{ p_form|crispy }}
-            
+
             <!-- Depending on whether or not a place is given, these input fields are visible or not visible -->
             <!-- If the page is accessed from an eating place profile 'write a review', these fields are already filled in -->
             {% if place %}
