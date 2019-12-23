@@ -21,6 +21,7 @@ import json
 from django.http import JsonResponse
 
 # A very simple function-based view for the api page
+@login_required
 def apipageview(request):
     return render(request, 'blog/api-page.html')
     
