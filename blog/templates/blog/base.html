@@ -16,11 +16,13 @@
     <link rel="stylesheet" href="{% static 'blog/main.css' %}">
     {% if title %}
     <title>StudentEats - {{ title }}</title>
-    {% else %}
+        {% else %}
     <title>StudentEats</title>
     {% endif %}
-    {% block extra_css %}
+
+    {% block extra_css %} <!-- extra css block if we want to add css in other pages that inherit this page-->
     {% endblock extra_css %}
+
 </head>
 
 <body>
@@ -78,7 +80,7 @@
         </nav>
     </header>
 
-    <main style="margin-top: 10vh" role="main" class="container">
+    <main role="main" class="container">
 
         <div class="row">
 
@@ -90,7 +92,9 @@
                 </div>
                     {% endfor %}
                 {% endif %}
-                {% block content %}  {% endblock %}
+
+                {% block content %}  <!-- This is the place where the content of the other pages that inherit this page will be inserted-->
+                {% endblock %}
 
             </div>
 
@@ -105,12 +109,12 @@
 
 
 
-    <div id="FOOTERTEST">
+    <div>
 
-	<footer id="footerpush">
+	<footer id="footerpush">   <!-- footer -->
     <div class="row">
   <div class="col-sm-4">
-      <p style="text-align: center" class="copyright-text">Copyright &copy; 2019 All Rights Reserved by <a href="{% url 'blog-home' %}">StudentEats</a>. </p>
+      <p id="copyrightText" class="copyright-text">Copyright &copy; 2019 All Rights Reserved by <a href="{% url 'blog-home' %}">StudentEats</a>. </p>
   </div>
   <div class="col-sm-4">
       <ul class="footer-links">
@@ -121,7 +125,7 @@
             </ul>
   </div>
   <div  id="footersharebuttons" class="col-sm-4">
-      <div class="sharethis-inline-share-buttons"></div>
+      <div class="sharethis-inline-share-buttons"></div> <!-- share buttons -->
   </div>
 </div>
     </footer>
@@ -229,7 +233,7 @@
         })
     </script>
 
-    {% block extra_jss %}
+    {% block extra_jss %} <!-- extra js block if we want to add javascript in other pages that inherit this page-->
 
     {% endblock extra_jss %}
 </body>

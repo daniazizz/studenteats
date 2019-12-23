@@ -20,7 +20,7 @@
             <!-- Profile follow button: -->
             <a class="follow-btn btn btn-primary btn-sm mb-1" data-id="{{ selected_user.id }}" href="{% url 'follow' selected_user.id %}">
               {% if selected_user.profile in user.profile.following.all %}
-              Unfollow
+                Unfollow
               {% else %}
               Follow
               {% endif %}

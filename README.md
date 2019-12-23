@@ -1,7 +1,9 @@
 # STUDENTEATS
 ## A web application for students to share their favorite places to eat
 
+
 ### Prerequisites
+Depending on your feeling, you can choose whether you install the following packages on your system or in a python virtual environment.
 ```
 python (latest version)
 pip package installer
