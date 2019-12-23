@@ -3,7 +3,7 @@
 
 
 ### Prerequisites
-Depending on your feeling, you can choose whether you install the following packages on your system or in a python virtual environment.
+N.B: Depending on your feeling, you can choose whether you install the following packages on your system or in a python virtual environment.
 ```
 python (latest version)
 pip package installer
@@ -11,7 +11,7 @@ pip package installer
 
 ### Installing
 
-After installing the prerequisites, you can execute `./packtoinstall.sh` on your **`bash`** terminal or do it manually:
+After installing the prerequisites, you can execute `./requirements.sh` on your **`bash`** terminal or do it manually:
 
 ```
 pip install Django
@@ -26,6 +26,8 @@ pip install geopy
 
 You can run the application by executing this command :
 ```python manage.py runserver```
+
+The web application can be accessed by these urls: [localhost:8000](localhost:8000) or [127.0.0.1:8000](127.0.0.1:8000)
 
 ##### **CREDENTIALS**
 * username: 
